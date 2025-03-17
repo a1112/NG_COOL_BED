@@ -1,4 +1,4 @@
-# LG_3D
+# 南钢冷床
 
 
 https://peps.python.org/pep-0008/
@@ -15,3 +15,12 @@ https://github.com/tporadowski/redis/releases
 
 git config --global http.proxy http://127.0.0.1:7890
 git config --global https.proxy https://127.0.0.1:7890
+
+
+
+------------------------
+
+南钢冷床流程：
+--  
+--
+--
