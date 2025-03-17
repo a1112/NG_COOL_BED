@@ -47,13 +47,11 @@ colorama
 filelock
 urllib3
 fsspec
-defusedxml
-minio
-lxml
-CoilDataBase
 pydantic
-torchvision
 PyYAML
 safetensors
 pandas
 shapely
+pyinstaller
+HslCommunication
+python-snap7
