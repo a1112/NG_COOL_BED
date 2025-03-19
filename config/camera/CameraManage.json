@@ -1,0 +1,7 @@
+{
+  "calibrate": {
+    "path": "calibrate/calibrate_1"
+  },
+  "run": ["L1"]
+
+}
