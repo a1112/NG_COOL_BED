@@ -15,3 +15,11 @@ class ConversionImage:
             json_data = {}
         else:
             json_data = load_json(calibrate_json_path)
+
+    def image_conversion(self, frame):
+        """
+        数据转换
+        :param frame:
+        :return:
+        """
+        pass

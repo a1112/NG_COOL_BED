@@ -14,4 +14,6 @@ CAMERA_CONFIG_FOLDER = CONFIG_FOLDER / "camera"
 IP_LIST_CAMERA_CONFIG = CONFIG_FOLDER / "camera"/"IpList.json"
 CAMERA_MANAGE_CONFIG = CONFIG_FOLDER / "camera"/"CameraManage.json"
 
+lOG_DIR = CONFIG_FOLDER / "log"
+lOG_DIR.mkdir(exist_ok=True, parents=True)
 encoding = "utf-8"

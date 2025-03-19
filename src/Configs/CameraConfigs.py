@@ -1,8 +1,8 @@
-import logging
 from CONFIG import CONFIG_FOLDER, IP_LIST_CAMERA_CONFIG
 from CameraStreamer.ConversionImage import ConversionImage
 
 from tool import load_json
+from Loger import logger
 # 获取所有的Ip
 camera_configs = load_json(IP_LIST_CAMERA_CONFIG)
 
@@ -18,7 +18,7 @@ class CameraConfig:
         self.conversion = ConversionImage(self.key)
         base_rtsp_url = "rtsp://admin:ng123456@{}/Streaming/Channels/1"
         self.rtsp_url = base_rtsp_url.format(self.ip)
-        logging.debug(f"rtsp: {self.rtsp_url}")
+        logger.debug(f"rtsp: {self.rtsp_url}")
 
 
 class CoolBedConfig:
@@ -39,4 +39,4 @@ cool_bed_map = {
     for key in camera_configs.keys()
 }
 
-print(cool_bed_map)
+logger.info(cool_bed_map)
