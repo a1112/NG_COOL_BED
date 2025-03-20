@@ -4,7 +4,7 @@ class ImageBuffer:
 
     def __init__(self):
         self.create_time = time.time()
-        self.ret = 0
+        self.ret_ = 0
         self.frame_ = None
         self.image_ = None
         self.set_image_time = time.time()
@@ -12,11 +12,11 @@ class ImageBuffer:
 
     @property
     def ret(self):
-        return self.ret
+        return self.ret_
 
     @ret.setter
     def ret(self, value):
-        self.ret = value
+        self.ret_ = value
 
     @property
     def frame(self):

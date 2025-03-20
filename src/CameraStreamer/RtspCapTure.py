@@ -8,7 +8,7 @@ from threading import Thread
 from CameraStreamer.ConversionImage import ConversionImage
 from Configs.CameraConfigs import CameraConfig
 from Loger import logger
-from ImageBuffer import ImageBuffer
+from .ImageBuffer import ImageBuffer
 
 
 class RtspCapTure(Thread):
@@ -37,7 +37,7 @@ class RtspCapTure(Thread):
             ret, frame = self.cap.read()
             buffer.ret = ret
             buffer.frame = frame
-
+            print(buffer)
             index += 1
             if frame is None:
                 print("相机为空")
