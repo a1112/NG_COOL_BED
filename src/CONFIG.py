@@ -1,3 +1,4 @@
+import socket
 from pathlib import Path
 
 
@@ -17,3 +18,11 @@ CAMERA_MANAGE_CONFIG = CONFIG_FOLDER / "camera"/"CameraManage.json"
 lOG_DIR = CONFIG_FOLDER / "log"
 lOG_DIR.mkdir(exist_ok=True, parents=True)
 encoding = "utf-8"
+
+
+DATA_FOLDER = CONFIG_FOLDER / "data"
+DATA_FOLDER.mkdir(exist_ok=True, parents=True)
+DEBUG_MODEL = False
+
+if socket.gethostname() in ["MS-LGKRSZGOVODD"]:
+    DEBUG_MODEL = True

@@ -2,6 +2,25 @@
   "calibrate": {
     "path": "calibrate/calibrate_1"
   },
-  "run": ["L1"]
+  "run": ["L1"],
+  "group": {
+    "L1": {
+      "camera_list": ["L1_1", "L1_2", "L1_3", "L1_4", "L1_5", "L1_6"],
+      "type": "calibrate",
+      "group": [
+        {},
+        {},
+        {},
+        {}
 
+      ]
+    },
+    "L2":{
+      "camera_list": ["L2_1", "L2_2", "L2_3", "L2_4", "L2_5", "L2_6"],
+      "type": "calibrate",
+      "group": [
+
+      ]
+    }
+  }
 }

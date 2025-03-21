@@ -23,5 +23,12 @@ class CameraManageConfig:
             logging.error(f"不执行 {key}")
         return is_run
 
+    def get_debug_frame_url(self, key):
+        file_name = key.replace("_", "-") + ".jpg"
+        return self.calibrate_path / file_name
+
+    def get_camera_config(self, key):
+        return self.config["camera"][key]
+
 
 camera_manage_config = CameraManageConfig()

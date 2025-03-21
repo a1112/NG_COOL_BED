@@ -16,7 +16,7 @@ class CoolBedThreadWorker(Thread):
 
     def run(self):
         for key, camera_config in self.config.camera_map.items():
-            cap_ture = RtspCapTure(camera_config)
+            cap_ture = RtspCapTure(camera_config) # 执行采集
             self.camera_map[key] = cap_ture
 
 
