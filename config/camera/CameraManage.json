@@ -12,7 +12,9 @@
           "camera_list": ["L1"],
           "msg": "一号冷床 左侧 辅助相机",
           "priority": 3,
-          "data":[]
+          "size_list": [[1024, 768]],
+          "data_x": [],
+          "data_y": []
         },
         {},
         {},
