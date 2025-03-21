@@ -17,6 +17,7 @@ class CameraConfig:
         self.key = key
         self.config = config
         self.ip = config["ip"]
+        self.enable = config["enable"]
         self.conversion = ConversionImage(self.key)
         base_rtsp_url = "rtsp://admin:ng123456@{}/stream" #Streaming/Channels/1
         self.rtsp_url = base_rtsp_url.format(self.ip)

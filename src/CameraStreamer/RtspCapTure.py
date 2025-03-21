@@ -1,4 +1,4 @@
-
+from tqdm import tqdm
 import time
 # from queue import Queue
 
@@ -15,10 +15,11 @@ from .ImageBuffer import ImageBuffer
 from .CameraSdk import DebugCameraSdk, OpenCvCameraSdk, AvCameraSdk
 from CONFIG import DEBUG_MODEL
 
-class RtspCapTure(Thread): # Process
+class RtspCapTure(Thread): # Process, Thread
     def __init__(self, camera_config:CameraConfig):
         self.camera_config = camera_config
         self.key = camera_config.key
+        self.config = camera_config.config
         self.rtsp_url = camera_config.rtsp_url
         self.trans=camera_config.trans
         super().__init__()
@@ -37,6 +38,7 @@ class RtspCapTure(Thread): # Process
 
 
     def run(self):
+        self.camera_config = CameraConfig(self.key, self.config)
         logger.debug(f"start RtspCapTure {self.key}")
 
         self.cap = self.get_video_capture()
@@ -44,12 +46,15 @@ class RtspCapTure(Thread): # Process
         # ret, frame = cap.read()
         index = 0
         num = 0
-        while True:
+        t = tqdm()
+        while self.camera_config.enable:
             buffer = ImageBuffer(self.key,self.trans)
             ret, frame = self.cap.read()
             buffer.ret = ret
             buffer.frame = frame
+            print(frame.shape)
             index += 1
+            t.update(1)
             if frame is None:
                 print("相机为空")
                 self.cap.release()
@@ -61,8 +66,6 @@ class RtspCapTure(Thread): # Process
             # image = self.conversion.image_conversion(frame)
             buffer.image = image
             self.camera_buffer.put(buffer)
-            print(image.shape)
             buffer.show_frame()
-            time.sleep(0.2)
             self.camera_buffer.get() if self.camera_buffer.qsize() > 1 else time.sleep(0.01)
             num += 1
