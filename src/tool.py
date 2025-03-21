@@ -9,6 +9,7 @@ def load_json(url):
 
 def show_cv2(img,title="image"):
     cv2.namedWindow(title, flags=cv2.WINDOW_NORMAL)
+
     cv2.imshow(title, img)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         return

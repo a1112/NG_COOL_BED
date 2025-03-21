@@ -9,13 +9,13 @@ from Configs.CameraConfigs import CameraConfig
 
 class ImageBuffer:
 
-    def __init__(self, camera_config: CameraConfig):
-        self.camera_config = camera_config
-        self.key = camera_config.key
+    def __init__(self, key,trans):
+        self.key = key
         self.create_time = time.time()
         self.ret_ = 0
         self.frame_ = None
         self.image_ = None
+        self.trans = trans
         # 设置时间
         self.set_image_time = time.time()
         # 采集时间
@@ -57,7 +57,7 @@ class ImageBuffer:
 
     def show_frame(self, show_rect = True):
         if show_rect:
-            trans = self.camera_config.trans
+            trans = self.trans
             pts = np.array(trans, np.int32)
             pts = pts.reshape((-1, 1, 2))  # 必须重塑为 (N,1,2) 格式[3,5](@ref)
             # 参数说明：图像、顶点、是否闭合、颜色（BGR）、线宽

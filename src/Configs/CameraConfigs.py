@@ -18,7 +18,7 @@ class CameraConfig:
         self.config = config
         self.ip = config["ip"]
         self.conversion = ConversionImage(self.key)
-        base_rtsp_url = "rtsp://admin:ng123456@{}/Streaming/Channels/1"
+        base_rtsp_url = "rtsp://admin:ng123456@{}/stream" #Streaming/Channels/1
         self.rtsp_url = base_rtsp_url.format(self.ip)
         logger.debug(f"rtsp: {self.rtsp_url}")
 
