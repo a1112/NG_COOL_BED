@@ -8,7 +8,12 @@
       "camera_list": ["L1_1", "L1_2", "L1_3", "L1_4", "L1_5", "L1_6"],
       "type": "calibrate",
       "group": [
-        {},
+        {
+          "camera_list": ["L1"],
+          "msg": "一号冷床 左侧 辅助相机",
+          "priority": 3,
+          "data":[]
+        },
         {},
         {},
         {}
