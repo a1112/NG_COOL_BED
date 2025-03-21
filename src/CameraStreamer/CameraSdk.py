@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 from PIL import Image
 import cv2
 import numpy as np
+import av
+
 import tool
 
 from Configs.CameraManageConfig import camera_manage_config
@@ -11,7 +13,7 @@ from Configs.CameraManageConfig import camera_manage_config
 
 class CameraSdkBase(ABC):
     """
-
+    基础类别
     """
     def __init__(self):
         pass
@@ -24,9 +26,29 @@ class CameraSdkBase(ABC):
     def release(self):
         ...
 
-    @abstractmethod
-    def  show(self):
-        ...
+
+class AvCameraSdk(CameraSdkBase):
+
+    def __init__(self, key, rtsp_url):
+        super().__init__()
+        self.key = key
+        self.rtsp_url = rtsp_url
+        container = av.open(self.rtsp_url, options = {
+            'filter_complex': 'fps = 7'  # 设置帧率为30fps
+        })
+        self.container = container
+        self.container_cap = container.decode(video=0)
+
+
+
+    def release(self):
+        self.container.close()
+
+    def read(self):
+        cap_image = next(self.container_cap)
+        return cap_image.to_ndarray()
+
+
 
 class OpenCvCameraSdk(CameraSdkBase):
 
@@ -39,6 +61,7 @@ class OpenCvCameraSdk(CameraSdkBase):
         self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
         self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
         self.camera.set(cv2.CAP_PROP_FPS, 8)
+
     def read(self):
         det, img = self.camera.read()
         return det, img
@@ -46,8 +69,6 @@ class OpenCvCameraSdk(CameraSdkBase):
     def release(self):
         return self.camera.release()
 
-    def show(self):
-        pass
 
 
 class DebugCameraSdk(CameraSdkBase):
@@ -67,6 +88,3 @@ class DebugCameraSdk(CameraSdkBase):
 
     def release(self):
         pass
-
-    def show(self):
-        return tool.show_cv2(self.frame, self.key)

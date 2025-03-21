@@ -55,3 +55,4 @@ shapely
 pyinstaller
 HslCommunication
 python-snap7
+av

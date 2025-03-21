@@ -12,7 +12,7 @@ from CameraStreamer.ConversionImage import ConversionImage
 from Configs.CameraConfigs import CameraConfig
 from Loger import logger
 from .ImageBuffer import ImageBuffer
-from .CameraSdk import DebugCameraSdk, OpenCvCameraSdk
+from .CameraSdk import DebugCameraSdk, OpenCvCameraSdk, AvCameraSdk
 from CONFIG import DEBUG_MODEL
 
 class RtspCapTure(Thread): # Process
@@ -32,7 +32,8 @@ class RtspCapTure(Thread): # Process
     def get_video_capture(self):
         if DEBUG_MODEL:
             return DebugCameraSdk(self.key)
-        return OpenCvCameraSdk(self.key, self.rtsp_url)
+        return AvCameraSdk(self.key, self.rtsp_url)
+        # return OpenCvCameraSdk(self.key, self.rtsp_url)
 
 
     def run(self):

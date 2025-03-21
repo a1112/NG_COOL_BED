@@ -1,16 +1,15 @@
-from av import open_input, Container, Stream
-
-container = open_input('rtsp://admin:ng123456@192.168.1.101/stream')
-for stream in container.streams:
-    if stream.type == 'video':
-        video_stream = stream
-        break
-codec_context = video_stream.codec_context
-reader = container.open(video_stream)
-
+import cv2
+import numpy as np
+from PIL import Image
+from tqdm import tqdm
+import av
+container = av.open('rtsp://admin:ng123456@192.168.1.101/stream')
+#path_to_video是你视频的路径
+container_cap = container.decode(video=0)
 while True:
-    packet = reader.read_packet()
-    frame = av.frame.Frame(codec_context.width, codec_context.height,
-                           codec_context pix_fmt)
-    reader.decode_video(packet, frame)
-    # 处理帧数据c
+    frame=next(container_cap)
+    image=frame.to_image()
+    cv_image = np.array(image)
+    cv2.imshow('frame', cv_image)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
