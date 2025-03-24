@@ -33,8 +33,26 @@ class AvCameraSdk(CameraSdkBase):
         super().__init__()
         self.key = key
         self.rtsp_url = rtsp_url
+        self.det = 1
+        # options = {
+        #     "analyzeduration": "10000000",  # 设置analyzeduration选项为10秒
+        #     "probesize": "5000000",  # 设置probesize选项为5000000字节
+        #     'rtsp_transport': 'tcp',  # 设置RTSP传输协议，可以是"tcp"或"udp"
+        #     'max_delay': '50000',  # 设置最大延迟
+        #     'stimeout': '10000000',  # 设置超时时间，单位是微秒
+        #     'allowed_media_types': '设置允许的媒体类型，例如["audio", "video"]",  # 未验证！！！
+        #     'muxdelay': "设置最大复用延迟。",  # 未验证！！！
+        #     'probesize2': "设置探测大小。"  # 未验证！！！
+        # }
+
         container = av.open(self.rtsp_url, options = {
-            'filter_complex': 'fps = 7'  # 设置帧率为30fps
+            '-c:v': 'libx264',
+            '-preset': 'slow',  # 编码速度（slow=质量优先）
+            '-crf': '23',  # 恒定质量模式（0-51，值越小质量越高）
+            # 's': '1280x720',  # 输出分辨率
+            '-vf': 'scale=1280:-2',  # 宽度x，高度自动保持比例（偶数调整）
+            '-r': '10',  # 强制输出x fps（可能重复或丢弃帧）
+            # '-vsync': 'vfr'  # 保持原始可变帧率（不推荐直播）
         })
         self.container = container
         self.container_cap = container.decode(video=0)
@@ -45,8 +63,15 @@ class AvCameraSdk(CameraSdkBase):
         self.container.close()
 
     def read(self):
+        self.det +=1
         cap_image = next(self.container_cap)
-        return cap_image.to_ndarray()
+
+        # image = cap_image.to_rgb().to_ndarray()
+
+        image = cap_image.to_image()
+        image =  np.array(image)
+
+        return self.det, image
 
 
 
@@ -84,7 +109,7 @@ class DebugCameraSdk(CameraSdkBase):
 
     def read(self):
         self.det+=1
-        return self.det,self.frame
+        return self.det, self.frame
 
     def release(self):
         pass
