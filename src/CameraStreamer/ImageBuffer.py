@@ -5,17 +5,19 @@ import numpy as np
 
 import tool
 from Configs.CameraConfigs import CameraConfig
-
+from CameraStreamer.ConversionImage import ConversionImage
 
 class ImageBuffer:
 
-    def __init__(self, key,trans):
-        self.key = key
+    def __init__(self, camera_config : CameraConfig):
+        self.camera_config=camera_config
+        self.key = camera_config.key
+        self.conversion:ConversionImage = camera_config.conversion
         self.create_time = time.time()
         self.ret_ = 0
         self.frame_ = None
         self.image_ = None
-        self.trans = trans
+        self.trans = camera_config.trans
         # 设置时间
         self.set_image_time = time.time()
         # 采集时间
@@ -48,6 +50,9 @@ class ImageBuffer:
 
     @property
     def image(self):
+        if self.image_ is None:
+            self.image_ = self.conversion(self.frame)
+
         return self.image_
 
     @image.setter

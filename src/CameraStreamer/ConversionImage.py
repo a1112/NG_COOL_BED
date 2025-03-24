@@ -47,6 +47,10 @@ class ConversionImage:
 
         self.trans = get_trans(json_data)
 
+    def __call__(self, *args, **kwargs):
+        frame = args[0]
+        return self.image_conversion(frame)
+
     def image_conversion(self, frame):
         """
         数据转换

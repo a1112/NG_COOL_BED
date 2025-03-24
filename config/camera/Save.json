@@ -1,0 +1,7 @@
+{
+  "camera": {
+  "enable": true,
+  "folder": "../data/相机采集保存",
+  "name": "camera"
+}
+}

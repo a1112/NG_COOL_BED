@@ -2,53 +2,61 @@ from tqdm import tqdm
 import time
 # from queue import Queue
 
-import cv2
-from threading import Thread
 
-from joblib.externals.loky.backend.queues import Queue
-from typing_extensions import override
-from multiprocessing import Process, Queue
+
+from multiprocessing import  Queue
 from CameraStreamer.ConversionImage import ConversionImage
 from Configs.CameraConfigs import CameraConfig
+from Configs.GlobalConfig import GlobalConfig
 from Loger import logger
 from .ImageBuffer import ImageBuffer
 from .CameraSdk import DebugCameraSdk, OpenCvCameraSdk, AvCameraSdk
-from CONFIG import DEBUG_MODEL
+from CONFIG import DEBUG_MODEL, CapTureBaseClass, USE_OPENCV
+from Save.ImageSave import CameraImageSave
 
-class RtspCapTure(Thread): # Process, Thread
-    def __init__(self, camera_config:CameraConfig):
+
+class RtspCapTure(CapTureBaseClass): # Process, Thread
+    def __init__(self, camera_config:CameraConfig, global_config:GlobalConfig):
+        super().__init__()
+        self.conversion = None
         self.camera_config = camera_config
         self.key = camera_config.key
         self.config = camera_config.config
+        self.global_config = global_config
+
         self.rtsp_url = camera_config.rtsp_url
         self.trans=camera_config.trans
-        super().__init__()
         self.cap = None
         self.camera_buffer = Queue()
-        self.conversion = self.camera_config.conversion
-        self.conversion: ConversionImage    # 图像转换
+
+        self.camera_image_save = None
         self.start()
 
 
     def get_video_capture(self):
         if DEBUG_MODEL:
             return DebugCameraSdk(self.key)
+        if USE_OPENCV:
+            return OpenCvCameraSdk(self.key, self.rtsp_url)
         return AvCameraSdk(self.key, self.rtsp_url)
-        # return OpenCvCameraSdk(self.key, self.rtsp_url)
 
 
     def run(self):
         self.camera_config = CameraConfig(self.key, self.config)
+        self.conversion = self.camera_config.conversion
+        self.conversion: ConversionImage    # 图像转换
+
         logger.debug(f"start RtspCapTure {self.key}")
 
         self.cap = self.get_video_capture()
-        print(self.cap)
+        self.camera_image_save = CameraImageSave(self.camera_config)
+        print(self.camera_image_save)
         # ret, frame = cap.read()
         index = 0
         num = 0
         t = tqdm()
         while self.camera_config.enable:
-            buffer = ImageBuffer(self.key,self.trans)
+            buffer = ImageBuffer(self.camera_config)
             ret, frame = self.cap.read()
             buffer.ret = ret
             buffer.frame = frame
@@ -61,11 +69,13 @@ class RtspCapTure(Thread): # Process, Thread
                 time.sleep(2)
                 self.cap = self.get_video_capture()
                 continue
+            self.camera_image_save.save_first_buffer(buffer)    # 保存第一帧图像
 
-            image = frame
-            # image = self.conversion.image_conversion(frame)
-            buffer.image = image
             self.camera_buffer.put(buffer)
+            # self.camera_
             buffer.show_frame()
             self.camera_buffer.get() if self.camera_buffer.qsize() > 1 else time.sleep(0.01)
             num += 1
+
+            if DEBUG_MODEL:  # 测试模式
+                time.sleep(0.5)

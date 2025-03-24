@@ -1,9 +1,10 @@
 import logging
-from CONFIG import CAMERA_MANAGE_CONFIG, CAMERA_CONFIG_FOLDER
 
+from CONFIG import CAMERA_MANAGE_CONFIG, CAMERA_CONFIG_FOLDER
+from .ConfigBase import ConfigBase
 from tool import load_json
 
-class CameraManageConfig:
+class CameraManageConfig(ConfigBase):
     """
     管理
     """
