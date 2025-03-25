@@ -69,5 +69,6 @@ class ImageBuffer:
             cv2.polylines(self.frame, [pts], isClosed=True, color=(0,255, 0), thickness = 3)
         return tool.show_cv2(self.frame, self.key)
 
+
     def show(self):
         return tool.show_cv2(self.image, self.key)

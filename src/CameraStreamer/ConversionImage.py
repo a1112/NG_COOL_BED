@@ -39,13 +39,18 @@ class ConversionImage:
     def __init__(self, key):
         self.key = key
         calibrate_json_path = camera_manage_config.get_calibrate_json_path(self.key)
+        self.map = camera_manage_config.get_map(self.key)
+
         if not calibrate_json_path.exists():
             logging.error(f"{calibrate_json_path} 不存在 ! ")
             json_data = {}
         else:
             json_data = load_json(calibrate_json_path)
 
-        self.trans = get_trans(json_data)
+        self.trans = np.array(get_trans(json_data), np.float32)
+        width, height = [512, 512]
+
+        self.M = cv2.getPerspectiveTransform(self.trans, np.array([(0, 0), (width, 0), (width, height), (0, height)], dtype=np.float32))
 
     def __call__(self, *args, **kwargs):
         frame = args[0]
@@ -57,7 +62,5 @@ class ConversionImage:
         :param frame:
         :return:
         """
-        width, height = [512, 512]
-        M = cv2.getPerspectiveTransform(self.trans, np.array([(0, 0), (width, 0), (width, height), (0, height)], dtype=np.float32))
-        warped = cv2.warpPerspective(frame, M, (width, height))
+        warped = cv2.warpPerspective(frame, self.M, (width, height))
         return warped
