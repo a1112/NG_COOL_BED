@@ -1,4 +1,5 @@
 # 用于图像数据保存
+from pathlib import Path
 from threading import Thread
 from queue import Queue
 
@@ -10,6 +11,7 @@ from Configs.CameraConfigs import CameraConfig
 from Configs.SaveConfig import save_config
 from Loger import logger
 import CONFIG
+import tool
 
 
 class ImageSaveBase(Thread):
@@ -28,6 +30,7 @@ class ImageSaveBase(Thread):
                 image = Image.fromarray(frame)
             else:
                 image = frame
+            Path(save_url).parent.mkdir(parents=True, exist_ok=True)
             image.save(save_url)
 
 
@@ -47,14 +50,25 @@ class CameraImageSave(ImageSaveBase):
         """
 
         if not self.first_buffer_saved:
+            """
+            开机保存
+            """
             logger.debug(fr"start time {self.camera_config.key} {self.camera_config.start}")
-
             self.first_buffer_saved = True
             frame = buffer.frame
             save_folder = save_config.camera_save_folder /self.camera_config.start
-            save_folder.mkdir(parents=True, exist_ok=True)
-            save_url = save_folder / fr"{self.camera_config.key}.jpg"
-            self.camera_buffer.put([frame,save_url])
+            save_url = save_folder /"采集"/ fr"{self.camera_config.key}.{CONFIG.IMAGE_SAVE_TYPE}"
+            self.camera_buffer.put([frame, save_url])
+
+    def save_buffer(self, buffer:ImageBuffer):
+        """
+        采集保存
+        """
+        frame = buffer.frame
+        save_folder = save_config.camera_save_folder /self.camera_config.key
+
+        save_url = save_folder /"原图"/tool.get_new_data_str()/fr"{tool.get_now_data_time_str()}.{CONFIG.IMAGE_SAVE_TYPE}"
+        self.camera_buffer.put([frame, save_url])
 
 class ImageSave(ImageSaveBase):
     pass

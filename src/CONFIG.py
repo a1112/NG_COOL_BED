@@ -36,6 +36,9 @@ if socket.gethostname() in ["MS-LGKRSZGOVODD", "DESKTOP-94ADH1G"]:
 CapTureBaseClass = Thread
 USE_OPENCV=False
 
-DATETIME_FMT = "%Y_%m_%d-%H_%M_%S"
+DATA_FMT="%Y-%m-%d"
+TIME_FMT="%H_%M_%S"
 
+DATETIME_FMT = f"{DATA_FMT}-{TIME_FMT}"
+IMAGE_SAVE_TYPE = "jpg"
 APP_RUN = True

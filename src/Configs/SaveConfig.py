@@ -17,4 +17,10 @@ class SaveConfig(ConfigBase):
         self.camera_save_folder.mkdir(parents=True, exist_ok=True)
         self.camera_save_name = self.camera_save_config["name"]
 
+        self.data_save_config = self.config["data"]
+        self.data_saved = self.data_save_config["enable"]
+        self.data_save_folder = CAMERA_CONFIG_FOLDER / Path(self.data_save_config["folder"])
+        self.data_save_folder.mkdir(parents=True, exist_ok=True)
+        self.data_save_name = self.data_save_config["name"]
+
 save_config = SaveConfig()
