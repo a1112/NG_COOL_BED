@@ -1,8 +1,8 @@
 # coding=utf-8
 import time
 
-from HCNetSDK import *
-from PlayCtrl import *
+from .HCNetSDK import *
+from .PlayCtrl import *
 
 
 class devClass:
