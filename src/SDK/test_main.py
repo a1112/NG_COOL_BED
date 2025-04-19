@@ -1,12 +1,16 @@
 # coding=utf-8
+import queue
 import time
+
+import cv2
 
 from .HCNetSDK import *
 from .PlayCtrl import *
+from threading import Thread
 
-
-class devClass:
+class devClass(Thread):
     def __init__(self):
+        super().__init__()
         self.hikSDK, self.playM4SDK = self.LoadSDK()  # 加载sdk库
         self.iUserID = -1  # 登录句柄
         self.lRealPlayHandle = -1  # 预览句柄
@@ -17,8 +21,9 @@ class devClass:
         self.basePath = ''  # 基础路径
         self.preview_file = ''  # linux预览取流保存路径
         self.funcRealDataCallBack_V30 = REALDATACALLBACK(self.RealDataCallBack_V30)  # 预览回调函数
+        self.frame_queue = queue.Queue(maxsize=10)  # 限制队列大小防止内存溢出
         # self.msg_callback_func = MSGCallBack_V31(self.g_fMessageCallBack_Alarm)  # 注册回调函数实现
-
+        self.start()
     def LoadSDK(self):
         hikSDK = None
         playM4SDK = None
@@ -102,6 +107,36 @@ class devClass:
             self.hikSDK.NET_DVR_Logout(self.iUserID)
 
     def DecCBFun(self, nPort, pBuf, nSize, pFrameInfo, nUser, nReserved2):
+        from threading import Thread
+        if pFrameInfo.contents.nType == 3:
+            import cv2
+            import numpy as np
+            from ctypes import addressof
+
+            # 获取图像参数
+            nWidth = pFrameInfo.contents.nWidth
+            nHeight = pFrameInfo.contents.nHeight
+
+            # 将指针数据转为numpy数组
+            buf_type = (c_ubyte * nSize).from_address(addressof(pBuf.contents))
+            yuv_data = np.frombuffer(buf_type, dtype=np.uint8)
+
+            # 检查数据长度
+            expected_size = nWidth * nHeight * 3 // 2
+            if yuv_data.size != expected_size:
+                return
+
+            # 重塑形状并转换YUV420到RGB
+            yuv_frame = yuv_data.reshape((nHeight * 3 // 2, nWidth))
+            try:
+                rgb_frame = cv2.cvtColor(yuv_frame, cv2.COLOR_YUV2RGB_I420)
+            except:
+                return
+            # 存入队列
+            if not self.frame_queue.full():
+                self.frame_queue.put_nowait(rgb_frame)
+
+    def DecCBFun_1(self, nPort, pBuf, nSize, pFrameInfo, nUser, nReserved2):
         # 解码回调函数
         from pathlib import Path
         import CONFIG
@@ -264,6 +299,15 @@ class devClass:
             self.playM4SDK.PlayM4_CloseStream(self.PlayCtrlPort)
             self.playM4SDK.PlayM4_FreePort(self.PlayCtrlPort)
             self.PlayCtrlPort = C_LONG(-1)
+
+    def run(self):
+        while True:
+            print("run")
+            frame = self.frame_queue.get()
+            # 示例：显示帧
+            cv2.imshow('Frame', frame)
+            cv2.waitKey(1)
+
 
 import CONFIG
 def cap_one(ip_):
