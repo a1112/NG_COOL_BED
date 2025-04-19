@@ -1,2 +1,4 @@
 .idea/
 /config/data/
+/venv/
+/SDK/SdkLog_Python/
