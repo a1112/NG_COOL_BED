@@ -81,11 +81,11 @@ class OpenCvCameraSdk(CameraSdkBase):
         super().__init__()
         self.key = key
         self.rtsp_url = rtsp_url
-        self.camera = cv2.VideoCapture(rtsp_url, cv2.CAP_FFMPEG)
-        self.camera.set(cv2.CAP_PROP_BUFFERSIZE, 10000)
-        self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
-        self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
-        self.camera.set(cv2.CAP_PROP_FPS, 8)
+        self.camera = cv2.VideoCapture(rtsp_url) # cv2.CAP_FFMPEG
+        self.camera.set(cv2.CAP_PROP_BUFFERSIZE, 100000)
+        self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 600)
+        self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 400)
+        self.camera.set(cv2.CAP_PROP_FPS, 2)
 
     def read(self):
         det, img = self.camera.read()

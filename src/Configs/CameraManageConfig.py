@@ -51,6 +51,7 @@ class CameraManageConfig(ConfigBase):
         return self.config["camera"][key]
 
     def get_map(self, key):
+        print(self.config["map"])
         map_ = MapConfig(self.config["map"][key.replace("_", "-")])
         return map_
 

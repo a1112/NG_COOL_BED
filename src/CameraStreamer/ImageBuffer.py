@@ -51,7 +51,9 @@ class ImageBuffer:
     @property
     def image(self):
         if self.image_ is None:
-            self.image_ = self.conversion(self.frame)
+            pass
+            return self.frame_
+            # self.image_ = self.conversion(self.frame)
 
         return self.image_
 
@@ -71,4 +73,5 @@ class ImageBuffer:
 
 
     def show(self):
-        return tool.show_cv2(self.image, self.key)
+        if self.image is not None:
+            return tool.show_cv2(self.image, self.key)

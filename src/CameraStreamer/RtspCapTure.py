@@ -74,9 +74,13 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
             self.camera_buffer.put(buffer)
             # self.camera_
             # buffer.show_frame()
-            buffer.show()
+            # buffer.show()
             self.camera_buffer.get() if self.camera_buffer.qsize() > 1 else time.sleep(0.01)
             num += 1
 
             if DEBUG_MODEL:  # 测试模式
                 time.sleep(0.5)
+            else:
+                if num % 5 == 1:
+                    self.camera_image_save.save_buffer(buffer)
+            time.sleep(0.1)
