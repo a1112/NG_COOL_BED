@@ -42,10 +42,10 @@ class CapModelEnum(Enum):
     SDK=3
     DEBUG=4
 
-CAP_MODEL = CapModelEnum.OPENCV
+CAP_MODEL = CapModelEnum.SDK
 
 if DEBUG_MODEL:
-    CAP_MODEL = CapModelEnum.SDK
+    CAP_MODEL = CapModelEnum.DEBUG
 
 DATA_FMT="%Y-%m-%d"
 TIME_FMT="%H_%M_%S"

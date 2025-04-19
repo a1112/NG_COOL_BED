@@ -8,7 +8,7 @@ from .HCNetSDK import *
 from .PlayCtrl import *
 from threading import Thread
 
-class DevClass:
+class DevClass(Thread):
     def __init__(self):
         super().__init__()
         self.hikSDK, self.playM4SDK = self.LoadSDK()  # 加载sdk库
@@ -22,6 +22,7 @@ class DevClass:
         self.preview_file = ''  # linux预览取流保存路径
         self.funcRealDataCallBack_V30 = REALDATACALLBACK(self.RealDataCallBack_V30)  # 预览回调函数
         self.frame_queue = queue.Queue(maxsize=1)  # 限制队列大小防止内存溢出
+        # self.start()
         # self.msg_callback_func = MSGCallBack_V31(self.g_fMessageCallBack_Alarm)  # 注册回调函数实现
 
     def LoadSDK(self):
@@ -176,68 +177,46 @@ class DevClass:
         preview_file_output.close()
 
     def RealDataCallBack_V30(self, lPlayHandle, dwDataType, pBuffer, dwBufSize, pUser):
-        # 码流回调函数
-        if sys_platform == 'linux':
-            # 码流回调函数
-            if dwDataType == NET_DVR_SYSHEAD:
-                from datetime import datetime
-                # 获取当前时间的datetime对象
-                current_time = datetime.now()
-                timestamp_str = current_time.strftime('%Y%m%d_%H%M%S')
-                self.preview_file = f'./previewVideo{timestamp_str}.mp4'
-            elif dwDataType == NET_DVR_STREAMDATA:
-                self.writeFile(self.preview_file, pBuffer, dwBufSize)
-            else:
-                print(u'其他数据,长度:', dwBufSize)
-        elif sys_platform == 'windows':
-            if dwDataType == NET_DVR_SYSHEAD:
-                # 设置流播放模式
-                self.playM4SDK.PlayM4_SetStreamOpenMode(self.PlayCtrlPort, 0)
-                # 打开码流，送入40字节系统头数据
-                if self.playM4SDK.PlayM4_OpenStream(self.PlayCtrlPort, pBuffer, dwBufSize, 1024 * 1024):
-                    # 设置解码回调，可以返回解码后YUV视频数据
-                    self.FuncDecCB = DECCBFUNWIN(self.DecCBFun)
-                    self.playM4SDK.PlayM4_SetDecCallBackExMend(self.PlayCtrlPort, self.FuncDecCB, None, 0, None)
-                    # 开始解码播放
-                    if self.playM4SDK.PlayM4_Play(self.PlayCtrlPort, self.wincv.winfo_id()):
-                        print(u'播放库播放成功')
-                    else:
-                        print(u'播放库播放失败')
-                else:
-                    print(f'播放库打开流失败, 错误码：{self.playM4SDK.PlayM4_GetLastError(self.PlayCtrlPort)}')
-            elif dwDataType == NET_DVR_STREAMDATA:
-                self.playM4SDK.PlayM4_InputData(self.PlayCtrlPort, pBuffer, dwBufSize)
-            else:
-                print(u'其他数据,长度:', dwBufSize)
+        if dwDataType == NET_DVR_SYSHEAD:
+            # 设置流播放模式和解码回调
+            self.playM4SDK.PlayM4_SetStreamOpenMode(self.PlayCtrlPort, 0)
+            if self.playM4SDK.PlayM4_OpenStream(self.PlayCtrlPort, pBuffer, dwBufSize, 1024 * 1024):
+                # 注册解码回调函数
+                self.FuncDecCB = DECCBFUNWIN(self.DecCBFun)
+                print("PlayM4_SetDecCallBackExMend")
+                self.playM4SDK.PlayM4_SetDecCallBackExMend(self.PlayCtrlPort, self.FuncDecCB, None, 0, None)
+                self.playM4SDK.PlayM4_Play(self.PlayCtrlPort, 0)
+                # 输入数据启动解码
+        elif dwDataType == NET_DVR_STREAMDATA:
+            # 直接输入流数据
+            self.playM4SDK.PlayM4_InputData(self.PlayCtrlPort, pBuffer, dwBufSize)
 
     def startPlay(self, playTime):
         # 获取一个播放句柄
         if not self.playM4SDK.PlayM4_GetPort(byref(self.PlayCtrlPort)):
             print(f'获取播放库句柄失败, 错误码：{self.playM4SDK.PlayM4_GetLastError(self.PlayCtrlPort)}')
-
-        if sys_platform == 'linux':
             # 开始预览
-            preview_info = NET_DVR_PREVIEWINFO()
-            preview_info.hPlayWnd = 0
-            preview_info.lChannel = 1  # 通道号
-            preview_info.dwStreamType = 0  # 主码流
-            preview_info.dwLinkMode = 0  # TCP
-            preview_info.bBlocked = 1  # 阻塞取流
+        preview_info = NET_DVR_PREVIEWINFO()
+        preview_info.hPlayWnd = 0
+        preview_info.lChannel = 1  # 通道号
+        preview_info.dwStreamType = 0  # 主码流
+        preview_info.dwLinkMode = 0  # TCP
+        preview_info.bBlocked = 1  # 阻塞取流
 
-            # 开始预览并且设置回调函数回调获取实时流数据
-            self.lRealPlayHandle = self.hikSDK.NET_DVR_RealPlay_V40(self.iUserID, byref(preview_info),
-                                                                    self.funcRealDataCallBack_V30,
-                                                                    None)
-            if self.lRealPlayHandle < 0:
-                print('Open preview fail, error code is: %d' % self.hikSDK.NET_DVR_GetLastError())
-                # 登出设备
-                self.hikSDK.NET_DVR_Logout(self.iUserID)
-                # 释放资源
-                self.hikSDK.NET_DVR_Cleanup()
-                exit()
-            time.sleep(playTime)
-
-        elif sys_platform == 'windows':
+        # 开始预览并且设置回调函数回调获取实时流数据
+        self.lRealPlayHandle = self.hikSDK.NET_DVR_RealPlay_V40(self.iUserID, byref(preview_info),
+                                                                self.funcRealDataCallBack_V30,
+                                                                None)
+        if self.lRealPlayHandle < 0:
+            print('Open preview fail, error code is: %d' % self.hikSDK.NET_DVR_GetLastError())
+            # 登出设备
+            self.hikSDK.NET_DVR_Logout(self.iUserID)
+            # 释放资源
+            self.hikSDK.NET_DVR_Cleanup()
+            exit()
+        import tkinter
+        self.win = tkinter.Tk()
+        if sys_platform == 'windows1':
             import tkinter
             from tkinter import Button
 
@@ -300,13 +279,13 @@ class DevClass:
             self.playM4SDK.PlayM4_FreePort(self.PlayCtrlPort)
             self.PlayCtrlPort = C_LONG(-1)
 
-    # def run(self):
-    #     while True:
-    #         print("run")
-    #         frame = self.frame_queue.get()
-    #         # 示例：显示帧
-    #         cv2.imshow('Frame', frame)
-    #         cv2.waitKey(1)
+    def run(self):
+        while True:
+            print("run")
+            frame = self.frame_queue.get()
+            # 示例：显示帧
+            cv2.imshow('Frame', frame)
+            cv2.waitKey(1)
 
 
 def cap_one(ip_):
@@ -320,6 +299,10 @@ def cap_one(ip_):
     dev.LoginDev(ip=ip_, username=b"admin", pwd=b"ng123456")  # 登录设备
 
     dev.startPlay(playTime=10)  # playTime用于linux环境控制预览时长，windows环境无效
+    print(dev)
+    while True:
+        time.sleep(1)
+        print(dev.frame_queue.qsize())
     dev.stopPlay()
     dev.LogoutDev()
     # 释放资源

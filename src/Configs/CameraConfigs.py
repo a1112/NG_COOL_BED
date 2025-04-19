@@ -44,6 +44,7 @@ class CoolBedConfig(ConfigBase):
         self.ip_map = config["ipList"]
         self.camera_map = {}
         for key,value in self.ip_map.items():
+            print(fr" value: {value}")
             self.camera_map[key] = CameraConfig(key, value)
 
 

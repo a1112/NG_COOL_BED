@@ -17,7 +17,7 @@ class ImageBuffer:
         self.ret_ = 0
         self.frame_ = None
         self.image_ = None
-        self.trans = camera_config.trans
+        # self.trans = camera_config.trans
         # 设置时间
         self.set_image_time = time.time()
         # 采集时间
@@ -63,12 +63,12 @@ class ImageBuffer:
         self.image_ = value
 
     def show_frame(self, show_rect = True):
-        if show_rect:
-            trans = self.trans
-            pts = np.array(trans, np.int32)
-            pts = pts.reshape((-1, 1, 2))  # 必须重塑为 (N,1,2) 格式[3,5](@ref)
-            # 参数说明：图像、顶点、是否闭合、颜色（BGR）、线宽
-            cv2.polylines(self.frame, [pts], isClosed=True, color=(0,255, 0), thickness = 3)
+        # if show_rect:
+        #     trans = self.trans
+        #     pts = np.array(trans, np.int32)
+        #     pts = pts.reshape((-1, 1, 2))  # 必须重塑为 (N,1,2) 格式[3,5](@ref)
+        #     # 参数说明：图像、顶点、是否闭合、颜色（BGR）、线宽
+        #     cv2.polylines(self.frame, [pts], isClosed=True, color=(0,255, 0), thickness = 3)
         return tool.show_cv2(self.frame, self.key)
 
 

@@ -126,5 +126,5 @@ class HkCameraSdk(CameraSdkBase):
         pass
 
     def read(self):
-        self.sdk.get_last_frame()
+        return 0,self.sdk.get_last_frame()
 

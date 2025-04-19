@@ -21,12 +21,12 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         self.conversion = None
         self.camera_config = camera_config
         self.key = camera_config.key
+        print(camera_config.key)
         self.config = camera_config.config
         self.global_config = global_config
 
         self.ip = camera_config.ip
         self.rtsp_url = camera_config.rtsp_url
-        self.trans=camera_config.trans
         self.cap = None
         self.camera_buffer = Queue()
 
@@ -54,19 +54,15 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
 
         self.cap = self.get_video_capture()
         self.camera_image_save = CameraImageSave(self.camera_config)
-        print(self.camera_image_save)
         # ret, frame = cap.read()
         index = 0
         num = 0
-        t = tqdm()
         while self.camera_config.enable:
             buffer = ImageBuffer(self.camera_config)
             ret, frame = self.cap.read()
             buffer.ret = ret
             buffer.frame = frame
-            print(frame.shape)
             index += 1
-            t.update(1)
             if frame is None:
                 print("相机为空")
                 self.cap.release()
@@ -77,7 +73,7 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
 
             self.camera_buffer.put(buffer)
             # self.camera_
-            # buffer.show_frame()
+            buffer.show_frame()
             # buffer.show()
             self.camera_buffer.get() if self.camera_buffer.qsize() > 1 else time.sleep(0.01)
             num += 1
@@ -85,6 +81,6 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
             if DEBUG_MODEL:  # 测试模式
                 time.sleep(0.5)
             else:
-                if num % 5 == 1:
+                if num % 500 == 1:
                     self.camera_image_save.save_buffer(buffer)
             time.sleep(0.1)

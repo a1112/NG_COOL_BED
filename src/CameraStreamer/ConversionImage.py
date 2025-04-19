@@ -46,12 +46,13 @@ class ConversionImage:
             json_data = {}
         else:
             json_data = load_json(calibrate_json_path)
-
-        self.trans = np.array(get_trans(json_data), np.float32)
         width, height = [512, 512]
 
-        self.M = cv2.getPerspectiveTransform(self.trans, np.array([(0, 0), (width, 0), (width, height), (0, height)], dtype=np.float32))
-
+        try:
+            self.trans = np.array(get_trans(json_data), np.float32)
+            self.M = cv2.getPerspectiveTransform(self.trans, np.array([(0, 0), (width, 0), (width, height), (0, height)], dtype=np.float32))
+        except:
+            pass
     def __call__(self, *args, **kwargs):
         frame = args[0]
         return self.image_conversion(frame)
