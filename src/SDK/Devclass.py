@@ -8,7 +8,7 @@ from .HCNetSDK import *
 from .PlayCtrl import *
 from threading import Thread
 
-class devClass(Thread):
+class DevClass:
     def __init__(self):
         super().__init__()
         self.hikSDK, self.playM4SDK = self.LoadSDK()  # 加载sdk库
@@ -21,9 +21,9 @@ class devClass(Thread):
         self.basePath = ''  # 基础路径
         self.preview_file = ''  # linux预览取流保存路径
         self.funcRealDataCallBack_V30 = REALDATACALLBACK(self.RealDataCallBack_V30)  # 预览回调函数
-        self.frame_queue = queue.Queue(maxsize=10)  # 限制队列大小防止内存溢出
+        self.frame_queue = queue.Queue(maxsize=1)  # 限制队列大小防止内存溢出
         # self.msg_callback_func = MSGCallBack_V31(self.g_fMessageCallBack_Alarm)  # 注册回调函数实现
-        self.start()
+
     def LoadSDK(self):
         hikSDK = None
         playM4SDK = None
@@ -300,19 +300,20 @@ class devClass(Thread):
             self.playM4SDK.PlayM4_FreePort(self.PlayCtrlPort)
             self.PlayCtrlPort = C_LONG(-1)
 
-    def run(self):
-        while True:
-            print("run")
-            frame = self.frame_queue.get()
-            # 示例：显示帧
-            cv2.imshow('Frame', frame)
-            cv2.waitKey(1)
+    # def run(self):
+    #     while True:
+    #         print("run")
+    #         frame = self.frame_queue.get()
+    #         # 示例：显示帧
+    #         cv2.imshow('Frame', frame)
+    #         cv2.waitKey(1)
 
 
-import CONFIG
 def cap_one(ip_):
+    import CONFIG
+
     CONFIG.IP = ip_
-    dev = devClass()
+    dev = DevClass()
     dev.SetSDKInitCfg()  # 设置SDK初始化依赖库路径
     dev.hikSDK.NET_DVR_Init()  # 初始化sdk
     dev.GeneralSetting()  # 通用设置，日志，回调函数等
@@ -323,9 +324,9 @@ def cap_one(ip_):
     dev.LogoutDev()
     # 释放资源
     dev.hikSDK.NET_DVR_Cleanup()
-from multiprocessing import Process,freeze_support
 
 if __name__ == '__main__':
+    from multiprocessing import Process, freeze_support
     freeze_support()
     Process(target=cap_one,args=(b'192.168.1.101',)).start()
     Process(target=cap_one,args=(b'192.168.1.102',)).start()

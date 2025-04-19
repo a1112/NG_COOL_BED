@@ -1,4 +1,5 @@
 import socket
+from enum import Enum
 from pathlib import Path
 
 from threading import Thread
@@ -34,7 +35,17 @@ if socket.gethostname() in ["MS-LGKRSZGOVODD", "DESKTOP-94ADH1G"]:
 
 
 CapTureBaseClass = Thread
-USE_OPENCV=False
+
+class CapModelEnum(Enum):
+    OPENCV=1
+    AV=2
+    SDK=3
+    DEBUG=4
+
+CAP_MODEL = CapModelEnum.OPENCV
+
+if DEBUG_MODEL:
+    CAP_MODEL = CapModelEnum.SDK
 
 DATA_FMT="%Y-%m-%d"
 TIME_FMT="%H_%M_%S"

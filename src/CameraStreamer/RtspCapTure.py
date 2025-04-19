@@ -10,8 +10,8 @@ from Configs.CameraConfigs import CameraConfig
 from Configs.GlobalConfig import GlobalConfig
 from Loger import logger
 from .ImageBuffer import ImageBuffer
-from .CameraSdk import DebugCameraSdk, OpenCvCameraSdk, AvCameraSdk
-from CONFIG import DEBUG_MODEL, CapTureBaseClass, USE_OPENCV
+from .CameraSdk import DebugCameraSdk, OpenCvCameraSdk, AvCameraSdk, HkCameraSdk
+from CONFIG import DEBUG_MODEL, CapTureBaseClass, CAP_MODEL, CapModelEnum
 from Save.ImageSave import CameraImageSave
 
 
@@ -24,6 +24,7 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         self.config = camera_config.config
         self.global_config = global_config
 
+        self.ip = camera_config.ip
         self.rtsp_url = camera_config.rtsp_url
         self.trans=camera_config.trans
         self.cap = None
@@ -34,11 +35,14 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
 
 
     def get_video_capture(self):
-        if DEBUG_MODEL:
+        if CAP_MODEL == CapModelEnum.DEBUG:
             return DebugCameraSdk(self.key)
-        if USE_OPENCV:
+        if CAP_MODEL == CapModelEnum.OPENCV:
             return OpenCvCameraSdk(self.key, self.rtsp_url)
-        return AvCameraSdk(self.key, self.rtsp_url)
+        if CAP_MODEL == CapModelEnum.AV:
+            return AvCameraSdk(self.key, self.rtsp_url)
+        if CAP_MODEL == CapModelEnum.SDK:
+            return HkCameraSdk(self.key, self.ip)
 
 
     def run(self):

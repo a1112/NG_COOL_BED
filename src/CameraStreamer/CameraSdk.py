@@ -9,7 +9,7 @@ import av
 import tool
 
 from Configs.CameraManageConfig import camera_manage_config
-
+from SDK.HkSdkCap import HkSdkCap
 
 class CameraSdkBase(ABC):
     """
@@ -113,3 +113,18 @@ class DebugCameraSdk(CameraSdkBase):
 
     def release(self):
         pass
+
+class HkCameraSdk(CameraSdkBase):
+
+    def __init__(self, key, ip):
+        super().__init__()
+        self.key = key
+        self.ip = ip
+        self.sdk = HkSdkCap(self.ip)
+
+    def release(self):
+        pass
+
+    def read(self):
+        self.sdk.get_last_frame()
+
