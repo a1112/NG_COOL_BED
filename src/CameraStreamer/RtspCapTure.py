@@ -49,9 +49,7 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         self.camera_config = CameraConfig(self.key, self.config)
         self.conversion = self.camera_config.conversion
         self.conversion: ConversionImage    # 图像转换
-
         logger.debug(f"start RtspCapTure {self.key}")
-
         self.cap = self.get_video_capture()
         self.camera_image_save = CameraImageSave(self.camera_config)
         # ret, frame = cap.read()

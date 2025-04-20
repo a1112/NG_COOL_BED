@@ -20,7 +20,7 @@ class CoolBedThreadWorker(Thread):
         for key, camera_config in self.config.camera_map.items():
             camera_config:CameraConfigs
             camera_config.set_start(self.global_config.start_datetime_str) # 设置统一时间
-            cap_ture = RtspCapTure(camera_config, self.global_config) # 执行采集                    <<<--------------------------------------
+            cap_ture = RtspCapTure(camera_config, self.global_config) # 执行采集   <<<---------------------------------
             self.camera_map[key] = cap_ture
 
         # join
