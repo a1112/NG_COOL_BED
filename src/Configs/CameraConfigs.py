@@ -7,9 +7,10 @@ from tool import load_json
 from Loger import logger
 
 from Configs.CameraManageConfig import camera_manage_config
+from .GroupConfig import CoolBedGroupConfig
 
 # 获取所有的Ip
-camera_configs = load_json(IP_LIST_CAMERA_CONFIG)
+
 
 
 class CameraConfig(ConfigBase):
@@ -43,15 +44,15 @@ class CoolBedConfig(ConfigBase):
         self.config = config
         self.ip_map = config["ipList"]
         self.camera_map = {}
-        for key,value in self.ip_map.items():
-            print(fr" value: {value}")
-            self.camera_map[key] = CameraConfig(key, value)
+        self.group_config = camera_manage_config.get_group_config(key)
+        self.group_config:CoolBedGroupConfig
+        for key in self.group_config.camera_list:
+            self.camera_map[key] = CameraConfig(key,config["ipList"][key])
 
+        # for key,value in self.ip_map.items():
+        #     print(fr" value: {value}")
+        #     self.camera_map[key] = CameraConfig(key, value)
 
-cool_bed_map = {
-    key:CoolBedConfig(key,camera_configs[key])
-    for key in camera_configs.keys() if camera_manage_config.run_worker_key(key)
-}
 
 
 def get_cool_bed_config(key)->CoolBedConfig:

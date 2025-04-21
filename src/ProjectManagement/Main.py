@@ -1,4 +1,5 @@
 from Configs.GlobalConfig import GlobalConfig
+from Configs.GroupConfig import CoolBedGroupConfig
 from Loger import logger
 from threading import Thread
 
@@ -8,6 +9,10 @@ from Configs.CameraManageConfig import camera_manage_config
 
 
 class CoolBedThreadWorker(Thread):
+    """
+    单个冷床 的 循环
+
+    """
     def __init__(self,key, config:CameraConfigs.CoolBedConfig, global_config:GlobalConfig):
         super().__init__()
         self.key = key
@@ -17,6 +22,10 @@ class CoolBedThreadWorker(Thread):
         self.camera_map = {}
 
     def run(self):
+
+        group_config = self.config.group_config
+        group_config:CoolBedGroupConfig
+
         for key, camera_config in self.config.camera_map.items():
             camera_config:CameraConfigs
             camera_config.set_start(self.global_config.start_datetime_str) # 设置统一时间

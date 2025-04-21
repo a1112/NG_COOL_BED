@@ -1,8 +1,11 @@
 import logging
 
-from CONFIG import CAMERA_MANAGE_CONFIG, CAMERA_CONFIG_FOLDER
+from CONFIG import CAMERA_MANAGE_CONFIG, CAMERA_CONFIG_FOLDER, IP_LIST_CAMERA_CONFIG
 from .ConfigBase import ConfigBase
+from .GlobalConfig import GlobalConfig
+from .GroupConfig import GroupConfig, CoolBedGroupConfig
 from tool import load_json
+
 
 class MapConfig(ConfigBase):
     """
@@ -28,7 +31,7 @@ class CameraManageConfig(ConfigBase):
         calibrate_base_path = self.config["calibrate"]["path"]
         self.calibrate_path = CAMERA_CONFIG_FOLDER/calibrate_base_path
         self.camera_map = {}
-
+        self.group_dict = {key:CoolBedGroupConfig(key, config) for key,config in  self.config["group"].items()}
     def get_calibrate_json_path(self, key):
         file_name = key.replace("_", "-") + ".json"
         return self.calibrate_path / file_name
@@ -46,9 +49,9 @@ class CameraManageConfig(ConfigBase):
     def get_camera_config(self, key):
         return self.config["camera"][key]
 
-    def get_map(self, key):
-        print(self.config["map"])
-        map_ = MapConfig(self.config["map"][key.replace("_", "-")])
-        return map_
 
-camera_manage_config = CameraManageConfig()
+    def get_group_config(self, key):
+        return self.group_dict[key]
+
+
+camera_manage_config = CameraManageConfig()  # 管理參數
