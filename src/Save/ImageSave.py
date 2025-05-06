@@ -7,7 +7,7 @@ from PIL import Image
 import numpy as np
 
 from CameraStreamer.ImageBuffer import ImageBuffer
-from Configs.CameraConfigs import CameraConfig
+from Configs.CameraConfig import CameraConfig
 from Configs.SaveConfig import save_config
 from Loger import logger
 import CONFIG
@@ -19,7 +19,7 @@ class ImageSaveBase(Thread):
         super().__init__()
         self.camera_config = camera_config
         self.camera_buffer = Queue()
-        self.save_path = self.camera_config.key
+        self.save_path = self.camera_config.camera_key
         self.start()
 
     def run(self):
@@ -53,11 +53,11 @@ class CameraImageSave(ImageSaveBase):
             """
             开机保存
             """
-            logger.debug(fr"start time {self.camera_config.key} {self.camera_config.start}")
+            logger.debug(fr"start time {self.camera_config.camera_key} {self.camera_config.start}")
             self.first_buffer_saved = True
             frame = buffer.frame
             save_folder = save_config.camera_save_folder /self.camera_config.start
-            save_url = save_folder /"采集"/ fr"{self.camera_config.key}.{CONFIG.IMAGE_SAVE_TYPE}"
+            save_url = save_folder /"采集"/ fr"{self.camera_config.camera_key}.{CONFIG.IMAGE_SAVE_TYPE}"
             self.camera_buffer.put([frame, save_url])
 
     def save_buffer(self, buffer:ImageBuffer):
@@ -65,7 +65,7 @@ class CameraImageSave(ImageSaveBase):
         采集保存
         """
         frame = buffer.frame
-        save_folder = save_config.camera_save_folder /self.camera_config.key
+        save_folder = save_config.camera_save_folder /self.camera_config.camera_key
 
         save_url = save_folder /"原图"/tool.get_new_data_str()/fr"{tool.get_now_data_time_str()}.{CONFIG.IMAGE_SAVE_TYPE}"
         self.camera_buffer.put([frame, save_url])

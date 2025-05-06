@@ -6,7 +6,7 @@ import time
 
 from multiprocessing import  Queue
 from CameraStreamer.ConversionImage import ConversionImage
-from Configs.CameraConfigs import CameraConfig
+from Configs.CameraConfig import CameraConfig
 from Configs.GlobalConfig import GlobalConfig
 from Loger import logger
 from .ImageBuffer import ImageBuffer
@@ -20,8 +20,9 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         super().__init__()
         self.conversion = None
         self.camera_config = camera_config
-        self.key = camera_config.key
-        print(camera_config.key)
+        self.cool_bed_key = camera_config.cool_bed_key
+        self.camera_key = camera_config.camera_key
+        print(camera_config.camera_key)
         self.config = camera_config.config
         self.global_config = global_config
 
@@ -36,20 +37,20 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
 
     def get_video_capture(self):
         if CAP_MODEL == CapModelEnum.DEBUG:
-            return DebugCameraSdk(self.key)
+            return DebugCameraSdk(self.camera_key)
         if CAP_MODEL == CapModelEnum.OPENCV:
-            return OpenCvCameraSdk(self.key, self.rtsp_url)
+            return OpenCvCameraSdk(self.camera_key, self.rtsp_url)
         if CAP_MODEL == CapModelEnum.AV:
-            return AvCameraSdk(self.key, self.rtsp_url)
+            return AvCameraSdk(self.camera_key, self.rtsp_url)
         if CAP_MODEL == CapModelEnum.SDK:
-            return HkCameraSdk(self.key, self.ip)
+            return HkCameraSdk(self.camera_key, self.ip)
 
 
     def run(self):
-        self.camera_config = CameraConfig(self.key, self.config)
-        self.conversion = self.camera_config.conversion
+        self.camera_config = CameraConfig(self.cool_bed_key, self.camera_key)
+        # self.conversion = self.camera_config.conversion
         self.conversion: ConversionImage    # 图像转换
-        logger.debug(f"start RtspCapTure {self.key}")
+        logger.debug(f"start RtspCapTure {self.camera_key}")
         self.cap = self.get_video_capture()
         self.camera_image_save = CameraImageSave(self.camera_config)
         # ret, frame = cap.read()
@@ -79,6 +80,7 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
             if DEBUG_MODEL:  # 测试模式
                 time.sleep(0.5)
             else:
-                if num % 500 == 1:
-                    self.camera_image_save.save_buffer(buffer)
+                pass
+                # if num % 500 == 1:
+                #     self.camera_image_save.save_buffer(buffer)
             time.sleep(0.1)

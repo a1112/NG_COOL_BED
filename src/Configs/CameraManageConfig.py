@@ -38,6 +38,8 @@ class CameraManageConfig(ConfigBase):
 
     def run_worker_key(self, key):
         is_run = key in self.config["run"]
+        print(key)
+        print(self.config)
         if not is_run:
             logging.error(f"不执行 {key}")
         return is_run
