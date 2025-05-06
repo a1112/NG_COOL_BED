@@ -13,17 +13,19 @@ class CoolBedThreadWorker(Thread):
     单个冷床 的 循环
 
     """
-    def __init__(self,key, config:CameraConfigs.CoolBedConfig, global_config:GlobalConfig):
+    def __init__(self,key, config:CoolBedGroupConfig, global_config:GlobalConfig):
         super().__init__()
         self.key = key
         self.global_config = global_config
         self.run_worker = camera_manage_config.run_worker_key(key)
-        self.config = config
+        self.config = config  #  对于组别的参数试图
         self.camera_map = {}
+        if  self.run_worker:
+            logger.debug(f"开始 执行 {key} ")
+            self.start()
 
     def run(self):
 
-        group_config = self.config.group_config
         group_config:CoolBedGroupConfig
 
         for key, camera_config in self.config.camera_map.items():
@@ -42,14 +44,13 @@ def main():
     logger.info("start main")
     global_config = GlobalConfig()
     # 1 获取参数 数据
-    for key, config in CameraConfigs.cool_bed_map.items():
+    for key, config in camera_manage_config.group_dict:
+        config:CoolBedGroupConfig    # 冷床 参数中心，用于管理冷床参数
         logger.debug(f"初始化 {key} ")
-        cool_bed_thread_worker_map[key] = CoolBedThreadWorker(key, config, global_config)
+        cool_bed_thread_worker_map[key] = CoolBedThreadWorker(key,config, global_config)
 
-    for key, cool_bed_thread_worker in cool_bed_thread_worker_map.items():
-        if  cool_bed_thread_worker.run_worker:
-            logger.debug(f"开始 执行 {key} ")
-            cool_bed_thread_worker.start()
+    for key, cool_bed_thread_worker in cool_bed_thread_worker_map.items():  # 等待
+            cool_bed_thread_worker.join()
 
     logger.info("end main")
 

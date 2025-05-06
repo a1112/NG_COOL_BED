@@ -21,4 +21,6 @@ class CoolBedGroupConfig(ConfigBase):
         self.config = config
         self.key = key
         self.camera_list = self.config["camera_list"]
+        self.camera_map = {}
+
         self.groups = [GroupConfig(g) for g in config["group"]]
