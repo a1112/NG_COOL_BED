@@ -2,9 +2,7 @@ from tqdm import tqdm
 import time
 # from queue import Queue
 
-
-
-from multiprocessing import  Queue
+from Base import RollingQueue
 from CameraStreamer.ConversionImage import ConversionImage
 from Configs.CameraConfig import CameraConfig
 from Configs.GlobalConfig import GlobalConfig
@@ -29,7 +27,7 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         self.ip = camera_config.ip
         self.rtsp_url = camera_config.rtsp_url
         self.cap = None
-        self.camera_buffer = Queue(maxsize=1)
+        self.camera_buffer = RollingQueue(maxsize=1)
 
         self.camera_image_save = None
         self.start()
