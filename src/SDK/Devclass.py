@@ -127,6 +127,7 @@ class DevClass(Thread):
     def DecCBFun(self, nPort, pBuf, nSize, pFrameInfo, nUser, nReserved2):
         if (time.time()-self.last_time)<(1/self.FPS):
             return
+        self.last_time = time.time()
         if pFrameInfo.contents.nType == 3:
             # 获取图像参数
             nWidth = pFrameInfo.contents.nWidth
