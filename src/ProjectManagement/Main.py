@@ -11,6 +11,7 @@ from threading import Thread
 from Configs.CameraConfig import CameraConfig
 from CameraStreamer.RtspCapTure import RtspCapTure
 from Configs.CameraManageConfig import camera_manage_config
+from Save.CapJoinSave import CapJoinSave
 from alg.YoloModel import YoloModel
 from tool import show_cv2
 
@@ -22,6 +23,7 @@ class CoolBedThreadWorker(Thread):
     """
     def __init__(self,key, config:CoolBedGroupConfig, global_config:GlobalConfig):
         super().__init__()
+        self.save_thread:CapJoinSave|None = None
         self.key = key
         self.global_config = global_config
         self.run_worker = camera_manage_config.run_worker_key(key)
@@ -35,14 +37,16 @@ class CoolBedThreadWorker(Thread):
 
     def run(self):
         print(f"start  CoolBedThreadWorker {self.key}")
-        group_config:CoolBedGroupConfig
         model = YoloModel()
+        self.save_thread = CapJoinSave(self.config)
         #  工作1， 相机初始化
         for key, camera_config in self.config.camera_map.items():
             camera_config:CameraConfig
             camera_config.set_start(self.global_config.start_datetime_str)  # 设置统一时间
             self.camera_map[key] = RtspCapTure(camera_config, self.global_config)  # 执行采集   <<<-------------------
+        cap_index=0
         while True:
+            cap_index += 1
             start_time = time.time()
             # 工作2 采集 1 CAPTURE
             cap_dict = {key: cap_ture.get_cap() for key, cap_ture in self.camera_map.items()}
@@ -54,6 +58,8 @@ class CoolBedThreadWorker(Thread):
                 show_cv2(join_image,title="join_image  "+group_config.msg)
                 # 调整中的工作-----------------------------------
                 # 工作4 识别
+                if not cap_index%(self.FPS*10):
+                    self.save_thread.save_buffer(group_config.group_key, join_image)
                 steel_info = model.predict(join_image)
                 if steel_info.can_get_data: # 如果有符合（无冷床遮挡）则返回数据
                     continue

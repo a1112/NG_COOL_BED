@@ -15,6 +15,7 @@ class GroupConfig(ConfigBase):
         self.camera_list = config["camera_list"]
         self.config = config
         self.msg = config["msg"]
+        self.group_key = config["key"]
         size_list = config["size_list"]
 
         self.conversion_list = [ConversionImage(key,size[0],size[1]) for key, size in zip(self.camera_list,size_list)]  # 拿到 对应的 透视 参数
