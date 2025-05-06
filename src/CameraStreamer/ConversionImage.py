@@ -7,9 +7,24 @@ from CONFIG import CalibratePath
 from tool import load_json
 
 
-def sort_point(shape):
-    return shape
+def sort_point(points):
+    # 按 y 坐标升序排列
+    sorted_by_y = sorted(points, key=lambda p: p[1])
 
+    # 分离顶部和底部点
+    top_two = sorted_by_y[:2]
+    bottom_two = sorted_by_y[2:]
+
+    # 顶部按 x 升序排列 → 左上、右上
+    top_sorted = sorted(top_two, key=lambda p: p[0])
+
+    # 底部按 x 降序排列 → 右下、左下
+    bottom_sorted = sorted(bottom_two, key=lambda p: -p[0])
+
+    # 合并结果
+    ordered_points = top_sorted + bottom_sorted
+
+    return ordered_points
 
 def get_trans(data):
     """
@@ -22,7 +37,6 @@ def get_trans(data):
     for shape in shapes:
         if shape["label"].lower() == "area":
             area_shape.append( shape["points"]  )
-        print(area_shape)
     assert len(area_shape) == 1 , "area 数量不匹配"
     area_shape = area_shape[0]
     assert len(area_shape) == 4, "area_shape 数量 点 不匹配"
@@ -31,7 +45,7 @@ def get_trans(data):
 
 
 def get_calibrate_json_path(key):
-    file_name = key.replace("_", "-") + ".json"
+    file_name = key + ".json"
     return CalibratePath / file_name
 
 class ConversionImage:

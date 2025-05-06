@@ -27,7 +27,7 @@ class CameraManageConfig(ConfigBase):
         return is_run
 
     def get_debug_frame_url(self, key):
-        file_name = key.replace("_", "-") + ".jpg"
+        file_name = key + ".jpg"
         return CalibratePath / file_name
 
     def get_camera_config(self, key):
