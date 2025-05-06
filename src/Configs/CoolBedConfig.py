@@ -1,7 +1,7 @@
 from Configs.CameraConfig import CameraConfig
 from Configs.CameraManageConfig import camera_manage_config
 from Configs.ConfigBase import ConfigBase
-from Configs.GroupConfig import CoolBedGroupConfig
+from Configs.CoolBedGroupConfig import CoolBedGroupConfig
 
 
 class CoolBedConfig(ConfigBase):

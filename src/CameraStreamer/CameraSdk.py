@@ -104,6 +104,7 @@ class DebugCameraSdk(CameraSdkBase):
         self.camera = None
         self.det = 0
         self.frame_url = camera_manage_config.get_debug_frame_url(self.key)
+        print(f"debug model {self.frame_url}")
         self.frame = Image.open(str(self.frame_url))
         self.frame = np.array(self.frame)
 

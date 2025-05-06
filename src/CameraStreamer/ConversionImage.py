@@ -3,9 +3,7 @@ import logging
 import cv2
 import numpy as np
 
-from Configs.CameraManageConfig import camera_manage_config
-
-
+from CONFIG import CalibratePath
 from tool import load_json
 
 
@@ -32,24 +30,29 @@ def get_trans(data):
     return area_shape
 
 
+def get_calibrate_json_path(key):
+    file_name = key.replace("_", "-") + ".json"
+    return CalibratePath / file_name
+
 class ConversionImage:
     """
     This class is responsible for converting the image to the desired format.
     """
-    def __init__(self, key):
+    def __init__(self, key,width, height ):
         self.key = key
-        calibrate_json_path = camera_manage_config.get_calibrate_json_path(self.key)
-        self.map = camera_manage_config.get_map(self.key)
+        calibrate_json_path = get_calibrate_json_path(self.key)
+        # self.map = camera_manage_config.get_map(self.key)
 
         if not calibrate_json_path.exists():
             logging.error(f"{calibrate_json_path} 不存在 ! ")
             json_data = {}
         else:
             json_data = load_json(calibrate_json_path)
-        width, height = [512, 512]
-
+        self.width = width
+        self.height = height
         self.trans = np.array(get_trans(json_data), np.float32)
         self.M = cv2.getPerspectiveTransform(self.trans, np.array([(0, 0), (width, 0), (width, height), (0, height)], dtype=np.float32))
+
     def __call__(self, *args, **kwargs):
         frame = args[0]
         return self.image_conversion(frame)
@@ -60,5 +63,5 @@ class ConversionImage:
         :param frame:
         :return:
         """
-        warped = cv2.warpPerspective(frame, self.M, (width, height))
+        warped = cv2.warpPerspective(frame, self.M, (self.width, self.height))
         return warped

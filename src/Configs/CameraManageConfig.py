@@ -1,23 +1,10 @@
 import logging
 
-from CONFIG import CAMERA_MANAGE_CONFIG, CAMERA_CONFIG_FOLDER, IP_LIST_CAMERA_CONFIG
+from CONFIG import CAMERA_MANAGE_CONFIG, CAMERA_CONFIG_FOLDER, IP_LIST_CAMERA_CONFIG, CalibratePath
 from .ConfigBase import ConfigBase
 from .GlobalConfig import GlobalConfig
-from .GroupConfig import GroupConfig, CoolBedGroupConfig
 from tool import load_json
-
-
-class MapConfig(ConfigBase):
-    """
-    管理 相机与实际对应的
-    Map.json
-    """
-    def __init__(self, config):
-        self.config = config
-        if isinstance(config, str):
-            self.config = load_json(config)
-        self.size = self.config["size"] if "size" in self.config else [512, 512]
-
+from .CoolBedGroupConfig import CoolBedGroupConfig
 
 
 
@@ -28,13 +15,10 @@ class CameraManageConfig(ConfigBase):
     """
     def __init__(self):
         self.config = load_json(CAMERA_MANAGE_CONFIG)
-        calibrate_base_path = self.config["calibrate"]["path"]
-        self.calibrate_path = CAMERA_CONFIG_FOLDER/calibrate_base_path
+
         self.camera_map = {}
         self.group_dict = {key:CoolBedGroupConfig(key, config) for key,config in  self.config["group"].items()}
-    def get_calibrate_json_path(self, key):
-        file_name = key.replace("_", "-") + ".json"
-        return self.calibrate_path / file_name
+
 
     def run_worker_key(self, key):
         is_run = key in self.config["run"]
@@ -46,7 +30,7 @@ class CameraManageConfig(ConfigBase):
 
     def get_debug_frame_url(self, key):
         file_name = key.replace("_", "-") + ".jpg"
-        return self.calibrate_path / file_name
+        return CalibratePath / file_name
 
     def get_camera_config(self, key):
         return self.config["camera"][key]

@@ -18,6 +18,8 @@ CAMERA_CONFIG_FOLDER = CONFIG_FOLDER / "camera"
 IP_LIST_CAMERA_CONFIG = CONFIG_FOLDER / "camera"/"IpList.json"
 CAMERA_MANAGE_CONFIG = CONFIG_FOLDER / "camera"/"CameraManage.json"
 
+CalibratePath = CAMERA_CONFIG_FOLDER/"calibrate"/"calibrate"
+
 SAVE_CONFIG = CONFIG_FOLDER / "camera"/"Save.json"
 
 lOG_DIR = CONFIG_FOLDER / "log"

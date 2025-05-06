@@ -1,29 +1,33 @@
+import numpy as np
+
+from CameraStreamer.ConversionImage import ConversionImage
 from .ConfigBase import ConfigBase
-from Configs.CameraConfig import CameraConfig
 
 
 class GroupConfig(ConfigBase):
     """
     组合识别
+    单组识别，记录组内的相机拼接顺序
     """
     def __init__(self,key, config):
         super().__init__()
         self.key = key
+        self.camera_list = config["camera_list"]
         self.config = config
-        print(config)
+        self.msg = config["msg"]
+        size_list = config["size_list"]
+
+        self.conversion_list = [ConversionImage(key,size[0],size[1]) for key, size in zip(self.camera_list,size_list)]  # 拿到 对应的 透视 参数
 
 
-class CoolBedGroupConfig(ConfigBase):
-    """
-    冷床的组合识别配置
-    """
-    def __init__(self,key, config):
-        super().__init__()
-        self.config = config
-        self.key = key
-        self.camera_list = self.config["camera_list"]
-        self.camera_map = {
-            camera_key : CameraConfig(key,camera_key) for camera_key in self.camera_list
-        }
+        # 拿到 对应的 透视 参数
+    def join_conversion_image_list(self, image_list):
+        return np.hstack(image_list)
 
-        self.groups = [GroupConfig(key, g) for g in config["group"]]
+
+    def calibrate_image(self, cap_dict):
+        image_list = [cap_dict[key] for key in self.camera_list]  # 拿到 对应的 透视 参数
+        conversion_image_list = [conv.image_conversion(image.frame) for image,conv in zip(image_list,self.conversion_list)]
+        # 透视拼接
+        return self.join_conversion_image_list(conversion_image_list)
+

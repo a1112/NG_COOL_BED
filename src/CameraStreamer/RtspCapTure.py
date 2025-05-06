@@ -29,7 +29,7 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         self.ip = camera_config.ip
         self.rtsp_url = camera_config.rtsp_url
         self.cap = None
-        self.camera_buffer = Queue()
+        self.camera_buffer = Queue(maxsize=1)
 
         self.camera_image_save = None
         self.start()
@@ -74,13 +74,14 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
             # self.camera_
             buffer.show_frame()
             # buffer.show()
-            self.camera_buffer.get() if self.camera_buffer.qsize() > 1 else time.sleep(0.01)
             num += 1
 
             if DEBUG_MODEL:  # 测试模式
-                time.sleep(0.5)
+                time.sleep(0.1)
             else:
                 pass
                 # if num % 500 == 1:
                 #     self.camera_image_save.save_buffer(buffer)
-            time.sleep(0.1)
+
+    def get_cap(self):
+        return self.camera_buffer.get()
