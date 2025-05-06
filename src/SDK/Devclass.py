@@ -134,6 +134,7 @@ class DevClass(Thread):
             except:
                 return
             # 存入队列
+            time.sleep(0.1)
             if not self.frame_queue.full():
                 self.frame_queue.put_nowait(rgb_frame)
 
