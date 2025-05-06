@@ -3,6 +3,7 @@ import queue
 import time
 
 import cv2
+import numpy as np
 
 from Base import RollingQueue
 from .HCNetSDK import *
@@ -23,6 +24,9 @@ class DevClass(Thread):
         self.preview_file = ''  # linux预览取流保存路径
         self.funcRealDataCallBack_V30 = REALDATACALLBACK(self.RealDataCallBack_V30)  # 预览回调函数
         self.frame_queue = RollingQueue(maxsize=1)  # 限制队列大小防止内存溢出
+        self.FPS = 15
+        self.last_time = time.time()
+
         # self.start()
         # self.msg_callback_func = MSGCallBack_V31(self.g_fMessageCallBack_Alarm)  # 注册回调函数实现
 
@@ -120,14 +124,10 @@ class DevClass(Thread):
         if self.iUserID > -1:
             # 撤销布防，退出程序时调用
             self.hikSDK.NET_DVR_Logout(self.iUserID)
-
     def DecCBFun(self, nPort, pBuf, nSize, pFrameInfo, nUser, nReserved2):
-        from threading import Thread
+        if (time.time()-self.last_time)<(1/self.FPS):
+            return
         if pFrameInfo.contents.nType == 3:
-            import cv2
-            import numpy as np
-            from ctypes import addressof
-
             # 获取图像参数
             nWidth = pFrameInfo.contents.nWidth
             nHeight = pFrameInfo.contents.nHeight
@@ -154,7 +154,6 @@ class DevClass(Thread):
         # 解码回调函数
         from pathlib import Path
         import CONFIG
-        print(pBuf.contents)
         if pFrameInfo.contents.nType == 3:
             # 解码返回视频YUV数据，将YUV数据转成jpg图片保存到本地
             # 如果有耗时处理，需要将解码数据拷贝到回调函数外面的其他线程里面处理，避免阻塞回调导致解码丢帧
