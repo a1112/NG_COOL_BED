@@ -12,7 +12,6 @@ class CameraConfig(ConfigBase):
     def __init__(self,cool_bed_key, camera_key):
         self.cool_bed_key = cool_bed_key
         self.camera_key = camera_key
-        print(f"init CameraConfig {self.cool_bed_key} {self.camera_key}")
         self.config = camera_list_config.get_item_config(cool_bed_key, camera_key)
         self.ip = self.config["ip"]
         self.enable = self.config["enable"] if not DEBUG_MODEL else True

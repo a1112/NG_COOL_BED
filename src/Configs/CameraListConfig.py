@@ -8,7 +8,6 @@ class CameraListConfig(ConfigBase):
         self.config = load_json(IP_LIST_CAMERA_CONFIG)
 
     def get_item_config(self, cool_bed_key, camera_key):
-        print(self.config)
         return self.config[cool_bed_key]["ipList"][camera_key]
 
 camera_list_config = CameraListConfig()
