@@ -4,6 +4,7 @@ import time
 
 import cv2
 
+from Base import RollingQueue
 from .HCNetSDK import *
 from .PlayCtrl import *
 from threading import Thread
@@ -21,7 +22,7 @@ class DevClass(Thread):
         self.basePath = ''  # 基础路径
         self.preview_file = ''  # linux预览取流保存路径
         self.funcRealDataCallBack_V30 = REALDATACALLBACK(self.RealDataCallBack_V30)  # 预览回调函数
-        self.frame_queue = queue.Queue(maxsize=1)  # 限制队列大小防止内存溢出
+        self.frame_queue = RollingQueue(maxsize=1)  # 限制队列大小防止内存溢出
         # self.start()
         # self.msg_callback_func = MSGCallBack_V31(self.g_fMessageCallBack_Alarm)  # 注册回调函数实现
 
@@ -133,10 +134,8 @@ class DevClass(Thread):
                 rgb_frame = cv2.cvtColor(yuv_frame, cv2.COLOR_YUV2RGB_I420)
             except:
                 return
-            # 存入队列
-            time.sleep(0.1)
-            if not self.frame_queue.full():
-                self.frame_queue.put_nowait(rgb_frame)
+
+            self.frame_queue.put(rgb_frame)
 
     def DecCBFun_1(self, nPort, pBuf, nSize, pFrameInfo, nUser, nReserved2):
         # 解码回调函数
