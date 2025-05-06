@@ -74,6 +74,19 @@ class DevClass(Thread):
                 print('NET_DVR_SetSDKInitCfg: 4 Succ')
         self.basePath = basePath
 
+        try:
+            print(f"尝试加载SDK: {playM4dllpath}")
+            playM4SDK = CDLL(playM4dllpath)
+            print("SDK加载成功，获取版本信息...")
+            if hasattr(playM4SDK, 'PlayM4_GetSDKVersion'):
+                version = playM4SDK.PlayM4_GetSDKVersion()
+                print(f"PlayM4 SDK版本: {version}")
+            return playM4SDK
+        except Exception as e:
+            print(f'动态库加载失败: {e}')
+            return None
+
+
     # 通用设置，日志/回调事件类型等
     def GeneralSetting(self):
 
@@ -191,11 +204,7 @@ class DevClass(Thread):
             # 直接输入流数据
             self.playM4SDK.PlayM4_InputData(self.PlayCtrlPort, pBuffer, dwBufSize)
 
-    def startPlay(self, playTime):
-        # 设置最大解码帧率（例如限制为 15 FPS）
-        if not self.playM4SDK.PlayM4_SetDecodeFrameRate(self.PlayCtrlPort, 15):
-            print(f"Set decode FPS failed! Error: {self.playM4SDK.PlayM4_GetLastError(self.PlayCtrlPort)}")
-
+    def startPlay(self):
         # 获取一个播放句柄
         if not self.playM4SDK.PlayM4_GetPort(byref(self.PlayCtrlPort)):
             print(f'获取播放库句柄失败, 错误码：{self.playM4SDK.PlayM4_GetLastError(self.PlayCtrlPort)}')
