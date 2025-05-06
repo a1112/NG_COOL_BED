@@ -13,6 +13,7 @@ class HkSdkCap(Thread):
         self.dev.hikSDK.NET_DVR_Init()  # 初始化sdk
         self.dev.GeneralSetting()  # 通用设置，日志，回调函数等
         self.dev.LoginDev(ip=self.ip, username=b"admin", pwd=b"ng123456")  # 登录设备
+        self.dev.hikSDK
 
         self.dev.startPlay(playTime=10)  # playTime用于linux环境控制预览时长，windows环境无效
 

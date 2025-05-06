@@ -192,6 +192,10 @@ class DevClass(Thread):
             self.playM4SDK.PlayM4_InputData(self.PlayCtrlPort, pBuffer, dwBufSize)
 
     def startPlay(self, playTime):
+        # 设置最大解码帧率（例如限制为 15 FPS）
+        if not self.playM4SDK.PlayM4_SetDecodeFrameRate(self.PlayCtrlPort, 15):
+            print(f"Set decode FPS failed! Error: {self.playM4SDK.PlayM4_GetLastError(self.PlayCtrlPort)}")
+
         # 获取一个播放句柄
         if not self.playM4SDK.PlayM4_GetPort(byref(self.PlayCtrlPort)):
             print(f'获取播放库句柄失败, 错误码：{self.playM4SDK.PlayM4_GetLastError(self.PlayCtrlPort)}')
