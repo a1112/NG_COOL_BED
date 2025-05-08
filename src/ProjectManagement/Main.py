@@ -1,4 +1,5 @@
 import time
+from typing import Optional
 
 from Base import RollingQueue
 from Base.Error import CoolBedError
@@ -12,7 +13,7 @@ from Configs.CameraConfig import CameraConfig
 from CameraStreamer.RtspCapTure import RtspCapTure
 from Configs.CameraManageConfig import camera_manage_config
 from Save.CapJoinSave import CapJoinSave
-from alg.YoloModel import YoloModel
+from alg.YoloModel import SteelDetModel
 from tool import show_cv2
 
 
@@ -23,7 +24,7 @@ class CoolBedThreadWorker(Thread):
     """
     def __init__(self,key, config:CoolBedGroupConfig, global_config:GlobalConfig):
         super().__init__()
-        self.save_thread:CapJoinSave|None = None
+        self.save_thread: Optional[CapJoinSave] = None
         self.key = key
         self.global_config = global_config
         self.run_worker = camera_manage_config.run_worker_key(key)
@@ -37,7 +38,7 @@ class CoolBedThreadWorker(Thread):
 
     def run(self):
         print(f"start  CoolBedThreadWorker {self.key}")
-        model = YoloModel()
+        model = SteelDetModel()
         self.save_thread = CapJoinSave(self.config)
         #  工作1， 相机初始化
         for key, camera_config in self.config.camera_map.items():
@@ -61,6 +62,7 @@ class CoolBedThreadWorker(Thread):
                 if not cap_index%(self.FPS*10):
                     self.save_thread.save_buffer(group_config.group_key, join_image)
                 steel_info = model.predict(join_image)
+                print(fr"steel_info {steel_info}")
                 if steel_info.can_get_data: # 如果有符合（无冷床遮挡）则返回数据
                     continue
             # 工作5 识别结果 的逻辑处理

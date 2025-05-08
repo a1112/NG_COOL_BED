@@ -10,14 +10,8 @@ matplotlib
 tqdm
 scipy
 huggingface-hub
-typer
-addict
-yapf
-supervision
-pycocotools
 setuptools
 seaborn
-loguru
 ipython
 traitlets
 SQLAlchemy-Utils

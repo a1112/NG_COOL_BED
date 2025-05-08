@@ -22,6 +22,8 @@ CalibratePath = CAMERA_CONFIG_FOLDER/"calibrate"/"calibrate"
 
 SAVE_CONFIG = CONFIG_FOLDER / "camera"/"Save.json"
 
+MODEL_FOLDER = CONFIG_FOLDER / "model"
+
 lOG_DIR = CONFIG_FOLDER / "log"
 lOG_DIR.mkdir(exist_ok=True, parents=True)
 encoding = "utf-8"
