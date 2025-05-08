@@ -1,0 +1,26 @@
+<annotation>
+	<folder>train_data</folder>
+	<filename>L1_g3_2_5_2025-05-06-23_05_37.jpg</filename>
+	<path>P:\NG_COOL_BED\train\train_data\L1_g3_2_5_2025-05-06-23_05_37.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>2048</width>
+		<height>1024</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>steel</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>425</xmin>
+			<ymin>105</ymin>
+			<xmax>1806</xmax>
+			<ymax>470</ymax>
+		</bndbox>
+	</object>
+</annotation>
