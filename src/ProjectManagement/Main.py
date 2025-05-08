@@ -13,7 +13,7 @@ from Configs.CameraConfig import CameraConfig
 from CameraStreamer.RtspCapTure import RtspCapTure
 from Configs.CameraManageConfig import camera_manage_config
 from Save.CapJoinSave import CapJoinSave
-from alg.YoloModel import SteelDetModel
+from alg.YoloModel import SteelDetModel, Result
 from tool import show_cv2
 
 
@@ -56,15 +56,17 @@ class CoolBedThreadWorker(Thread):
             for group_config in self.config.groups:  # 注意排序规则
                 group_config: GroupConfig
                 join_image = group_config.calibrate_image(cap_dict)
-                show_cv2(join_image,title="join_image  "+group_config.msg)
+
                 # 调整中的工作-----------------------------------
                 # 工作4 识别
                 if not cap_index%(self.FPS*10):
                     self.save_thread.save_buffer(group_config.group_key, join_image)
-                steel_info = model.predict(join_image)
+                steel_info = Result(model.getSteelRect(join_image))
                 print(fr"steel_info {steel_info}")
+                show_cv2(join_image,title="join_image  "+group_config.msg, rec_list=steel_info.rec_list)
                 if steel_info.can_get_data: # 如果有符合（无冷床遮挡）则返回数据
                     continue
+
             # 工作5 识别结果 的逻辑处理
             if steel_info is not None:
                 self.steel_data_queue.put(steel_info)

@@ -1,10 +1,13 @@
+import cv2
+import numpy as np
 from ultralytics import YOLO
 
 import CONFIG
 
 class Result:
-    def __init__(self):
-        pass
+    def __init__(self,rec_list):
+        print(rec_list)
+        self.rec_list = rec_list
 
     @property
     def can_get_data(self):
@@ -27,12 +30,8 @@ class SteelDetModel:
                 xyxy = box.xyxy[0].cpu().numpy()
                 label = int(box.cls[0].cpu().numpy())  # 假设类标签是整数
                 xmin, ymin, xmax, ymax = xyxy
-                bounding_boxes.append((int(xmin), int(ymin), int(xmax-xmin), int(ymax-ymin),label))
-        if bounding_boxes:
-            max_rect = max(bounding_boxes, key=lambda x: x[2]*x[3])
-            return max_rect
-        return []
-
+                bounding_boxes.append([int(xmin), int(ymin), int(xmax-xmin), int(ymax-ymin),label])
+        return bounding_boxes
 
 class SteelSegModel:
     def __init__(self):
