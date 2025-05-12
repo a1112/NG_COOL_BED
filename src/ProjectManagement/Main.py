@@ -15,7 +15,7 @@ from Configs.CameraManageConfig import camera_manage_config
 from Save.CapJoinSave import CapJoinSave
 from alg.YoloModel import SteelDetModel, Result
 from tool import show_cv2
-
+from .Business import Business
 
 class CoolBedThreadWorker(Thread):
     """
@@ -85,6 +85,8 @@ class CoolBedThreadWorker(Thread):
         # for key, cap_ture in self.camera_map.items():
         #     cap_ture.join()
 
+    def get_steel_info(self):
+        return self.steel_data_queue.get()
 
 cool_bed_thread_worker_map = {}
 def main():
@@ -96,10 +98,18 @@ def main():
         logger.debug(f"初始化 {key} ")
         cool_bed_thread_worker_map[key] = CoolBedThreadWorker(key,config, global_config)
 
-    for key, cool_bed_thread_worker in cool_bed_thread_worker_map.items():  # 等待
-        if cool_bed_thread_worker.run_worker:
-            cool_bed_thread_worker.join()
-    logger.info("end main")
+    business_main = Business()
+    while True:
+        steel_infos = {}
+        for key, config in camera_manage_config.group_dict.items():
+            config: CoolBedGroupConfig  # 冷床 参数中心，用于管理冷床参数
+            worker = cool_bed_thread_worker_map[key]
+            steel_infos[key] = worker.get_steel_info()
+        business_main.update(steel_infos)
+    # for key, cool_bed_thread_worker in cool_bed_thread_worker_map.items():  # 等待
+    #     if cool_bed_thread_worker.run_worker:
+    #         cool_bed_thread_worker.join()
+
 
 
 if __name__ == '__main__':

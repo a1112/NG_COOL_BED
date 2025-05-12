@@ -5,7 +5,8 @@ from HslCommunication import SiemensS7Net, SiemensPLCS
 from threading import Thread
 from snap7.util import get_int, get_real, get_dword, get_string, get_bool, get_char, set_real
 import PLC_config
-from Loging import logger
+from Loger import logger
+
 
 # DB = 0x84  # DB  区域c
 
@@ -163,25 +164,7 @@ class L1_4600(threading.Thread):
         self.setSpeed(0)
         return True
 
-l1 = L1_4600()
-
-def test1():
-    l1.select()
-    l1.stop()
-    # while True:
-    #     l1.setSpeed(0.5)
-    #     l1.select([1,1,1,1,0,0,0,0])
-    #     time.sleep(20)
-    #     l1.stop()
-    #     input()
-    # time.sleep(6)
-    # l1.select([0,0,0,0, 1, 1, 1, 1])
-    # l1.setSpeed(-0.5)
-    # time.sleep(5)
-    # l1.select()
-    l1.setSpeed(0)
 
 if __name__ == "__main__":
     logger.debug("__main__")
-    test1()
     input()
