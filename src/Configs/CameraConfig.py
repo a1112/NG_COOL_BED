@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from CONFIG import DEBUG_MODEL
+from CONFIG import DEBUG_MODEL, DATETIME_FMT
 from Configs.CameraListConfig import camera_list_config
 from Configs.ConfigBase import ConfigBase
 
@@ -18,7 +18,7 @@ class CameraConfig(ConfigBase):
         # self.conversion = ConversionImage(self.key)
         base_rtsp_url = "rtsp://admin:ng123456@{}/stream" #Streaming/Channels/1
         self.rtsp_url = base_rtsp_url.format(self.ip)
-        self.start = datetime.now().strftime("DATETIME_FMT")
+        self.start = datetime.now().strftime(DATETIME_FMT)
 
     # @property
     # def trans(self):

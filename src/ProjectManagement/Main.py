@@ -20,7 +20,6 @@ from .Business import Business
 class CoolBedThreadWorker(Thread):
     """
     单个冷床 的 循环
-
     """
     def __init__(self,key, config:CoolBedGroupConfig, global_config:GlobalConfig):
         super().__init__()
@@ -59,8 +58,7 @@ class CoolBedThreadWorker(Thread):
 
                 # 调整中的工作-----------------------------------
                 # 工作4 识别
-                if not cap_index%(self.FPS*10):
-                    self.save_thread.save_buffer(group_config.group_key, join_image)
+                self.save_thread.save_buffer(group_config.group_key, join_image)
                 steel_info = Result(model.getSteelRect(join_image))
                 print(fr"steel_info {steel_info}")
                 show_cv2(join_image,title="join_image  "+group_config.msg, rec_list=steel_info.rec_list)
@@ -88,15 +86,15 @@ class CoolBedThreadWorker(Thread):
     def get_steel_info(self):
         return self.steel_data_queue.get()
 
-cool_bed_thread_worker_map = {}
 def main():
     logger.info("start main")
     global_config = GlobalConfig()
+    cool_bed_thread_worker_map = {}
     # 1 获取参数 数据
     for key, config in camera_manage_config.group_dict.items():
         config:CoolBedGroupConfig    # 冷床 参数中心，用于管理冷床参数
         logger.debug(f"初始化 {key} ")
-        cool_bed_thread_worker_map[key] = CoolBedThreadWorker(key,config, global_config)
+        cool_bed_thread_worker_map[key] = CoolBedThreadWorker(key, config, global_config)
 
     business_main = Business()
     while True:

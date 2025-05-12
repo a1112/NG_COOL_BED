@@ -12,12 +12,23 @@ class CapJoinSave(ImageSaveBase):
         self.first_buffer_saved = False
         self.first_buffer_saved = False
         self.camera_config = camera_config
+        self.save_first_dict={}
         self.start()
+
+    def save_first_image(self,key,frame):
+        save_folder = save_config.first_save_map_folder
+        save_url = save_folder/fr"{key}.{CONFIG.IMAGE_SAVE_TYPE}"
+        self.camera_buffer.put([frame, save_url])
 
     def save_buffer(self,key, frame):
         """
         采集保存
         """
-        save_folder = save_config.camera_save_folder / "join"/ key
-        save_url = save_folder / tool.get_new_data_str() / fr"{key}_{tool.get_now_data_time_str()}.{CONFIG.IMAGE_SAVE_TYPE}"
-        self.camera_buffer.put([frame, save_url])
+        if key not in self.save_first_dict:
+            self.save_first_image(key, frame)
+            self.save_first_dict[key] = 1
+        self.save_first_dict[key]+=1
+        if not self.save_first_dict[key] % 50:
+            save_folder = save_config.camera_save_folder / "join"/ key
+            save_url = save_folder / tool.get_new_data_str() / fr"{key}_{tool.get_now_data_time_str()}.{CONFIG.IMAGE_SAVE_TYPE}"
+            self.camera_buffer.put([frame, save_url])
