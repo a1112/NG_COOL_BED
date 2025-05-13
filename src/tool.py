@@ -4,11 +4,27 @@ import datetime
 import cv2
 
 import CONFIG
+import xml.etree.ElementTree as ET
 
 
 def load_json(url):
     with open(url, "r", encoding = CONFIG.encoding ) as f:
         return json.load(f)
+
+def load_xml(url):
+    in_file = open(url, encoding='utf-8')
+    tree = ET.parse(in_file)
+    root = tree.getroot()
+    objects = root.findall("object")
+    re_dict={}
+    for obj in objects:
+        cls = obj.find('name').text
+        xmlbox = obj.find('bndbox')
+        b = [int(xmlbox.find('xmin').text), int(xmlbox.find('xmax').text),
+             int(xmlbox.find('ymin').text), int(xmlbox.find('ymax').text)]
+        re_dict[cls] = b
+    return re_dict
+
 def zh_ch(string):
     return string.encode('gbk').decode(errors='ignore')
 

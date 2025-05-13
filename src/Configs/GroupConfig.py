@@ -2,6 +2,7 @@ import numpy as np
 
 from CameraStreamer.ConversionImage import ConversionImage
 from .ConfigBase import ConfigBase
+from .MappingConfig import MappingConfig
 
 
 class GroupConfig(ConfigBase):
@@ -17,6 +18,7 @@ class GroupConfig(ConfigBase):
         self.msg = config["msg"]
         self.group_key = config["key"]
         size_list = config["size_list"]
+        self.map_config = MappingConfig(self.config["key"])
 
         self.conversion_list = [ConversionImage(key,size[0],size[1]) for key, size in zip(self.camera_list,size_list)]  # 拿到 对应的 透视 参数
 

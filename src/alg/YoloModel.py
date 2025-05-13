@@ -4,14 +4,6 @@ from ultralytics import YOLO
 
 import CONFIG
 
-class Result:
-    def __init__(self,rec_list):
-        print(rec_list)
-        self.rec_list = rec_list
-
-    @property
-    def can_get_data(self):
-        return False
 
 class SteelDetModel:
     def __init__(self):
@@ -22,7 +14,7 @@ class SteelDetModel:
         if results[0].xyxy:
             return results[0].xyxy
 
-    def getSteelRect(self, image):
+    def get_steel_rect(self, image):
         results = self.model(image)
         bounding_boxes = []
         for result in results:

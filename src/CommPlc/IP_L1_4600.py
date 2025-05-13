@@ -11,19 +11,19 @@ from Loger import logger
 # DB = 0x84  # DB  区域c
 
 
-class L1_4600(threading.Thread):
+class L1_5(threading.Thread):
     def __init__(self):
         super().__init__()
         self.has_run = True
         self.PLC_DATA = b""
-        self.DB_AD = "DB4600.0"
-        self.DB_LEN = 162
+        self.DB_AD = "DB5.0"
+        self.DB_LEN = 64
         self.last_data_dict = {}
         self.old_temp_in = 0.0
         self.max_temp = 0.0
-        self.PLC_IP = PLC_config.IP_L1_4600  # 热矫
+        self.PLC_IP = PLC_config.IP_L1  # 热矫
         self.siemens = SiemensS7Net(SiemensPLCS.S400, self.PLC_IP)
-        self.siemens.SetSlotAndRack(0, 11)
+        self.siemens.SetSlotAndRack(PLC_config.ROCK, PLC_config.SLOT)
         self.set_speed_value = 0
         self.selectList = [0, 0, 0, 0, 0, 0, 0, 0]
         self.start()
