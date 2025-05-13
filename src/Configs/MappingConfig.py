@@ -9,4 +9,4 @@ class MappingConfig(ConfigBase):
     指标转换参数
     """
     def __init__(self,key):
-        tool.load_json(CONFIG.CONFIG_FOLDER)
+        tool.load_json(CONFIG.MappingPath/fr"{key}.json")
