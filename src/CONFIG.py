@@ -13,13 +13,13 @@ if not CONFIG_FOLDER.is_dir():
 assert CONFIG_FOLDER.exists(), f"CONFIG_FOLDER 不存在： {CONFIG_FOLDER}"
 
 print(CONFIG_FOLDER)
-
+FIRST_SAVE_FOLDER = CONFIG_FOLDER/ "first_save"
 CAMERA_CONFIG_FOLDER = CONFIG_FOLDER / "camera"
 IP_LIST_CAMERA_CONFIG = CONFIG_FOLDER / "camera"/"IpList.json"
 CAMERA_MANAGE_CONFIG = CONFIG_FOLDER / "camera"/"CameraManage.json"
 
 CalibratePath = CAMERA_CONFIG_FOLDER/"calibrate"/"calibrate"
-
+MappingPath = CAMERA_CONFIG_FOLDER/"mapping"
 SAVE_CONFIG = CONFIG_FOLDER / "camera"/"Save.json"
 
 MODEL_FOLDER = CONFIG_FOLDER / "model"
@@ -28,7 +28,8 @@ lOG_DIR = CONFIG_FOLDER / "log"
 lOG_DIR.mkdir(exist_ok=True, parents=True)
 encoding = "utf-8"
 
-
+MappingPath.mkdir(exist_ok=True, parents=True)
+FIRST_SAVE_FOLDER.mkdir(exist_ok=True, parents=True)
 DATA_FOLDER = CONFIG_FOLDER / "data"
 DATA_FOLDER.mkdir(exist_ok=True, parents=True)
 DEBUG_MODEL = False

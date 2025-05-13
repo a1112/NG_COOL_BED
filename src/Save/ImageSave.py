@@ -35,8 +35,8 @@ class CameraImageSave(ImageSaveBase):
             logger.debug(fr"start time {self.camera_config.camera_key} {self.camera_config.start}")
             self.first_buffer_saved = True
             frame = buffer.frame
-            save_folder = save_config.camera_save_folder /self.camera_config.start
-            save_url = save_folder /"采集"/ fr"{self.camera_config.camera_key}.{CONFIG.IMAGE_SAVE_TYPE}"
+            save_folder = save_config.first_save_camera_folder
+            save_url = save_folder /fr"{self.camera_config.camera_key}.{CONFIG.IMAGE_SAVE_TYPE}"
             self.camera_buffer.put([frame, save_url])
 
     def save_buffer(self, buffer:ImageBuffer):
