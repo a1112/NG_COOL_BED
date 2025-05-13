@@ -20,8 +20,8 @@ def load_xml(url):
     for obj in objects:
         cls = obj.find('name').text
         xmlbox = obj.find('bndbox')
-        b = [int(xmlbox.find('xmin').text), int(xmlbox.find('xmax').text),
-             int(xmlbox.find('ymin').text), int(xmlbox.find('ymax').text)]
+        b = [int(xmlbox.find('xmin').text),int(xmlbox.find('ymin').text), int(xmlbox.find('xmax').text),
+             int(xmlbox.find('ymax').text)]
         re_dict[cls] = b
     return re_dict
 

@@ -60,8 +60,8 @@ class CoolBedThreadWorker(Thread):
                 # 调整中的工作-----------------------------------
                 # 工作4 识别
                 self.save_thread.save_buffer(group_config.group_key, join_image)
-                steel_info = DetResult(model.get_steel_rect(join_image), group_config.map_config)
-                show_cv2(join_image,title="join_image  "+group_config.msg, rec_list=steel_info.rec_list)
+                steel_info = DetResult(join_image,model.get_steel_rect(join_image), group_config.map_config)
+                show_cv2(steel_info.show_image,title="join_image  "+group_config.msg)
                 if steel_info.can_get_data: # 如果有符合（无冷床遮挡）则返回数据
                     continue
 
