@@ -6,12 +6,13 @@ from threading import Thread
 from snap7.util import get_int, get_real, get_dword, get_string, get_bool, get_char, set_real
 import PLC_config
 from Loger import logger
+from CONFIG import DEBUG_MODEL
 
 
 # DB = 0x84  # DB  区域c
 
 
-class L1_5(threading.Thread):
+class ComPlc(threading.Thread):
     def __init__(self):
         super().__init__()
         self.has_run = True
@@ -25,7 +26,6 @@ class L1_5(threading.Thread):
         self.siemens = SiemensS7Net(SiemensPLCS.S400, self.PLC_IP)
         self.siemens.SetSlotAndRack(PLC_config.ROCK, PLC_config.SLOT)
         self.set_speed_value = 0
-        self.selectList = [0, 0, 0, 0, 0, 0, 0, 0]
         self.start()
 
     def close(self):
@@ -35,17 +35,17 @@ class L1_5(threading.Thread):
         while self.has_run:
             try:
                 time.sleep(0.01)
-                startTime = time.time()
+                start_time = time.time()
                 self.PLC_DATA = self.siemens.Read(self.DB_AD, self.DB_LEN).Content
                 now = datetime.datetime.now()
-                endTime = time.time()
+                end_time = time.time()
             except BaseException as e:
                 logger.error(f"{self.DB_AD} PLC 读取 出现错误： {e}")
             else:
                 try:
                     self.decodePLC_DATA(self.PLC_DATA, {
                         "getDateTime": now,  # 最新的刷新时间
-                        "getTimeLen": endTime - startTime  # PLC 读取延时
+                        "getTimeLen": end_time - start_time  # PLC 读取延时
                     })
                 except BaseException as e:
                     logger.error(f"{self.DB_AD} PLC 解析 出现错误： {e}  : {self.PLC_DATA}")
@@ -163,6 +163,14 @@ class L1_5(threading.Thread):
         self.select()
         self.setSpeed(0)
         return True
+
+class ComDebug:
+    pass
+
+if DEBUG_MODEL:
+    com = ComDebug()
+else:
+    com = ComPlc()
 
 
 if __name__ == "__main__":
