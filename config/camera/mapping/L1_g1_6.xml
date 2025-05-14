@@ -26,13 +26,13 @@
 	<object>
 		<name>down</name>
 		<pose>Unspecified</pose>
-		<truncated>1</truncated>
+		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
 			<xmin>5</xmin>
-			<ymin>738</ymin>
+			<ymin>736</ymin>
 			<xmax>1020</xmax>
-			<ymax>768</ymax>
+			<ymax>766</ymax>
 		</bndbox>
 	</object>
 	<object>
@@ -53,10 +53,10 @@
 		<truncated>1</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>3</xmin>
+			<xmin>4</xmin>
 			<ymin>1</ymin>
-			<xmax>1024</xmax>
-			<ymax>378</ymax>
+			<xmax>1020</xmax>
+			<ymax>379</ymax>
 		</bndbox>
 	</object>
 </annotation>

@@ -22,7 +22,8 @@ def load_xml(url):
         xmlbox = obj.find('bndbox')
         b = [int(xmlbox.find('xmin').text),int(xmlbox.find('ymin').text), int(xmlbox.find('xmax').text),
              int(xmlbox.find('ymax').text)]
-        re_dict[cls] = b
+        x,y,x2,y2 = b
+        re_dict[cls] = [x, y, x2-x, y2-y]
     return re_dict
 
 def zh_ch(string):
