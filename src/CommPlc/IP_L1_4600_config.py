@@ -94,4 +94,3 @@ class L1_4600(threading.Thread):
 
 if __name__=="__main__":
     L1_4600()
-    input()

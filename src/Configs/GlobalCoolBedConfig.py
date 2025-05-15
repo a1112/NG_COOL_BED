@@ -10,8 +10,8 @@ class GlobalCoolBedConfigBase:
         self.roll_height = 4920 # 棍子高度
         self.up_seat_height = 750 # 轴承座上
         self.down_seat_height = 425 # 轴承座下
-        self.roll_count = 45
-        self.cool_bed_width = 45000
+        self.roll_count = 48
+        self.cool_bed_width = 48000
         self.cool_bed_height = 5810
 
     @property
@@ -29,8 +29,8 @@ class GlobalCoolBedConfigBase:
 class GlobalCoolBedConfigL1(GlobalCoolBedConfigBase):
     def __init__(self,width, height):
         super().__init__(width, height)
-        self.roll_count = 45
-        self.cool_bed_width = 45000
+        self.roll_count = 48
+        self.cool_bed_width = 48000
         self.cool_bed_height = 5810
 
 class  GlobalCoolBedConfigL2(GlobalCoolBedConfigBase):

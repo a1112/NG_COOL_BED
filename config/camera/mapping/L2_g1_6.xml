@@ -1,50 +1,50 @@
 <annotation>
 	<folder>mapping</folder>
-	<filename>L1_g3_2_5.jpg</filename>
-	<path>G:\LG\NG_COOL_BED\config\camera\mapping\L1_g3_2_5.jpg</path>
+	<filename>L2_g2_6.jpg</filename>
+	<path>G:\LG\NG_COOL_BED\config\camera\mapping\L2_g2_6.jpg</path>
 	<source>
 		<database>Unknown</database>
 	</source>
 	<size>
 		<width>2048</width>
-		<height>1024</height>
+		<height>768</height>
 		<depth>3</depth>
 	</size>
 	<segmented>0</segmented>
-	<object>
-		<name>up</name>
-		<pose>Unspecified</pose>
-		<truncated>0</truncated>
-		<difficult>0</difficult>
-		<bndbox>
-			<xmin>2</xmin>
-			<ymin>506</ymin>
-			<xmax>2037</xmax>
-			<ymax>566</ymax>
-		</bndbox>
-	</object>
 	<object>
 		<name>down</name>
 		<pose>Unspecified</pose>
 		<truncated>1</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>1</xmin>
-			<ymin>969</ymin>
-			<xmax>2024</xmax>
-			<ymax>1020</ymax>
+			<xmin>3</xmin>
+			<ymin>745</ymin>
+			<xmax>2048</xmax>
+			<ymax>768</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>up</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>6</xmin>
+			<ymin>366</ymin>
+			<xmax>2044</xmax>
+			<ymax>418</ymax>
 		</bndbox>
 	</object>
 	<object>
 		<name>coolbed</name>
 		<pose>Unspecified</pose>
-		<truncated>0</truncated>
+		<truncated>1</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>2</xmin>
-			<ymin>9</ymin>
-			<xmax>2034</xmax>
-			<ymax>503</ymax>
+			<xmin>1</xmin>
+			<ymin>5</ymin>
+			<xmax>2042</xmax>
+			<ymax>359</ymax>
 		</bndbox>
 	</object>
 </annotation>

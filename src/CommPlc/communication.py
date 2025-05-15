@@ -175,4 +175,3 @@ else:
 
 if __name__ == "__main__":
     logger.debug("__main__")
-    input()

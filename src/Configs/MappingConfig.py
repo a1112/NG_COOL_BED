@@ -92,6 +92,8 @@ class MappingConfig:
                 px_asp = (x_map_list[index][1] - x_map_list[index-1][1])/(x_map_list[index][0] - x_map_list[index-1][0])
                 px_asp = abs(px_asp)
                 return x_map_list[index-1][1] + px_asp * (x_-x_map_list[index-1][0])
+        # if CONFIG.DEBUG_MODEL:
+        #     return 1
         raise ValueError(f" X 出现越界 ")
 
 

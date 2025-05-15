@@ -37,7 +37,7 @@ print(f"hostname: {socket.gethostname()}")
 if socket.gethostname() in ["MS-LGKRSZGOVODD", "DESKTOP-94ADH1G"]:
     DEBUG_MODEL = True
 
-
+show_camera = False
 
 CapTureBaseClass = Thread
 
