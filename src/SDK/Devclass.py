@@ -145,7 +145,8 @@ class DevClass(Thread):
             # 重塑形状并转换YUV420到RGB
             yuv_frame = yuv_data.reshape((nHeight * 3 // 2, nWidth))
             try:
-                rgb_frame = cv2.cvtColor(yuv_frame, cv2.COLOR_YUV2RGB_I420)
+                rgb_frame = cv2.cvtColor(yuv_frame, cv2.COLOR_YUV2RGB_IYUV) # cv2.cvtColor(yuv_frame, cv2.COLOR_YUV2RGB_I420)
+                # rgb_frame= cv2.cvtColor(rgb_frame,cv2.COLOR_RGB2BGR)
             except:
                 return
 
