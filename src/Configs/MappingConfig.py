@@ -24,6 +24,18 @@ class MappingConfig:
         print(f'x_map  {self.x_map}')
         print(f"y_map  {self.y_map}")
 
+    @property
+    def up_seat_d(self):
+        return self.glob_cool_bed_config.roll_height
+
+    @property
+    def up_seat_u(self):
+        return self.glob_cool_bed_config.up_seat_u
+
+    @property
+    def up_cool_bed(self):
+        return self.glob_cool_bed_config.up_cool_bed
+
     def get_x_map(self):
         list_ = [
                     [self.cool_bed[0],0],

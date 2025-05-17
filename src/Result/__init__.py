@@ -6,9 +6,6 @@ import numpy as np
 from Configs.MappingConfig import MappingConfig
 
 
-def format_mm(mm):
-    return round((int(mm) / 1000), 2)
-
 class SteelItem:
     """
     单独的 item
@@ -44,8 +41,24 @@ class SteelItem:
         return self.y_mm - self.h_mm
 
     @property
+    def left_mm(self):
+        return self.x_mm
+
+    @property
+    def right_mm(self):
+        return self.x_mm + self.w_mm
+
+    @property
+    def top_mm(self):
+        return self.y_mm
+
+    @property
+    def bottom_mm(self):
+        return self.y_mm - self.h_mm
+
+    @property
     def mm_str(self):
-        x_mm,y_mm,w_mm,h_mm = self.mm_rec
+        x_mm, y_mm, w_mm, h_mm = self.mm_rec
         return f"x: {format_mm(x_mm)} y: {format_mm(y_mm)} w: {format_mm(w_mm)} h: {format_mm(h_mm)}"
 
     @property
@@ -63,6 +76,15 @@ class SteelItem:
     def rect_px(self):
         return self.rec[:4]
 
+    @property
+    def in_roll(self):
+        return self.bottom_mm < self.map_config.up_seat_d
+
+    @property
+    def in_cool_bed(self):
+        return self.top_mm >= self.map_config.up_seat_u
+
+
 class DetResult:
     """
     单独的 单帧检出数据
@@ -72,7 +94,7 @@ class DetResult:
         self.time=time.time()
         self.map_config:MappingConfig = map_config
         self.rec_list = rec_list
-        self.steel_list = [SteelItem(rec, self.map_config)for rec in self.rec_list]
+        self.steel_list = [SteelItem(rec, self.map_config) for rec in self.rec_list]
 
     @property
     def can_get_data(self):
@@ -85,7 +107,7 @@ class DetResult:
         """
 
     def draw_steel_item(self,steel):
-        steel:SteelItem
+        steel: SteelItem
         x, y, w, h, = steel.rect_px
         name = steel.name
         thickness = 2
@@ -116,7 +138,7 @@ class DetResult:
         cv2.rectangle(self.image, (x, y), (x2, y2), (0, 100, 100), 3)
 
     def draw_out_line(self, steel):
-        steel:SteelItem
+        steel: SteelItem
         x, y, w, h, = steel.rect_px
         text = f": {format_mm(steel.to_roll_mm)} m "
         thickness = 2
@@ -127,7 +149,44 @@ class DetResult:
         cv2.putText(self.image, text, (line_p[0][0],int((line_p[0][1] + line_p[1][1])/2)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), thickness)
 
     @property
+    def has_roll_steel(self):
+        """
+         辊道是否存在
+        """
+        for steel in self.steel_list:
+            if steel.in_roll:
+                return True
+        return False
+
+    @property
+    def roll_steel(self):
+        re_list=[]
+        for steel in self.steel_list:
+            if steel.in_roll:
+                re_list.append(steel)
+        return re_list
+
+    @property
+    def has_cool_bed_steel(self):
+        for steel in self.steel_list:
+            if steel.in_cool_bed:
+                return True
+        return False
+
+    @property
+    def cool_bed_steel(self):
+        re_list=[]
+        for steel in self.steel_list:
+            if steel.in_cool_bed:
+                re_list.append(steel)
+        return re_list
+
+    @property
     def show_image(self):
         self.draw_map()
         self.draw_steel()
         return self.image
+
+
+def format_mm(mm):
+    return round((int(mm) / 1000), 2)

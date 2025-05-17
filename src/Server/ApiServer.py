@@ -1,12 +1,12 @@
 import logging
 from threading import Thread
 
-import uvicorn
 
 from Configs import ServerConfig
 
 def _thread_server_start_():
     logging.info("start server")
+    import uvicorn
     from Server.Base import app
     uvicorn.run(app, host=ServerConfig.server_ip, port=ServerConfig.server_port)
 
