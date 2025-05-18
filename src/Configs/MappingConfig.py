@@ -20,6 +20,7 @@ class MappingConfig:
         self.x_map = self.get_x_map()
         self.y_map = self.get_y_map()
 
+        self.MAX_LEN = 400 # 距离最 近大允许范围
         print(self.data)
         print(f'x_map  {self.x_map}')
         print(f"y_map  {self.y_map}")
