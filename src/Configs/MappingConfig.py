@@ -134,6 +134,14 @@ class MappingConfig:
         x_mm,y_mm,x2_mm,y2_mm = self.px_to_x(x),self.px_to_y(y),self.px_to_x(x2),self.px_to_y(y2)
         return  x_mm,y_mm,x2_mm-x_mm,y_mm - y2_mm
 
+    @property
+    def mm_center_x(self):
+        return self.glob_cool_bed_config.cool_bed_width/2
+
+    @property
+    def roll_center_y(self):
+        return self.glob_cool_bed_config.roll_height/2
+
 if __name__ =="__main__":
     MappingConfig("L1_g1_6")
 

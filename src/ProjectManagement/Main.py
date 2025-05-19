@@ -1,11 +1,14 @@
 import time
 from typing import Optional
 
+from tqdm import tqdm
+
 from Base import RollingQueue
 from Base.Error import CoolBedError
 from Configs.GlobalConfig import GlobalConfig
 from Configs.GroupConfig import GroupConfig
 from Configs.CoolBedGroupConfig import CoolBedGroupConfig
+from Globals import business_main
 from Loger import logger
 from threading import Thread
 
@@ -31,7 +34,7 @@ class CoolBedThreadWorker(Thread):
         self.config = config  #  对于组别的参数试图
         self.camera_map = {}
         self.steel_data_queue = RollingQueue(maxsize=1)
-        self.FPS = 5
+        self.FPS = 7
         if  self.run_worker:
             logger.debug(f"开始 执行 {key} ")
             self.start()
@@ -47,7 +50,9 @@ class CoolBedThreadWorker(Thread):
             camera_config.set_start(self.global_config.start_datetime_str)  # 设置统一时间
             self.camera_map[key] = RtspCapTure(camera_config, self.global_config)  # 执行采集   <<<-------------------
         cap_index=0
+        tq = tqdm()
         while True:
+            tq.update(1)
             cap_index += 1
             start_time = time.time()
             # 工作2 采集 1 CAPTURE
@@ -55,7 +60,6 @@ class CoolBedThreadWorker(Thread):
             steel_info = None
             # 工作3 处理 透视 表
             for group_config in self.config.groups:  # 注意排序规则
-                print(f"group_config {group_config}  {group_config.group_key}")
                 group_config: GroupConfig
                 join_image = group_config.calibrate_image(cap_dict)
 
@@ -65,10 +69,9 @@ class CoolBedThreadWorker(Thread):
                 model_data=model.get_steel_rect(join_image)
                 steel_info = DetResult(join_image,model_data, group_config.map_config)
 
-                show_cv2(steel_info.show_image,title="join_image  "+group_config.msg)
+                show_cv2(steel_info.show_image,title=fr"j_{self.key}_"+group_config.msg)
                 if steel_info.can_get_data: # 如果有符合（无冷床遮挡）则返回数据
                     continue
-            print(f"put  {steel_info}")
             # 工作5 识别结果 的逻辑处理
             if steel_info is not None:
                 self.steel_data_queue.put(steel_info)
@@ -101,7 +104,7 @@ def main():
         logger.debug(f"初始化 {key} ")
         cool_bed_thread_worker_map[key] = CoolBedThreadWorker(key, config, global_config)
 
-    business_main = Business()
+
     while True:
         steel_infos = {}
         for key, config in camera_manage_config.group_dict.items():

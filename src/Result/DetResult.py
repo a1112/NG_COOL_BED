@@ -3,7 +3,12 @@ import cv2
 import numpy as np
 
 from Configs.MappingConfig import MappingConfig
-from Result import SteelItem, format_mm
+from Result import SteelItem
+from Result.SteelItem import SteelItemList
+
+
+def format_mm(mm):
+    return round((int(mm) / 1000), 2)
 
 
 class DetResult:
@@ -64,7 +69,7 @@ class DetResult:
         steel: SteelItem
         x, y, w, h, = steel.rect_px
         text = f": {format_mm(steel.to_roll_mm)} m "
-        thickness = 2
+        thickness = 3
         # 绘制矩形框
         line_p = (int(x + w/2), y+h), (int(x + w/2), self.map_config.down[1])
         cv2.line(self.image, line_p[0], line_p[1] ,(0,255,0), thickness)
@@ -72,6 +77,8 @@ class DetResult:
         cv2.putText(self.image, text, (line_p[0][0],int((line_p[0][1] + line_p[1][1])/2)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), thickness)
 
     def get_under_steel(self,in_roll_only=False,in_cool_bed_only=False,in_left=True,in_right=True):
+
+
         if in_roll_only:
             steels= self.cool_bed_steel
         elif in_cool_bed_only:
@@ -79,15 +86,22 @@ class DetResult:
         else:
             steels = self.steel_list
         if not steels:
-            return None
+            return SteelItemList(self.map_config, [])
+        # 过滤
+        if not in_left:
+            steels = [steel for steel in steels if steel.in_right]
+        if not in_right:
+            steels = [steel for steel in steels if steel.in_left]
+
         re_list = []
         base_steel = steels[0]
         for steel in steels:
+            steel:SteelItem
             if steel.bottom_mm-base_steel.bottom_mm < self.map_config.MAX_LEN:
                 re_list.append(steel)
             else:
                 break
-        return re_list
+        return SteelItemList(self.map_config, re_list)
 
     @property
     def under_steel(self):
@@ -101,6 +115,13 @@ class DetResult:
     def under_cool_bed_steel(self):
         return self.get_under_steel(in_cool_bed_only=True)
 
+    @property
+    def left_under_steel(self):
+        return self.get_under_steel(in_left=True)
+
+    @property
+    def right_under_steel(self):
+        return self.get_under_steel(in_right=True)
 
     @property
     def has_roll_steel(self):

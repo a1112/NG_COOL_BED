@@ -1,5 +1,10 @@
+from typing import List
+
 from Configs.MappingConfig import MappingConfig
-from Result import format_mm
+
+
+def format_mm(mm):
+    return round((int(mm) / 1000), 2)
 
 
 class SteelItem:
@@ -21,8 +26,16 @@ class SteelItem:
         return self.mm_rec[0]
 
     @property
+    def x2_mm(self):
+        return self.x_mm+self.w_mm
+
+    @property
     def y_mm(self):
         return self.mm_rec[1]
+
+    @property
+    def y2_mm(self):
+        return self.y_mm-self.h_mm
 
     @property
     def w_mm(self):
@@ -79,3 +92,77 @@ class SteelItem:
     @property
     def in_cool_bed(self):
         return self.top_mm >= self.map_config.up_seat_u
+
+
+    @property
+    def in_left(self):
+        return self.x_mm < self.map_config.mm_center_x-100
+
+    @property
+    def in_right(self):
+        return self.x_mm+self.w_mm < self.map_config.mm_center_x-100
+
+    @property
+    def to_roll_center_y(self):
+        # 距离中心线的建立
+        return (self.y2_mm+ self.h_mm/2) - self.map_config.roll_center_y
+
+
+class SteelItemList:
+    def __init__(self,map_config, steels:List[SteelItem]):
+        self.map_config:MappingConfig = map_config
+        self.steels = steels
+        self.has_steel =  bool(len(steels))
+
+    @property
+    def x_mm(self):
+        if self.has_steel:
+            left = self.steels[0].x_mm
+            for steel in self.steels:
+                if steel.x_mm<=left:
+                    left = steel.x_mm
+            return left
+        return 0
+
+    @property
+    def x2_mm(self):
+        if self.has_steel:
+            right = self.steels[0].x2_mm
+            for steel in self.steels:
+                if steel.x2_mm>= right:
+                    right = steel.x2_mm
+            return right
+        return 0
+
+    @property
+    def y_mm(self):
+        if self.has_steel:
+            top = self.steels[0].y_mm
+            for steel in self.steels:
+                if steel.y_mm >= top:
+                    top = steel.y_mm
+            return top
+        return 0
+
+    @property
+    def y2_mm(self):
+        if self.has_steel:
+            btn = self.steels[0].y2_mm
+            for steel in self.steels:
+                if steel.y2_mm <= btn:
+                    btn = steel.y2_mm
+            return btn
+        return 0
+
+    @property
+    def w_mm(self):
+        return self.x2_mm-self.x_mm
+
+    @property
+    def h_mm(self):
+        return self.y_mm-self.y2_mm
+
+    @property
+    def to_roll_center_y(self):
+        # 距离中心线的建立
+        return (self.y2_mm+ self.h_mm/2) - self.map_config.roll_center_y
