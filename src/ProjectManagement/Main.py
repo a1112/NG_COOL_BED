@@ -14,7 +14,7 @@ from CameraStreamer.RtspCapTure import RtspCapTure
 from Configs.CameraManageConfig import camera_manage_config
 from Save.CapJoinSave import CapJoinSave
 from alg.YoloModel import SteelDetModel
-from alg.Result import DetResult
+from Result.DetResult import DetResult
 from tool import show_cv2
 from .Business import Business
 

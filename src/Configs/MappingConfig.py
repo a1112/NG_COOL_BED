@@ -20,9 +20,22 @@ class MappingConfig:
         self.x_map = self.get_x_map()
         self.y_map = self.get_y_map()
 
+        self.MAX_LEN = 400 # 距离最 近大允许范围
         print(self.data)
         print(f'x_map  {self.x_map}')
         print(f"y_map  {self.y_map}")
+
+    @property
+    def up_seat_d(self):
+        return self.glob_cool_bed_config.roll_height
+
+    @property
+    def up_seat_u(self):
+        return self.glob_cool_bed_config.up_seat_u
+
+    @property
+    def up_cool_bed(self):
+        return self.glob_cool_bed_config.up_cool_bed
 
     def get_x_map(self):
         list_ = [

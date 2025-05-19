@@ -1,67 +1,10 @@
 import time
-
 import cv2
 import numpy as np
 
 from Configs.MappingConfig import MappingConfig
+from Result import SteelItem, format_mm
 
-
-def format_mm(mm):
-    return round((int(mm) / 1000), 2)
-
-class SteelItem:
-    """
-    单独的 item
-    """
-    def __init__(self,rec,map_config):
-        self.rec=rec
-        self.map_config:MappingConfig = map_config
-        x,y,w,h, self.type_ = self.rec
-        self.px_x = x
-        self.px_y = y
-        self.px_w = w
-        self.px_h = h
-        self.mm_rec = self.map_config.get_rect(self.rec[:4])
-
-    @property
-    def x_mm(self):
-        return self.mm_rec[0]
-
-    @property
-    def y_mm(self):
-        return self.mm_rec[1]
-
-    @property
-    def w_mm(self):
-        return self.mm_rec[2]
-
-    @property
-    def h_mm(self):
-        return self.mm_rec[3]
-
-    @property
-    def to_roll_mm(self):
-        return self.y_mm - self.h_mm
-
-    @property
-    def mm_str(self):
-        x_mm,y_mm,w_mm,h_mm = self.mm_rec
-        return f"x: {format_mm(x_mm)} y: {format_mm(y_mm)} w: {format_mm(w_mm)} h: {format_mm(h_mm)}"
-
-    @property
-    def name(self):
-        if self.type_ == 0:
-            return "steel" +self.mm_str
-        return "t_car"
-
-    @property
-    def color(self):
-        return 200, 0, 0
-
-
-    @property
-    def rect_px(self):
-        return self.rec[:4]
 
 class DetResult:
     """
@@ -72,7 +15,9 @@ class DetResult:
         self.time=time.time()
         self.map_config:MappingConfig = map_config
         self.rec_list = rec_list
-        self.steel_list = [SteelItem(rec, self.map_config)for rec in self.rec_list]
+        self.steel_list = [SteelItem(rec, self.map_config) for rec in self.rec_list]
+        self.steel_list.sort(key=lambda steel: steel.name)
+
 
     @property
     def can_get_data(self):
@@ -85,7 +30,7 @@ class DetResult:
         """
 
     def draw_steel_item(self,steel):
-        steel:SteelItem
+        steel: SteelItem
         x, y, w, h, = steel.rect_px
         name = steel.name
         thickness = 2
@@ -116,7 +61,7 @@ class DetResult:
         cv2.rectangle(self.image, (x, y), (x2, y2), (0, 100, 100), 3)
 
     def draw_out_line(self, steel):
-        steel:SteelItem
+        steel: SteelItem
         x, y, w, h, = steel.rect_px
         text = f": {format_mm(steel.to_roll_mm)} m "
         thickness = 2
@@ -125,6 +70,70 @@ class DetResult:
         cv2.line(self.image, line_p[0], line_p[1] ,(0,255,0), thickness)
         # 绘制文本标签
         cv2.putText(self.image, text, (line_p[0][0],int((line_p[0][1] + line_p[1][1])/2)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), thickness)
+
+    def get_under_steel(self,in_roll_only=False,in_cool_bed_only=False,in_left=True,in_right=True):
+        if in_roll_only:
+            steels= self.cool_bed_steel
+        elif in_cool_bed_only:
+            steels = self.cool_bed_steel
+        else:
+            steels = self.steel_list
+        if not steels:
+            return None
+        re_list = []
+        base_steel = steels[0]
+        for steel in steels:
+            if steel.bottom_mm-base_steel.bottom_mm < self.map_config.MAX_LEN:
+                re_list.append(steel)
+            else:
+                break
+        return re_list
+
+    @property
+    def under_steel(self):
+        return self.get_under_steel(in_roll_only=True)
+
+    @property
+    def under_roll_steel(self):
+        return self.get_under_steel(in_roll_only=True)
+
+    @property
+    def under_cool_bed_steel(self):
+        return self.get_under_steel(in_cool_bed_only=True)
+
+
+    @property
+    def has_roll_steel(self):
+        """
+         辊道是否存在
+        """
+        for steel in self.steel_list:
+            if steel.in_roll:
+                return True
+        return False
+
+    @property
+    def roll_steel(self):
+        re_list=[]
+        for steel in self.steel_list:
+            if steel.in_roll:
+                re_list.append(steel)
+        return re_list
+
+    @property
+    def has_cool_bed_steel(self):
+        for steel in self.steel_list:
+            if steel.in_cool_bed:
+                return True
+        return False
+
+    @property
+    def cool_bed_steel(self):
+        re_list=[]
+        for steel in self.steel_list:
+            if steel.in_cool_bed:
+                re_list.append(steel)
+        return re_list
 
     @property
     def show_image(self):
