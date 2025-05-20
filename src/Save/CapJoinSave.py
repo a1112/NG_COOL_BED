@@ -15,7 +15,7 @@ class CapJoinSave(ImageSaveBase):
         self.save_first_dict={}
         self.start()
 
-    def save_first_image(self,key,frame):
+    def save_first_image(self,key, frame):
         save_folder = save_config.first_save_map_folder
         save_url = save_folder/fr"{key}.{CONFIG.IMAGE_SAVE_TYPE}"
         self.camera_buffer.put([frame, save_url])

@@ -54,6 +54,7 @@ class ShowThread(Thread):
 
 show_thread=ShowThread()
 def show_cv2(img,title="image"):
+    """避免多线程显示失败"""
     return show_thread.add(title,img)
 
 

@@ -6,21 +6,21 @@
 		<database>Unknown</database>
 	</source>
 	<size>
-		<width>4468</width>
+		<width>4282</width>
 		<height>1024</height>
 		<depth>3</depth>
 	</size>
 	<segmented>0</segmented>
 	<object>
-		<name>coolbed</name>
+		<name>down</name>
 		<pose>Unspecified</pose>
 		<truncated>1</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>2</xmin>
-			<ymin>1</ymin>
-			<xmax>4439</xmax>
-			<ymax>500</ymax>
+			<xmin>5</xmin>
+			<ymin>987</ymin>
+			<xmax>4249</xmax>
+			<ymax>1024</ymax>
 		</bndbox>
 	</object>
 	<object>
@@ -29,22 +29,22 @@
 		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>4</xmin>
-			<ymin>503</ymin>
-			<xmax>4441</xmax>
-			<ymax>568</ymax>
+			<xmin>2</xmin>
+			<ymin>497</ymin>
+			<xmax>4220</xmax>
+			<ymax>573</ymax>
 		</bndbox>
 	</object>
 	<object>
-		<name>down</name>
+		<name>cool_bed</name>
 		<pose>Unspecified</pose>
 		<truncated>1</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>1</xmin>
-			<ymin>982</ymin>
-			<xmax>4444</xmax>
-			<ymax>1022</ymax>
+			<xmin>2</xmin>
+			<ymin>1</ymin>
+			<xmax>4220</xmax>
+			<ymax>493</ymax>
 		</bndbox>
 	</object>
 </annotation>
