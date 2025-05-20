@@ -28,6 +28,10 @@ def get_classes(item, classes_map_, only=False):
 
 
 def convert_annotation(xml_path, output_path, classes_, only=False):
+    if not xml_path.exists():
+        open(output_path, 'w', encoding='utf-8')
+        return
+
     in_file = open(xml_path, encoding='utf-8')
     out_file = open(output_path, 'w', encoding='utf-8')
     tree = ET.parse(in_file)
@@ -37,9 +41,8 @@ def convert_annotation(xml_path, output_path, classes_, only=False):
     h = int(size.find('height').text)
     classes = classes_
     for obj in root.iter('object'):
-
         cls = obj.find('name').text
-        if cls == "cae":
+        if cls in ["cae","t_car"]:
             cls = "car"
         # if cls not in classes:
         #     classes.append(cls)
@@ -56,14 +59,15 @@ def convert_annotation(xml_path, output_path, classes_, only=False):
 
 
 def process_annotations(xml_folder, yolo_folder, classes_, only=False):
-    if not os.path.exists(yolo_folder):
-        os.makedirs(yolo_folder)
+    xml_folder = Path(xml_folder)
+    yolo_folder= Path(yolo_folder)
+    yolo_folder.mkdir(exist_ok=True,parents=True)
 
-    xml_files = [f for f in os.listdir(xml_folder) if f.endswith('.xml')]
-
-    for xml_file in xml_files:
-        xml_path = os.path.join(xml_folder, xml_file)
-        yolo_path = os.path.join(yolo_folder, xml_file.replace('.xml', '.txt'))
+    image_files = [f for f in xml_folder.glob("*.*") if Path(f).suffix.lower() in [".jpg",".jpeg",".png"]]
+    for image_file in image_files:
+        xml_file = image_file.with_suffix(".xml")
+        xml_path = xml_folder/xml_file.name
+        yolo_path = yolo_folder/xml_file.with_suffix(".txt").name
         convert_annotation(xml_path, yolo_path, classes_, only=only)
         print(f"Converted {xml_file} to YOLO format.")
 
@@ -76,4 +80,4 @@ print(socket.gethostname())
 xml_folder = Path(r'train/data')
 yolo_folder = xml_folder.parent / "txt"
 yolo_folder.mkdir(parents=True, exist_ok=True)
-process_annotations(xml_folder, yolo_folder, classes_, only=True)
+process_annotations(xml_folder, yolo_folder, classes_, only=False)
