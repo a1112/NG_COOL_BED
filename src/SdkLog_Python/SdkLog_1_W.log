@@ -1,0 +1,278 @@
+[2025-05-19 16:35:49.778][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[D:/Project/NG_COOL_BED/src/lib/zlib1.dll], hHandleRet[1676541952]
+[2025-05-19 16:35:49.778][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-19 16:35:49.778][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-19 16:35:49.779][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-19 16:35:49.779][INF] Login dev 192.168.1.101:8000.
+[2025-05-19 16:35:49.779][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-19 16:35:49.779][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-19 16:35:49.779][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-19 16:35:49.779][INF] dwTotalNum[2048]
+[2025-05-19 16:35:49.779][INF] Login dev 192.168.2.105:8000.
+[2025-05-19 16:35:49.779][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-19 16:35:49.779][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-19 16:35:49.779][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-19 16:35:49.779][INF] Login dev 192.168.2.104:8000.
+[2025-05-19 16:35:49.779][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-19 16:35:49.779][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-19 16:35:49.779][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-19 16:35:49.779][INF] Login dev 192.168.3.107:8000.
+[2025-05-19 16:35:49.779][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-19 16:35:49.779][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-19 16:35:49.779][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-19 16:35:49.779][INF] Login dev 192.168.4.110:8000.
+[2025-05-19 16:35:49.779][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-19 16:35:49.779][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-19 16:35:49.779][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-19 16:35:49.779][INF] Login dev 192.168.2.106:8000.
+[2025-05-19 16:35:49.779][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-19 16:35:49.779][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-19 16:35:49.779][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-19 16:35:49.779][INF] Login dev 192.168.1.103:8000.
+[2025-05-19 16:35:49.779][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-19 16:35:49.779][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-19 16:35:49.779][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-19 16:35:49.779][INF] Login dev 192.168.4.112:8000.
+[2025-05-19 16:35:49.779][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-19 16:35:49.779][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-19 16:35:49.779][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-19 16:35:49.779][INF] Login dev 192.168.3.108:8000.
+[2025-05-19 16:35:49.779][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-19 16:35:49.779][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-19 16:35:49.779][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-19 16:35:49.779][INF] Login dev 192.168.3.109:8000.
+[2025-05-19 16:35:49.779][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-19 16:35:49.779][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-19 16:35:49.779][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-19 16:35:49.779][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-19 16:35:49.779][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-19 16:35:49.779][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-19 16:35:49.779][INF] Login dev 192.168.4.111:8000.
+[2025-05-19 16:35:49.779][INF] Login dev 192.168.1.102:8000.
+[2025-05-19 16:35:49.779][INF] Private connect 192.168.1.103:8000 sock=3008 this=0xcac73b4c cmd=0x10000 port=63834
+[2025-05-19 16:35:49.779][INF] LogonDev1 in[192.168.1.103:8000]
+[2025-05-19 16:35:49.779][INF] Private connect 192.168.1.102:8000 sock=3068 this=0xcac76068 cmd=0x10000 port=63839
+[2025-05-19 16:35:49.779][INF] LogonDev1 in[192.168.1.102:8000]
+[2025-05-19 16:35:49.779][INF] Private connect 192.168.4.111:8000 sock=3064 this=0xcac758fc cmd=0x10000 port=63838
+[2025-05-19 16:35:49.779][INF] LogonDev1 in[192.168.4.111:8000]
+[2025-05-19 16:35:49.780][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[D:/Project/NG_COOL_BED/src/lib/libcrypto-1_1-x64.dll], hHandleRet[149684224]
+[2025-05-19 16:35:49.780][DBG] Load [libcrypto-1_1-x64.dll] SUCC, Real Path[D:\Project\NG_COOL_BED\src\lib\libcrypto-1_1-x64.dll]
+[2025-05-19 16:35:49.780][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[D:/Project/NG_COOL_BED/src/lib/libssl-1_1-x64.dll], hHandleRet[687865856]
+[2025-05-19 16:35:49.780][DBG] Load [libssl-1_1-x64.dll] SUCC, Real Path[D:\Project\NG_COOL_BED\src\lib\libssl-1_1-x64.dll]
+[2025-05-19 16:35:49.780][INF] SSLTRANSAPI::IsAllAPILoaded, SSL_library_init Unload
+[2025-05-19 16:35:49.780][INF] OpenSSL, Not All Function Loaded!
+[2025-05-19 16:35:49.780][INF] SSLTRANSAPI::PrintVersion, OpenSSL version info [OpenSSL 1.1.1l  24 Aug 2021]
+[2025-05-19 16:35:49.780][INF] CSSLTrans::SSLCtxInit, dwSSLVersion[6], m_fnTLSServerMethod
+[2025-05-19 16:35:49.781][ERR] CSSLTrans::SSLTrans_CTX_Load_CA, invalid path[D:/Project/NG_COOL_BED/src/lib/cert/\]
+[2025-05-19 16:35:49.794][INF] Private connect 192.168.4.112:8000 sock=3020 this=0xcac742b8 cmd=0x10000 port=63835
+[2025-05-19 16:35:49.794][INF] Private connect 192.168.3.109:8000 sock=3044 this=0xcac75190 cmd=0x10000 port=63837
+[2025-05-19 16:35:49.794][INF] Private connect 192.168.3.108:8000 sock=3032 this=0xcac74a24 cmd=0x10000 port=63836
+[2025-05-19 16:35:49.794][INF] Private connect 192.168.1.101:8000 sock=2948 this=0xcac70ec4 cmd=0x10000 port=63828
+[2025-05-19 16:35:49.794][INF] Private connect 192.168.3.107:8000 sock=2968 this=0xcac72508 cmd=0x10000 port=63831
+[2025-05-19 16:35:49.794][INF] Private connect 192.168.2.106:8000 sock=2996 this=0xcac733e0 cmd=0x10000 port=63833
+[2025-05-19 16:35:49.794][INF] LogonDev1 in[192.168.4.112:8000]
+[2025-05-19 16:35:49.794][INF] Private connect 192.168.4.110:8000 sock=2980 this=0xcac72c74 cmd=0x10000 port=63832
+[2025-05-19 16:35:49.794][INF] Private connect 192.168.2.105:8000 sock=2944 this=0xcac71630 cmd=0x10000 port=63829
+[2025-05-19 16:35:49.794][INF] LogonDev1 in[192.168.3.109:8000]
+[2025-05-19 16:35:49.794][INF] LogonDev1 in[192.168.1.101:8000]
+[2025-05-19 16:35:49.794][INF] Private connect 192.168.2.104:8000 sock=2952 this=0xcac71d9c cmd=0x10000 port=63830
+[2025-05-19 16:35:49.794][INF] LogonDev1 in[192.168.2.106:8000]
+[2025-05-19 16:35:49.794][INF] LogonDev1 in[192.168.3.107:8000]
+[2025-05-19 16:35:49.794][INF] LogonDev1 in[192.168.4.110:8000]
+[2025-05-19 16:35:49.794][INF] LogonDev1 in[192.168.2.104:8000]
+[2025-05-19 16:35:49.794][INF] LogonDev1 in[192.168.3.108:8000]
+[2025-05-19 16:35:49.794][INF] LogonDev1 in[192.168.2.105:8000]
+[2025-05-19 16:35:50.614][DBG] CComBase::Load, Load szDllPath[D:/Project/NG_COOL_BED/src/lib/HCNetSDKCom/HCPreview.dll] SUCC
+[2025-05-19 16:35:50.614][INF] AbilityAnalyze---Init-- start
+[2025-05-19 16:35:50.614][ERR] AbilityAnalyze---open zip package error, package path D:/Project/NG_COOL_BED/src/SDK/lib/LocalXml.zip
+[2025-05-19 16:35:50.615][INF] The COM:Preview ver is 6.1.9.48, 2023_04_10.
+[2025-05-19 16:35:50.615][INF] Private connect 192.168.2.105:8000 sock=3256 this=0xcac733e0 cmd=0x30000 port=63841
+[2025-05-19 16:35:50.615][INF] Private connect 192.168.1.102:8000 sock=3804 this=0xcac71d9c cmd=0x30000 port=63843
+[2025-05-19 16:35:50.615][INF] Private connect 192.168.2.104:8000 sock=4440 this=0xcac72508 cmd=0x30000 port=63844
+[2025-05-19 16:35:50.615][INF] Private connect 192.168.2.106:8000 sock=2876 this=0xcac72c74 cmd=0x30000 port=63840
+[2025-05-19 16:35:50.615][INF] Private connect 192.168.3.107:8000 sock=4068 this=0xcac742b8 cmd=0x30000 port=63845
+[2025-05-19 16:35:50.615][INF] Private connect 192.168.1.103:8000 sock=4448 this=0xcac75190 cmd=0x30000 port=63850
+[2025-05-19 16:35:50.615][INF] Private connect 192.168.1.101:8000 sock=3744 this=0xcac70ec4 cmd=0x30000 port=63847
+[2025-05-19 16:35:50.615][INF] Private connect 192.168.3.109:8000 sock=4452 this=0xcac76068 cmd=0x30000 port=63842
+[2025-05-19 16:35:50.615][INF] Private connect 192.168.4.111:8000 sock=4444 this=0xcac74a24 cmd=0x30000 port=63848
+[2025-05-19 16:35:50.632][INF] Private connect 192.168.4.110:8000 sock=3272 this=0xcac73b4c cmd=0x30000 port=63846
+[2025-05-19 16:35:50.632][INF] Private connect 192.168.4.112:8000 sock=3372 this=0xcac71630 cmd=0x30000 port=63849
+[2025-05-19 16:35:50.632][INF] Private connect 192.168.3.108:8000 sock=4456 this=0xcac758fc cmd=0x30000 port=63851
+[2025-05-19 16:35:50.658][INF] ID-IP-CHAN[6-192.168.1.101-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-19 16:35:50.658][INF] ID-IP-CHAN[6-192.168.1.101-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-19 16:35:50.658][INF] CCoreGlobalCtrl::LoadDSo, enumDllType[2], cTempPath[D:/Project/NG_COOL_BED/src/lib/HCNetSDKCom/]
+[2025-05-19 16:35:50.658][DBG] CCoreGlobalCtrl::LoadDSo, HPR_LoadDSo, hHandleRet[-859897856], enumDllType[2], Path[SystemTransform.dll], syserror[0]
+[2025-05-19 16:35:50.658][INF] CStreamConvert::LoadConvertLib Load Succ, m_iInitCount = 1
+[2025-05-19 16:35:50.658][DBG] ID-IP-CHAN[6-192.168.1.101-1] RTP Format
+[2025-05-19 16:35:50.659][INF] ID-IP-CHAN[4-192.168.1.102-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-19 16:35:50.659][INF] ID-IP-CHAN[4-192.168.1.102-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-19 16:35:50.660][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 2
+[2025-05-19 16:35:50.660][DBG] ID-IP-CHAN[4-192.168.1.102-1] RTP Format
+[2025-05-19 16:35:50.662][INF] ID-IP-CHAN[8-192.168.4.111-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-19 16:35:50.662][INF] ID-IP-CHAN[8-192.168.4.111-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-19 16:35:50.662][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 3
+[2025-05-19 16:35:50.662][DBG] ID-IP-CHAN[8-192.168.4.111-1] RTP Format
+[2025-05-19 16:35:50.664][INF] ID-IP-CHAN[9-192.168.1.103-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-19 16:35:50.664][INF] ID-IP-CHAN[9-192.168.1.103-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-19 16:35:50.664][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 4
+[2025-05-19 16:35:50.664][DBG] ID-IP-CHAN[9-192.168.1.103-1] RTP Format
+[2025-05-19 16:35:50.664][INF] ID-IP-CHAN[7-192.168.3.107-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-19 16:35:50.664][INF] ID-IP-CHAN[7-192.168.3.107-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-19 16:35:50.664][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 5
+[2025-05-19 16:35:50.664][DBG] ID-IP-CHAN[7-192.168.3.107-1] RTP Format
+[2025-05-19 16:35:50.666][INF] ID-IP-CHAN[1-192.168.2.105-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-19 16:35:50.666][INF] ID-IP-CHAN[1-192.168.2.105-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-19 16:35:50.666][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 6
+[2025-05-19 16:35:50.666][DBG] ID-IP-CHAN[1-192.168.2.105-1] RTP Format
+[2025-05-19 16:35:50.670][INF] ID-IP-CHAN[2-192.168.2.106-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-19 16:35:50.670][INF] ID-IP-CHAN[2-192.168.2.106-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-19 16:35:50.670][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 7
+[2025-05-19 16:35:50.670][DBG] ID-IP-CHAN[2-192.168.2.106-1] RTP Format
+[2025-05-19 16:35:50.672][INF] ID-IP-CHAN[11-192.168.3.109-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-19 16:35:50.672][INF] ID-IP-CHAN[11-192.168.3.109-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-19 16:35:50.672][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 8
+[2025-05-19 16:35:50.672][DBG] ID-IP-CHAN[11-192.168.3.109-1] RTP Format
+[2025-05-19 16:35:50.677][INF] ID-IP-CHAN[10-192.168.3.108-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-19 16:35:50.677][INF] ID-IP-CHAN[10-192.168.3.108-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-19 16:35:50.677][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 9
+[2025-05-19 16:35:50.677][DBG] ID-IP-CHAN[10-192.168.3.108-1] RTP Format
+[2025-05-19 16:35:50.678][INF] ID-IP-CHAN[0-192.168.4.112-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-19 16:35:50.678][INF] ID-IP-CHAN[0-192.168.4.112-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-19 16:35:50.678][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 10
+[2025-05-19 16:35:50.678][DBG] ID-IP-CHAN[0-192.168.4.112-1] RTP Format
+[2025-05-19 16:35:50.679][INF] ID-IP-CHAN[3-192.168.2.104-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-19 16:35:50.679][INF] ID-IP-CHAN[3-192.168.2.104-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-19 16:35:50.679][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 11
+[2025-05-19 16:35:50.679][DBG] ID-IP-CHAN[3-192.168.2.104-1] RTP Format
+[2025-05-19 16:35:50.687][INF] ID-IP-CHAN[5-192.168.4.110-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-19 16:35:50.687][INF] ID-IP-CHAN[5-192.168.4.110-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-19 16:35:50.687][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 12
+[2025-05-19 16:35:50.687][DBG] ID-IP-CHAN[5-192.168.4.110-1] RTP Format
+[2025-05-19 17:37:54.983][ERR] [2]Exception changes 4
+[2025-05-19 17:37:54.983][DBG]  CUser::ProcessException[2]
+[2025-05-19 17:39:55.042][INF] [2]RESUME EXCHANGE
+[2025-05-19 18:07:57.834][ERR] [6]Exception changes 4
+[2025-05-19 18:07:57.834][DBG]  CUser::ProcessException[6]
+[2025-05-19 18:09:58.032][INF] [6]RESUME EXCHANGE
+[2025-05-19 18:38:00.639][ERR] [6]Exception changes 4
+[2025-05-19 18:38:00.639][DBG]  CUser::ProcessException[6]
+[2025-05-19 18:40:00.841][INF] [6]RESUME EXCHANGE
+[2025-05-19 18:46:01.348][ERR] [7]Exception changes 4
+[2025-05-19 18:46:01.348][DBG]  CUser::ProcessException[7]
+[2025-05-19 18:46:01.348][ERR] [4]Exception changes 4
+[2025-05-19 18:46:01.348][DBG]  CUser::ProcessException[4]
+[2025-05-19 18:46:01.348][ERR] [11]Exception changes 4
+[2025-05-19 18:46:01.348][DBG]  CUser::ProcessException[11]
+[2025-05-19 18:48:01.534][INF] [4]RESUME EXCHANGE
+[2025-05-19 18:48:01.534][INF] [11]RESUME EXCHANGE
+[2025-05-19 18:48:01.535][INF] [7]RESUME EXCHANGE
+[2025-05-19 19:56:06.994][ERR] [3]Exception changes 4
+[2025-05-19 19:56:06.994][DBG]  CUser::ProcessException[3]
+[2025-05-19 19:58:07.229][INF] [3]RESUME EXCHANGE
+[2025-05-19 20:08:08.191][ERR] [3]Exception changes 4
+[2025-05-19 20:08:08.191][DBG]  CUser::ProcessException[3]
+[2025-05-19 20:10:08.372][INF] [3]RESUME EXCHANGE
+[2025-05-19 20:12:08.567][ERR] [3]Exception changes 4
+[2025-05-19 20:12:08.567][DBG]  CUser::ProcessException[3]
+[2025-05-19 20:12:08.567][ERR] [6]Exception changes 4
+[2025-05-19 20:12:08.567][DBG]  CUser::ProcessException[6]
+[2025-05-19 20:14:08.766][INF] [3]RESUME EXCHANGE
+[2025-05-19 20:14:08.781][INF] [6]RESUME EXCHANGE
+[2025-05-19 20:16:08.979][ERR] [9]Exception changes 4
+[2025-05-19 20:16:08.979][DBG]  CUser::ProcessException[9]
+[2025-05-19 20:18:09.166][INF] [9]RESUME EXCHANGE
+[2025-05-19 20:48:11.830][ERR] [10]Exception changes 4
+[2025-05-19 20:48:11.830][DBG]  CUser::ProcessException[10]
+[2025-05-19 20:50:12.027][INF] [10]RESUME EXCHANGE
+[2025-05-19 21:02:13.042][ERR] [1]Exception changes 4
+[2025-05-19 21:02:13.042][DBG]  CUser::ProcessException[1]
+[2025-05-19 21:04:13.284][INF] [1]RESUME EXCHANGE
+[2025-05-19 22:56:23.205][ERR] [9]Exception changes 4
+[2025-05-19 22:56:23.205][DBG]  CUser::ProcessException[9]
+[2025-05-19 22:58:23.386][INF] [9]RESUME EXCHANGE
+[2025-05-19 23:16:24.815][ERR] [2]Exception changes 4
+[2025-05-19 23:16:24.815][DBG]  CUser::ProcessException[2]
+[2025-05-19 23:18:25.110][INF] [2]RESUME EXCHANGE
+[2025-05-19 23:20:25.297][ERR] [4]Exception changes 4
+[2025-05-19 23:20:25.297][DBG]  CUser::ProcessException[4]
+[2025-05-19 23:22:25.505][INF] [4]RESUME EXCHANGE
+[2025-05-20 00:02:29.184][ERR] [1]Exception changes 4
+[2025-05-20 00:02:29.184][DBG]  CUser::ProcessException[1]
+[2025-05-20 00:04:29.381][INF] [1]RESUME EXCHANGE
+[2025-05-20 00:14:30.321][ERR] [3]Exception changes 4
+[2025-05-20 00:14:30.321][DBG]  CUser::ProcessException[3]
+[2025-05-20 00:16:30.381][INF] [3]RESUME EXCHANGE
+[2025-05-20 00:26:31.257][ERR] [2]Exception changes 4
+[2025-05-20 00:26:31.257][DBG]  CUser::ProcessException[2]
+[2025-05-20 00:28:31.533][INF] [2]RESUME EXCHANGE
+[2025-05-20 00:30:31.640][ERR] [4]Exception changes 4
+[2025-05-20 00:30:31.640][DBG]  CUser::ProcessException[4]
+[2025-05-20 00:32:31.864][INF] [4]RESUME EXCHANGE
+[2025-05-20 02:10:40.513][ERR] [10]Exception changes 4
+[2025-05-20 02:10:40.513][DBG]  CUser::ProcessException[10]
+[2025-05-20 02:12:40.713][INF] [10]RESUME EXCHANGE
+[2025-05-20 02:26:42.101][ERR] [9]Exception changes 4
+[2025-05-20 02:26:42.101][DBG]  CUser::ProcessException[9]
+[2025-05-20 02:28:42.292][INF] [9]RESUME EXCHANGE
+[2025-05-20 02:36:42.941][ERR] [3]Exception changes 4
+[2025-05-20 02:36:42.941][DBG]  CUser::ProcessException[3]
+[2025-05-20 02:38:43.093][INF] [3]RESUME EXCHANGE
+[2025-05-20 03:12:46.319][ERR] [7]Exception changes 4
+[2025-05-20 03:12:46.319][DBG]  CUser::ProcessException[7]
+[2025-05-20 03:14:46.524][INF] [7]RESUME EXCHANGE
+[2025-05-20 04:10:51.431][ERR] [3]Exception changes 4
+[2025-05-20 04:10:51.431][DBG]  CUser::ProcessException[3]
+[2025-05-20 04:12:51.526][INF] [3]RESUME EXCHANGE
+[2025-05-20 04:16:51.879][ERR] [8]Exception changes 4
+[2025-05-20 04:16:51.879][DBG]  CUser::ProcessException[8]
+[2025-05-20 04:18:52.069][INF] [8]RESUME EXCHANGE
+[2025-05-20 05:20:57.752][ERR] [7]Exception changes 4
+[2025-05-20 05:20:57.752][DBG]  CUser::ProcessException[7]
+[2025-05-20 05:22:57.954][INF] [7]RESUME EXCHANGE
+[2025-05-20 05:26:58.336][ERR] [0]Exception changes 4
+[2025-05-20 05:26:58.336][DBG]  CUser::ProcessException[0]
+[2025-05-20 05:28:58.510][INF] [0]RESUME EXCHANGE
+[2025-05-20 06:01:01.401][ERR] [4]Exception changes 4
+[2025-05-20 06:01:01.401][DBG]  CUser::ProcessException[4]
+[2025-05-20 06:03:01.597][INF] [4]RESUME EXCHANGE
+[2025-05-20 09:05:17.881][ERR] [5]Exception changes 4
+[2025-05-20 09:05:17.881][DBG]  CUser::ProcessException[5]
+[2025-05-20 09:07:18.007][INF] [5]RESUME EXCHANGE
+[2025-05-20 09:23:18.965][ERR] [8]Exception changes 4
+[2025-05-20 09:23:18.965][DBG]  CUser::ProcessException[8]
+[2025-05-20 09:25:19.093][INF] [8]RESUME EXCHANGE
+[2025-05-20 11:25:28.296][ERR] [3]Exception changes 4
+[2025-05-20 11:25:28.296][DBG]  CUser::ProcessException[3]
+[2025-05-20 11:25:28.296][ERR] [5]Exception changes 4
+[2025-05-20 11:25:28.296][DBG]  CUser::ProcessException[5]
+[2025-05-20 11:27:28.440][INF] [5]RESUME EXCHANGE
+[2025-05-20 11:27:28.440][INF] [3]RESUME EXCHANGE
+[2025-05-20 11:47:30.335][ERR] [9]Exception changes 4
+[2025-05-20 11:47:30.335][DBG]  CUser::ProcessException[9]
+[2025-05-20 11:49:30.516][INF] [9]RESUME EXCHANGE
+[2025-05-20 12:05:31.999][ERR] [1]Exception changes 4
+[2025-05-20 12:05:31.999][DBG]  CUser::ProcessException[1]
+[2025-05-20 12:07:32.190][INF] [1]RESUME EXCHANGE
+[2025-05-20 12:33:34.598][ERR] [3]Exception changes 4
+[2025-05-20 12:33:34.598][DBG]  CUser::ProcessException[3]
+[2025-05-20 12:35:34.723][INF] [3]RESUME EXCHANGE
+[2025-05-20 12:43:35.525][ERR] [3]Exception changes 4
+[2025-05-20 12:43:35.525][DBG]  CUser::ProcessException[3]
+[2025-05-20 12:45:35.716][INF] [3]RESUME EXCHANGE
+[2025-05-20 14:31:45.221][ERR] [1]Exception changes 4
+[2025-05-20 14:31:45.221][DBG]  CUser::ProcessException[1]
+[2025-05-20 14:33:45.419][INF] [1]RESUME EXCHANGE
+[2025-05-20 14:47:46.664][ERR] [7]Exception changes 4
+[2025-05-20 14:47:46.664][DBG]  CUser::ProcessException[7]
+[2025-05-20 14:49:46.839][INF] [7]RESUME EXCHANGE
+[2025-05-20 14:49:46.853][ERR] [9]Exception changes 4
+[2025-05-20 14:49:46.853][DBG]  CUser::ProcessException[9]
+[2025-05-20 14:51:47.035][INF] [9]RESUME EXCHANGE
+[2025-05-20 16:19:54.606][ERR] [8]Exception changes 4
+[2025-05-20 16:19:54.606][DBG]  CUser::ProcessException[8]
+[2025-05-20 16:21:54.777][INF] [8]RESUME EXCHANGE
+[2025-05-20 16:37:56.218][ERR] [0]Exception changes 4
+[2025-05-20 16:37:56.218][DBG]  CUser::ProcessException[0]
+[2025-05-20 16:39:56.454][INF] [0]RESUME EXCHANGE
+[2025-05-20 16:43:56.825][ERR] [3]Exception changes 4
+[2025-05-20 16:43:56.825][DBG]  CUser::ProcessException[3]
+[2025-05-20 16:45:56.917][INF] [3]RESUME EXCHANGE
