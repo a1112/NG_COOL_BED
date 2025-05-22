@@ -10,6 +10,8 @@ class MappingConfig:
     """
     def __init__(self,cool_bed_key, key):
         self.cool_bed_key = cool_bed_key
+        self.key = key
+
         image_url = CONFIG.MappingPath/fr"{key}.jpg"
         self.map_image = Image.open(image_url)
         self.width,self.height = self.map_image.size
@@ -93,7 +95,7 @@ class MappingConfig:
 
     @property
     def cool_bed(self):
-        return self.data["coolbed"]
+        return self.data["cool_bed"]
 
     def px_to_x(self,x_):
         x_map_list = self.x_map

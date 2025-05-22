@@ -9,6 +9,18 @@ class DataMap:
         self.l1_data:DataItem = self.data_dict["L1"]
         self.l2_data:DataItem = self.data_dict["L2"]
 
+    def get_info_by_coll_bed(self,cool_bed):
+        data_item = self.data_dict[cool_bed]
+
+        return {
+            "left_cool_bed_has_steel":data_item.has_cool_bed_steel_left,
+            "right_cool_bed_has_steel": data_item.has_cool_bed_steel_right,
+            "left_roll_bed_has_steel": data_item.has_roll_steel_left,
+            "right_roll_bed_has_steel": data_item.has_roll_steel_right,
+
+
+        }
+
     def get_data_map(self):
         data =  {
             "I_NAI_W0_ALV_CNT":self.count, # 心跳

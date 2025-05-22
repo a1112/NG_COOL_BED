@@ -1,19 +1,28 @@
+import cv2
 from fastapi import FastAPI
+
+from Configs.CameraManageConfig import camera_manage_config
+from ProjectManagement.Main import CoolBedThreadWorker
 from Result.DataItem import DataItem
 from ProjectManagement.Business import Business
-from Globals import business_main
+from Globals import business_main, cool_bed_thread_worker_map, global_config
+from fastapi.responses import StreamingResponse, FileResponse, Response
+
+from Server.tool import noFindImageByte
 
 business_main: Business
 
 app = FastAPI()
-
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
 
 
 def get_data_item_info(data:DataItem):
+    if data is None:
+        return "w无数据，刷新后再尝试吧。"
     return {
+        "key":data.group_key,
         "左侧辊道有板":data.has_roll_steel_left,
         "右侧辊道有板":data.has_roll_steel_right,
         "左侧冷床辊道有板":data.has_cool_bed_steel_left,
@@ -32,6 +41,28 @@ def steel_info():
         "L1":get_data_item_info(di1),
         "L2":get_data_item_info(di2)
     }
+
+
+@app.get("/info")
+async def get_info():
+
+    return camera_manage_config.info
+
+@app.get("/image/{cool_bed:str}/{key:str}/{cap_index:int}")
+async def get_image(cool_bed:str, key:str, cap_index:int):
+    cool_bed_thread_worker = cool_bed_thread_worker_map[cool_bed]
+    cool_bed_thread_worker:CoolBedThreadWorker
+    index, cv_image = cool_bed_thread_worker.get_image(key)
+    if index<0:
+        return Response(content=noFindImageByte, media_type="image/jpg")
+    _, encoded_image = cv2.imencode(".jpg", cv_image)
+    # 返回图像响应
+    return Response(content=encoded_image.tobytes(), media_type="image/jpeg")
+
+@app.get("/data/{cool_bed:str}")
+async def get_data(cool_bed:str):
+    return business_main.data_map.get_info_by_coll_bed(cool_bed)
+
 
 if __name__=="__main__":
     import uvicorn

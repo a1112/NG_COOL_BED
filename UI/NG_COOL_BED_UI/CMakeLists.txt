@@ -18,6 +18,27 @@ qt_add_qml_module(appNG_COOL_BED_UI
     QML_FILES
         Main.qml
         QML_FILES qml/MainLayout.qml
+        QML_FILES qml/head/HeadView.qml
+        QML_FILES
+        QML_FILES qml/core/Core.qml
+        QML_FILES qml/api/Ajax.qml
+        QML_FILES qml/api/Api.qml
+        QML_FILES qml/api/ServerUrl.qml
+        QML_FILES qml/view/CoolBedView.qml
+        QML_FILES qml/view/head/Head.qml
+        QML_FILES qml/view/view/ImageView.qml
+        QML_FILES qml/base/HeadBase.qml
+        QML_FILES qml/api/Tool.qml
+        QML_FILES qml/types/CoolBedModelType.qml
+        QML_FILES qml/view/head/GroupButtonListView.qml
+        QML_FILES qml/view/head/GroupButton.qml
+        QML_FILES qml/view/head/AutoCheckDelegate.qml
+        QML_FILES qml/view/core/CoolBedCore.qml
+        QML_FILES qml/view/core/TimeCore.qml
+        QML_FILES qml/view/data/DataView.qml
+        QML_FILES qml/types/CoolBedDataType.qml
+        QML_FILES qml/view/data/DataLabelItem.qml
+        QML_FILES qml/view/data/DataLabelEx.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

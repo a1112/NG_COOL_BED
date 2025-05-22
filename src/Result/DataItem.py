@@ -31,3 +31,7 @@ class DataItem:
     @property
     def steel_info(self):
         return [[round(i/1000,1) for i in list(steel.mm_rec)] for steel in self.steels.steel_list]
+
+    @property
+    def group_key(self):
+        return self.steels.map_config.key

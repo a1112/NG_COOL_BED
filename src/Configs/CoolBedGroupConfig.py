@@ -18,3 +18,20 @@ class CoolBedGroupConfig(ConfigBase):
             camera_key : CameraConfig(key,camera_key) for camera_key in self.camera_list
         }
         self.groups = [GroupConfig(key, g) for g in config["group"]]
+        self.groups_dict = {config.group_key:config  for config in self.groups}
+
+
+    @property
+    def info(self):
+        info ={}
+        info.update(
+            {
+                "all": list(self.groups_dict.keys()),
+                "run": list(self.groups_dict.keys()),
+                "data":{
+                    key : config.info
+                    for key,config in self.groups_dict.items()
+                }
+            }
+        )
+        return info

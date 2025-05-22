@@ -8,10 +8,8 @@ from Base.Error import CoolBedError
 from Configs.GlobalConfig import GlobalConfig
 from Configs.GroupConfig import GroupConfig
 from Configs.CoolBedGroupConfig import CoolBedGroupConfig
-from Globals import business_main
 from Loger import logger
 from threading import Thread
-
 from Configs.CameraConfig import CameraConfig
 from CameraStreamer.RtspCapTure import RtspCapTure
 from Configs.CameraManageConfig import camera_manage_config
@@ -19,7 +17,6 @@ from Save.CapJoinSave import CapJoinSave
 from alg.YoloModel import SteelDetModel
 from Result.DetResult import DetResult
 from tool import show_cv2
-from .Business import Business
 
 class CoolBedThreadWorker(Thread):
     """
@@ -35,9 +32,27 @@ class CoolBedThreadWorker(Thread):
         self.camera_map = {}
         self.steel_data_queue = RollingQueue(maxsize=1)
         self.FPS = 7
+
+        self.join_image_dict = {}
+
         if  self.run_worker:
             logger.debug(f"开始 执行 {key} ")
             self.start()
+
+    def get_image(self, key):
+        if key in self.join_image_dict:
+            return self.join_image_dict[key]
+        return -1, None
+
+    def _up_join_image_(self,key, image):
+        if key in self.join_image_dict:
+            self.join_image_dict[key][0] = self.join_image_dict[key][0]+1
+            self.join_image_dict[key][1] = image
+        else:
+            self.join_image_dict[key] = [0,image]
+
+    def get_data(self):
+        return
 
     def run(self):
         print(f"start  CoolBedThreadWorker {self.key}")
@@ -62,16 +77,17 @@ class CoolBedThreadWorker(Thread):
             for group_config in self.config.groups:  # 注意排序规则
                 group_config: GroupConfig
                 join_image = group_config.calibrate_image(cap_dict)
-
+                self._up_join_image_(group_config.group_key,join_image)
                 # 调整中的工作-----------------------------------
                 # 工作4 识别
                 self.save_thread.save_buffer(group_config.group_key, join_image)
-                model_data=model.get_steel_rect(join_image)
-                steel_info = DetResult(join_image,model_data, group_config.map_config)
-
-                show_cv2(steel_info.show_image,title=fr"j_{self.key}_"+group_config.msg)
+                model_data = model.get_steel_rect(join_image)
+                steel_info = DetResult(join_image, model_data, group_config.map_config)
                 if steel_info.can_get_data: # 如果有符合（无冷床遮挡）则返回数据
                     continue
+                show_cv2(steel_info.show_image,title=fr"j_{self.key}_"+group_config.msg)
+
+
             # 工作5 识别结果 的逻辑处理
             if steel_info is not None:
                 self.steel_data_queue.put(steel_info)
@@ -91,32 +107,10 @@ class CoolBedThreadWorker(Thread):
         #     cap_ture.join()
 
     def get_steel_info(self):
-        print(f'get_steel_info')
         return self.steel_data_queue.get()
 
-def main():
-    logger.info("start main")
-    global_config = GlobalConfig()
-    cool_bed_thread_worker_map = {}
-    # 1 获取参数 数据
-    for key, config in camera_manage_config.group_dict.items():
-        config:CoolBedGroupConfig    # 冷床 参数中心，用于管理冷床参数
-        logger.debug(f"初始化 {key} ")
-        cool_bed_thread_worker_map[key] = CoolBedThreadWorker(key, config, global_config)
 
-
-    while True:
-        steel_infos = {}
-        for key, config in camera_manage_config.group_dict.items():
-            config: CoolBedGroupConfig  # 冷床 参数中心，用于管理冷床参数
-            worker = cool_bed_thread_worker_map[key]
-            steel_infos[key] = worker.get_steel_info()
-        business_main.update(steel_infos)
     # for key, cool_bed_thread_worker in cool_bed_thread_worker_map.items():  # 等待
     #     if cool_bed_thread_worker.run_worker:
     #         cool_bed_thread_worker.join()
 
-
-
-if __name__ == '__main__':
-    main()

@@ -34,3 +34,7 @@ class GroupConfig(ConfigBase):
         # 透视拼接
         return self.join_conversion_image_list(conversion_image_list)
 
+    @property
+    def info(self):
+        info = self.config
+        return info

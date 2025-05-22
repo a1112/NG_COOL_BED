@@ -1,7 +1,7 @@
 <annotation>
 	<folder>mapping</folder>
-	<filename>L2_g1_1.jpg</filename>
-	<path>G:\LG\NG_COOL_BED\config\camera\mapping\L2_g1_1.jpg</path>
+	<filename>L2_g2_1.jpg</filename>
+	<path>D:\Project\NG_COOL_BED\config\camera\mapping\L2_g2_1.jpg</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -36,7 +36,7 @@
 		</bndbox>
 	</object>
 	<object>
-		<name>coolbed</name>
+		<name>cool_bed</name>
 		<pose>Unspecified</pose>
 		<truncated>1</truncated>
 		<difficult>0</difficult>

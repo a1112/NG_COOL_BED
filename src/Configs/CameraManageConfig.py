@@ -37,5 +37,19 @@ class CameraManageConfig(ConfigBase):
     def get_group_config(self, key):
         return self.group_dict[key]
 
+    @property
+    def info(self):
+        info = {}
+        info.update(
+            {
+            "all":list(self.group_dict.keys()),
+            "run":self.config["run"],
+            "data" : {
+            key:config.info
+            for key,config in self.group_dict.items()
+                    }
+            }
+        )
+        return info
 
 camera_manage_config = CameraManageConfig()  # 管理參數

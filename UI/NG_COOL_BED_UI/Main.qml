@@ -1,11 +1,9 @@
-import QtQuick.Layouts
-import QtQuick.Window
-import QtQuick.Controls.Material
+import "qml"
+import "qml/api"
+import "qml/core"
 
-ApplicationWindow {
-    Material.theme: Material.Dark
-    width: Screen.width*0.7
-    height: Screen.height*0.7
-    visible: true
-    title: qsTr("冷床下料定位")
+MainLayout {
+    property Core app_core: Core{}
+    property Api app_api: Api{}
+    property Tool app_tool: Tool{}
 }

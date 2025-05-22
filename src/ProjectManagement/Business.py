@@ -7,6 +7,7 @@ class Business:
     def __init__(self):
         self.data_item_l1 = None
         self.data_item_l2 = None
+        self.data_map:DataMap|None = None
         self.count = 0
         self.cool_beds=['L1','L2']
 
@@ -55,14 +56,14 @@ class Business:
             self.count = 0
 
 
-
-
     def update(self,steel_infos:dict):
         print(f"update Business {steel_infos}")
         assert "L1" in steel_infos,"error"
         assert "L2" in steel_infos, "error"
         self.data_item_l1 = self.do_l1(steel_infos["L1"])
         self.data_item_l2 = self.do_l2(steel_infos["L2"])
+
+
         self.up_count()
-        data_map = DataMap(self.count,{"L1":self.data_item_l1,"L2":self.data_item_l2})
-        data_map.send()
+        self.data_map = DataMap(self.count,{"L1":self.data_item_l1,"L2":self.data_item_l2})
+        self.data_map.send()
