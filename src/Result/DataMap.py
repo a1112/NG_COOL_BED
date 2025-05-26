@@ -1,6 +1,18 @@
 from .DataItem import DataItem
 from CommPlc.communication import com
 
+def byte_join(*args):
+    return b''.join(args)
+
+
+def get_int_byte(value:int):
+    return bytearray(value.to_bytes(2,"little"))
+
+def get_bools_byte(original:list):
+    bits = [int(b) for b in original]
+    byte_data = bytes([int(''.join(map(str, bits)), 2)])
+    return byte_data
+
 class DataMap:
     def __init__(self, count, data_dict):
         self.data_dict = data_dict
@@ -30,12 +42,15 @@ class DataMap:
             "I_NAI_MET_F2": self.l1_data.has_roll_steel_right, # L1 右侧是否有板子
             "I_NAI_MET_F5": self.l2_data.has_roll_steel_left, # L2 左侧是否有板子
             "I_NAI_MET_F6": self.l2_data.has_roll_steel_right, # L2 右侧是否有板子
+            "I_NAI_LONG_CB1":False, "I_NAI_LONG_CB2":False,
             "I_NAI_ERROR_CB1": self.l1_data.has_error, # L1 冷床是否有错误
             "I_NAI_ERROR_CB2": self.l2_data.has_error,  #L2 冷床是否有错误
+            "I_NAI_LONG_F12":False, "I_NAI_LONG_F56":False,
             "I_NAI_W1_spare1": self.l1_data.has_cool_bed_steel_left, # 一号冷床左半段有钢
             "I_NAI_W1_spare2": self.l1_data.has_cool_bed_steel_right, # 一号冷床右半段有钢
             "I_NAI_W1_spare3": self.l2_data.has_cool_bed_steel_left, # 二号冷床左半段有钢
             "I_NAI_W1_spare4": self.l2_data.has_cool_bed_steel_right, # 二号冷床右半段有钢
+            "I_NAI_W1_spare5": False, "I_NAI_W1_spare6": False
         }
 
         left_under_steel_l1 = self.l1_data.left_under_steel
@@ -100,8 +115,74 @@ class DataMap:
             "I_NAI_Ang_F6": 0
             }
         )
+
+        data.update(
+            {
+              "I_NAI_W30_spare":0,
+                "I_NAI_W31_spare":0
+            }
+
+        )
         print(data)
         return data
 
+    def data_to_byte(self, data):
+        return (get_int_byte(data["I_NAI_W0_ALV_CNT"])
+                +get_bools_byte([data["I_NAI_MET_F1"],data["I_NAI_MET_F2"],
+                                 data["I_NAI_MET_F5"],data["I_NAI_MET_F6"],
+                                 data["I_NAI_LONG_CB1"], data["I_NAI_LONG_CB2"],
+                                 data["I_NAI_ERROR_CB1"], data["I_NAI_ERROR_CB2"],
+                                 ])
+                +get_bools_byte([data["I_NAI_LONG_F12"],data["I_NAI_LONG_F56"],
+                                 data["I_NAI_W1_spare1"],data["I_NAI_W1_spare2"],
+                                 data["I_NAI_W1_spare3"], data["I_NAI_W1_spare4"],
+                                 data["I_NAI_W1_spare5"], data["I_NAI_W1_spare6"],
+                                 ])
+
+                + get_int_byte(data["I_NAI_X_dis_CB1G3"])
+                + get_int_byte(data["I_NAI_Y_dis_CB1G3"])
+                + get_int_byte(data["I_NAI_Len_CB1G3"])
+                + get_int_byte(data["I_NAI_Wid_CB1G3"])
+                + get_int_byte(data["I_NAI_Ang_CB1G3"])
+
+                + get_int_byte(data["I_NAI_X_dis_CB1G4"])
+                + get_int_byte(data["I_NAI_Y_dis_CB1G4"])
+                + get_int_byte(data["I_NAI_Len_CB1G4"])
+                + get_int_byte(data["I_NAI_Wid_CB1G4"])
+                + get_int_byte(data["I_NAI_Ang_CB1G4"])
+
+                + get_int_byte(data["I_NAI_X_dis_CB2G3"])
+                + get_int_byte(data["I_NAI_Y_dis_CB2G3"])
+                + get_int_byte(data["I_NAI_Len_CB2G3"])
+                + get_int_byte(data["I_NAI_Wid_CB2G3"])
+                + get_int_byte(data["I_NAI_Ang_CB2G3"])
+
+                + get_int_byte(data["I_NAI_X_dis_CB2G4"])
+                + get_int_byte(data["I_NAI_Y_dis_CB2G4"])
+                + get_int_byte(data["I_NAI_Len_CB2G4"])
+                + get_int_byte(data["I_NAI_Wid_CB2G4"])
+                + get_int_byte(data["I_NAI_Ang_CB2G4"])
+
+                + get_int_byte(data["I_NAI_Y_dis_F1"])
+                + get_int_byte(data["I_NAI_Ang_F1"])
+
+                + get_int_byte(data["I_NAI_Y_dis_F2"])
+                + get_int_byte(data["I_NAI_Ang_F2"])
+
+                + get_int_byte(data["I_NAI_Y_dis_F5"])
+                + get_int_byte(data["I_NAI_Ang_F5"])
+
+                + get_int_byte(data["I_NAI_Y_dis_F6"])
+                + get_int_byte(data["I_NAI_Ang_F6"])
+
+                + get_int_byte(data["c"])
+                + get_int_byte(data["I_NAI_W31_spare"])
+
+
+                )
+
+
+
     def send(self):
         data = self.get_data_map()
+        byte_data = self.data_to_byte(data)

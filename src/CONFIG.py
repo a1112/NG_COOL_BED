@@ -15,9 +15,6 @@ assert CONFIG_FOLDER.exists(), f"CONFIG_FOLDER 不存在： {CONFIG_FOLDER}"
 print(CONFIG_FOLDER)
 FIRST_SAVE_FOLDER = CONFIG_FOLDER/ "first_save"
 
-CAMERA_SAVE_FOLDER = Path(fr"D:\NgDataSave")
-CAMERA_SAVE_FOLDER.mkdir(exist_ok=True, parents=True)
-
 
 CAMERA_CONFIG_FOLDER = CONFIG_FOLDER / "camera"
 
@@ -43,7 +40,7 @@ DATA_FOLDER = CONFIG_FOLDER / "data"
 DATA_FOLDER.mkdir(exist_ok=True, parents=True)
 DEBUG_MODEL = False
 print(f"hostname: {socket.gethostname()}")
-if socket.gethostname() in ["MS-LGKRSZGOVODD", "DESKTOP-94ADH1G"]:
+if socket.gethostname() in ["MS-LGKRSZGOVODD", "DESKTOP-94ADH1G","HGL8081-1"]:
     DEBUG_MODEL = True
 
 show_camera = False
@@ -57,9 +54,14 @@ class CapModelEnum(Enum):
     DEBUG=4
 
 CAP_MODEL = CapModelEnum.SDK
+CAMERA_SAVE_FOLDER = Path(fr"D:\NgDataSave")
 
 if DEBUG_MODEL:
     CAP_MODEL = CapModelEnum.DEBUG
+    CAMERA_SAVE_FOLDER = CONFIG_FOLDER / "data"
+
+CAMERA_SAVE_FOLDER.mkdir(exist_ok=True, parents=True)
+
 
 DATA_FMT="%Y-%m-%d"
 TIME_FMT="%H_%M_%S"
