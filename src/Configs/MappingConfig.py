@@ -14,6 +14,7 @@ class MappingConfig:
 
         image_url = CONFIG.MappingPath/fr"{key}.jpg"
         self.map_image = Image.open(image_url)
+        self.size = self.map_image.size
         self.width,self.height = self.map_image.size
         self.glob_cool_bed_config:GlobalCoolBedConfigBase = get_config(cool_bed_key,self.width,self.height)
         self.data = tool.load_xml(CONFIG.MappingPath/fr"{key}.xml") # 读取物理坐标标定
@@ -143,6 +144,19 @@ class MappingConfig:
     @property
     def roll_center_y(self):
         return self.glob_cool_bed_config.roll_height/2
+
+    @property
+    def info(self):
+        re_data = {
+            "key": self.key,
+            "size":self.size,
+            "width":self.width,
+            "height":self.height,
+        }
+        re_data.update(self.data)
+        re_data.update(self.glob_cool_bed_config.info)
+        return re_data
+
 
 if __name__ =="__main__":
     MappingConfig("L1_g1_6")

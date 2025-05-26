@@ -5,6 +5,10 @@ from .ConfigBase import ConfigBase
 from .MappingConfig import MappingConfig
 
 
+def join_conversion_image_list(image_list):
+    return np.hstack(image_list)
+
+
 class GroupConfig(ConfigBase):
     """
     组合识别
@@ -24,15 +28,12 @@ class GroupConfig(ConfigBase):
 
 
         # 拿到 对应的 透视 参数
-    def join_conversion_image_list(self, image_list):
-        return np.hstack(image_list)
-
 
     def calibrate_image(self, cap_dict):
         image_list = [cap_dict[key] for key in self.camera_list]  # 拿到 对应的 透视 参数
         conversion_image_list = [conv.image_conversion(image.frame) for image,conv in zip(image_list,self.conversion_list)]
         # 透视拼接
-        return self.join_conversion_image_list(conversion_image_list)
+        return join_conversion_image_list(conversion_image_list)
 
     @property
     def info(self):

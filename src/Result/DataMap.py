@@ -33,6 +33,7 @@ class DataMap:
             "has_error": data_item.has_error,
             "left_under_steel_to_center": data_item.left_under_steel.to_roll_center_y,
             "right_under_steel_to_center": data_item.right_under_steel.to_roll_center_y,
+            "objects" : data_item.steels.infos
         }
 
     def get_data_map(self):

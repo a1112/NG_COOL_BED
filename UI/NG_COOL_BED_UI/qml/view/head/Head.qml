@@ -10,7 +10,7 @@ HeadBase {
     height: 30
     RowLayout{
         anchors.fill: parent
-        spacing: 5
+        spacing: 10
         Item{
             width: 20
         }
@@ -46,6 +46,18 @@ HeadBase {
             model: ["透视-视图 ","模拟-视图 "]
         }
 
+        CheckDelegate{
+            implicitHeight: root.height
+            text: qsTr("背景标注")
+            checked: cool_bed_core.show_map_view
+            onCheckedChanged: cool_bed_core.show_map_view = checked
+        }
+        CheckDelegate{
+            implicitHeight: root.height
+            text: qsTr("检测标注")
+            checked: cool_bed_core.show_det_view
+            onCheckedChanged: cool_bed_core.show_det_view = checked
+        }
         Item{
             width: 50
         }

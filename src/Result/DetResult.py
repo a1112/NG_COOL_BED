@@ -26,6 +26,17 @@ class DetResult:
         self.t_car_list = [obj for obj in self.obj_list if obj.is_t_car]
         self.steel_list.sort(key=lambda steel: steel.name)
 
+    @property
+    def steel_infos(self):
+        return [obj.dict for obj in self.steel_list]
+
+    @property
+    def t_car_infos(self):
+        return [obj.dict for obj in self.t_car_list]
+
+    @property
+    def infos(self):
+        return [obj.dict for obj in self.obj_list]
 
     @property
     def can_get_data(self):

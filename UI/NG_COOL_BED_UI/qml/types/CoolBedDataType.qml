@@ -19,7 +19,18 @@ Item {
     property var left_under_steel_to_center: data["left_under_steel_to_center"]
     property var right_under_steel_to_center: data["left_under_steel_to_center"]
 
-    property var steel_list: []
+    property var objcet_list: data["objects"]
+    onObjcet_listChanged: {
+        objcetList.clear()
+        app_tool.for_list(objcetList, (item) =>{
+                            objcetList.append(item)
+                          })
+    }
+
+
+    property ListModel objcetList: ListModel{
+
+    }
 
     function set_data_str(text){
         console.log(text)

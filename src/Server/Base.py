@@ -2,6 +2,9 @@ import cv2
 from fastapi import FastAPI
 
 from Configs.CameraManageConfig import camera_manage_config
+from Configs.CoolBedGroupConfig import CoolBedGroupConfig
+from Configs.GroupConfig import GroupConfig
+from Configs.MappingConfig import MappingConfig
 from ProjectManagement.Main import CoolBedThreadWorker
 from Result.DataItem import DataItem
 from ProjectManagement.Business import Business
@@ -48,9 +51,16 @@ async def get_info():
 
     return camera_manage_config.info
 
-@app.get("/map")
-async def get_map(cool_bed_key = None):
-    pass
+
+@app.get("/map/{cool_bed_key:str}")
+async def get_map(cool_bed_key):
+    cbc:CoolBedGroupConfig = camera_manage_config.group_dict[cool_bed_key]
+    re_data = {}
+    for g_key,g_config in cbc.groups_dict.items():
+        g_config:GroupConfig
+        map_config :MappingConfig = g_config.map_config
+        re_data[g_key] = map_config.info
+    return re_data
 
 @app.get("/image/{cool_bed:str}/{key:str}/{cap_index:int}")
 async def get_image(cool_bed:str, key:str, cap_index:int):

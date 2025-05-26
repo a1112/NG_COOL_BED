@@ -6,6 +6,7 @@ import "head"
 import "core"
 import "view"
 import "api"
+
 ApplicationWindow {
     Material.theme: Material.Dark
     width: Screen.width*0.7

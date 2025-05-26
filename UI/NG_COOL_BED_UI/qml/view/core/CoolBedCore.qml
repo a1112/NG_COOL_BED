@@ -9,8 +9,12 @@ Item {
     property int current_index: 0
 
 
+    readonly property string cool_bed_key: cool_bed_model_type.cool_bed_key
+
     readonly property string current_key: cool_bed_model_type.get_key(current_index)
+
     property int cap_index : 0
+
     property string source_url: app_api.get_image_url(cool_bed_model_type.cool_bed_key, current_key, cap_index)
 
     property CoolBedDataType coolBedDataType: CoolBedDataType{}
@@ -39,4 +43,7 @@ Item {
         }
     }
 
+
+    property bool show_map_view: true
+    property bool show_det_view: true
 }

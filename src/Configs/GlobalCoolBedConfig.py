@@ -26,6 +26,22 @@ class GlobalCoolBedConfigBase:
     def up_cool_bed(self):
         return self.roll_height+self.up_seat_height+self.cool_bed_height
 
+    @property
+    def info(self):
+        return {
+            "roll_width_mm":self.roll_width,
+            "roll_height_mm":self.roll_height,
+            "up_seat_height_mm":self.up_seat_height,
+            "down_seat_height_mm":self.down_seat_height,
+            "roll_count":self.roll_count,
+            "cool_bed_width_mm":self.cool_bed_width,
+            "cool_bed_height_mm":self.cool_bed_height,
+            "up_seat_d_mm":self.up_seat_d,
+            "up_seat_u_mm":self.up_seat_u,
+            "up_cool_bed_mm":self.up_cool_bed,
+        }
+
+
 class GlobalCoolBedConfigL1(GlobalCoolBedConfigBase):
     def __init__(self,width, height):
         super().__init__(width, height)
