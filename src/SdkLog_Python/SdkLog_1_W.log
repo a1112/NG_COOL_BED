@@ -1,149 +1,149 @@
-[2025-05-22 17:52:30.222][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[D:/Project/NG_COOL_BED/src/lib/zlib1.dll], hHandleRet[1676541952]
-[2025-05-22 17:52:30.222][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-05-22 17:52:30.222][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-05-22 17:52:30.222][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-05-22 17:52:30.222][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-05-22 17:52:30.222][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-05-22 17:52:30.222][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-05-22 17:52:30.222][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-05-22 17:52:30.222][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-05-22 17:52:30.222][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-05-22 17:52:30.223][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-05-22 17:52:30.223][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-05-22 17:52:30.223][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-05-22 17:52:30.223][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-05-22 17:52:30.223][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-05-22 17:52:30.223][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-05-22 17:52:30.223][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-05-22 17:52:30.223][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-05-22 17:52:30.223][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-05-22 17:52:30.223][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-05-22 17:52:30.223][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-05-22 17:52:30.223][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-05-22 17:52:30.223][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-05-22 17:52:30.223][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-05-22 17:52:30.223][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-05-22 17:52:30.223][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-05-22 17:52:30.223][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-05-22 17:52:30.223][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-05-22 17:52:30.223][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-05-22 17:52:30.223][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-05-22 17:52:30.223][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-05-22 17:52:30.223][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-05-22 17:52:30.223][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-05-22 17:52:30.223][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-05-22 17:52:30.223][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-05-22 17:52:30.223][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-05-22 17:52:30.223][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-05-22 17:52:30.224][INF] Login dev 192.168.3.108:8000.
-[2025-05-22 17:52:30.224][INF] Login dev 192.168.4.110:8000.
-[2025-05-22 17:52:30.224][INF] Login dev 192.168.4.112:8000.
-[2025-05-22 17:52:30.224][INF] Login dev 192.168.1.102:8000.
-[2025-05-22 17:52:30.224][INF] Login dev 192.168.1.101:8000.
-[2025-05-22 17:52:30.224][INF] Login dev 192.168.3.109:8000.
-[2025-05-22 17:52:30.224][INF] Login dev 192.168.3.107:8000.
-[2025-05-22 17:52:30.224][INF] Login dev 192.168.2.105:8000.
-[2025-05-22 17:52:30.224][INF] Login dev 192.168.4.111:8000.
-[2025-05-22 17:52:30.224][INF] Login dev 192.168.2.104:8000.
-[2025-05-22 17:52:30.224][INF] Login dev 192.168.2.106:8000.
-[2025-05-22 17:52:30.224][INF] dwTotalNum[2048]
-[2025-05-22 17:52:30.224][INF] Login dev 192.168.1.103:8000.
-[2025-05-22 17:52:30.226][INF] Private connect 192.168.3.108:8000 sock=3016 this=0x768bc6a0 cmd=0x10000 port=60660
-[2025-05-22 17:52:30.226][INF] Private connect 192.168.1.101:8000 sock=1496 this=0x768bd578 cmd=0x10000 port=60657
-[2025-05-22 17:52:30.226][INF] Private connect 192.168.4.112:8000 sock=3116 this=0x768be450 cmd=0x10000 port=60655
-[2025-05-22 17:52:30.226][INF] LogonDev1 in[192.168.1.101:8000]
-[2025-05-22 17:52:30.226][INF] LogonDev1 in[192.168.3.108:8000]
-[2025-05-22 17:52:30.226][INF] LogonDev1 in[192.168.4.112:8000]
-[2025-05-22 17:52:30.226][INF] Private connect 192.168.4.110:8000 sock=1640 this=0x768c096c cmd=0x10000 port=60659
-[2025-05-22 17:52:30.226][INF] Private connect 192.168.1.103:8000 sock=3124 this=0x768bf328 cmd=0x10000 port=60658
-[2025-05-22 17:52:30.226][INF] Private connect 192.168.1.102:8000 sock=3128 this=0x768c0200 cmd=0x10000 port=60661
-[2025-05-22 17:52:30.226][INF] Private connect 192.168.3.107:8000 sock=3136 this=0x768c10d8 cmd=0x10000 port=60663
-[2025-05-22 17:52:30.226][INF] Private connect 192.168.2.105:8000 sock=3120 this=0x768bebbc cmd=0x10000 port=60656
-[2025-05-22 17:52:30.226][INF] LogonDev1 in[192.168.4.110:8000]
-[2025-05-22 17:52:30.226][INF] LogonDev1 in[192.168.1.102:8000]
-[2025-05-22 17:52:30.226][INF] LogonDev1 in[192.168.2.105:8000]
-[2025-05-22 17:52:30.226][INF] LogonDev1 in[192.168.1.103:8000]
-[2025-05-22 17:52:30.226][INF] LogonDev1 in[192.168.3.107:8000]
-[2025-05-22 17:52:30.226][INF] Private connect 192.168.4.111:8000 sock=3144 this=0x768bbf34 cmd=0x10000 port=60666
-[2025-05-22 17:52:30.226][INF] LogonDev1 in[192.168.4.111:8000]
-[2025-05-22 17:52:30.226][INF] Private connect 192.168.3.109:8000 sock=3132 this=0x768bce0c cmd=0x10000 port=60662
-[2025-05-22 17:52:30.226][INF] LogonDev1 in[192.168.3.109:8000]
-[2025-05-22 17:52:30.238][INF] Private connect 192.168.2.104:8000 sock=1708 this=0x768bfa94 cmd=0x10000 port=60665
-[2025-05-22 17:52:30.238][INF] Private connect 192.168.2.106:8000 sock=3140 this=0x768bdce4 cmd=0x10000 port=60664
-[2025-05-22 17:52:30.238][INF] LogonDev1 in[192.168.2.106:8000]
-[2025-05-22 17:52:30.238][INF] LogonDev1 in[192.168.2.104:8000]
-[2025-05-22 17:52:30.389][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[D:/Project/NG_COOL_BED/src/lib/libcrypto-1_1-x64.dll], hHandleRet[341377024]
-[2025-05-22 17:52:30.389][DBG] Load [libcrypto-1_1-x64.dll] SUCC, Real Path[D:\Project\NG_COOL_BED\src\lib\libcrypto-1_1-x64.dll]
-[2025-05-22 17:52:30.473][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[D:/Project/NG_COOL_BED/src/lib/libssl-1_1-x64.dll], hHandleRet[340459520]
-[2025-05-22 17:52:30.473][DBG] Load [libssl-1_1-x64.dll] SUCC, Real Path[D:\Project\NG_COOL_BED\src\lib\libssl-1_1-x64.dll]
-[2025-05-22 17:52:30.473][INF] SSLTRANSAPI::IsAllAPILoaded, SSL_library_init Unload
-[2025-05-22 17:52:30.473][INF] OpenSSL, Not All Function Loaded!
-[2025-05-22 17:52:30.474][INF] SSLTRANSAPI::PrintVersion, OpenSSL version info [OpenSSL 1.1.1l  24 Aug 2021]
-[2025-05-22 17:52:30.474][INF] CSSLTrans::SSLCtxInit, dwSSLVersion[6], m_fnTLSServerMethod
-[2025-05-22 17:52:30.598][ERR] CSSLTrans::SSLTrans_CTX_Load_CA, invalid path[D:/Project/NG_COOL_BED/src/lib/cert/\]
-[2025-05-22 17:52:32.029][DBG] CComBase::Load, Load szDllPath[D:/Project/NG_COOL_BED/src/lib/HCNetSDKCom/HCPreview.dll] SUCC
-[2025-05-22 17:52:32.030][INF] AbilityAnalyze---Init-- start
-[2025-05-22 17:52:32.031][ERR] AbilityAnalyze---open zip package error, package path D:/Project/NG_COOL_BED/src/SDK/lib/LocalXml.zip
-[2025-05-22 17:52:32.032][INF] The COM:Preview ver is 6.1.9.48, 2023_04_10.
-[2025-05-22 17:52:32.033][INF] Private connect 192.168.3.109:8000 sock=3412 this=0x768bce0c cmd=0x30000 port=60680
-[2025-05-22 17:52:32.033][INF] Private connect 192.168.1.101:8000 sock=4136 this=0x768bd578 cmd=0x30000 port=60682
-[2025-05-22 17:52:32.033][INF] Private connect 192.168.1.103:8000 sock=4144 this=0x768bebbc cmd=0x30000 port=60686
-[2025-05-22 17:52:32.033][INF] Private connect 192.168.3.107:8000 sock=4052 this=0x768bdce4 cmd=0x30000 port=60683
-[2025-05-22 17:52:32.033][INF] Private connect 192.168.2.104:8000 sock=4148 this=0x768c10d8 cmd=0x30000 port=60687
-[2025-05-22 17:52:32.033][INF] Private connect 192.168.2.105:8000 sock=4140 this=0x768be450 cmd=0x30000 port=60685
-[2025-05-22 17:52:32.033][INF] Private connect 192.168.3.108:8000 sock=3732 this=0x768bf328 cmd=0x30000 port=60677
-[2025-05-22 17:52:32.043][INF] Private connect 192.168.4.110:8000 sock=4132 this=0x768c096c cmd=0x30000 port=60684
-[2025-05-22 17:52:32.043][INF] Private connect 192.168.4.112:8000 sock=3952 this=0x768bbf34 cmd=0x30000 port=60681
-[2025-05-22 17:52:32.043][INF] Private connect 192.168.4.111:8000 sock=3724 this=0x768bfa94 cmd=0x30000 port=60688
-[2025-05-22 17:52:32.043][INF] Private connect 192.168.1.102:8000 sock=2948 this=0x768c0200 cmd=0x30000 port=60679
-[2025-05-22 17:52:32.043][INF] Private connect 192.168.2.106:8000 sock=3548 this=0x768bc6a0 cmd=0x30000 port=60678
-[2025-05-22 17:52:32.074][INF] ID-IP-CHAN[10-192.168.3.109-1] [CGetTCPStream::Start] Stream Head Data Callback Start
-[2025-05-22 17:52:32.074][INF] ID-IP-CHAN[10-192.168.3.109-1] [CGetTCPStream::Start] Stream Head Data Callback End
-[2025-05-22 17:52:32.074][INF] CCoreGlobalCtrl::LoadDSo, enumDllType[2], cTempPath[D:/Project/NG_COOL_BED/src/lib/HCNetSDKCom/]
-[2025-05-22 17:52:32.079][INF] ID-IP-CHAN[8-192.168.3.108-1] [CGetTCPStream::Start] Stream Head Data Callback Start
-[2025-05-22 17:52:32.079][INF] ID-IP-CHAN[8-192.168.3.108-1] [CGetTCPStream::Start] Stream Head Data Callback End
-[2025-05-22 17:52:32.079][INF] ID-IP-CHAN[11-192.168.1.101-1] [CGetTCPStream::Start] Stream Head Data Callback Start
-[2025-05-22 17:52:32.079][INF] ID-IP-CHAN[11-192.168.1.101-1] [CGetTCPStream::Start] Stream Head Data Callback End
-[2025-05-22 17:52:32.081][INF] ID-IP-CHAN[2-192.168.1.103-1] [CGetTCPStream::Start] Stream Head Data Callback Start
-[2025-05-22 17:52:32.081][INF] ID-IP-CHAN[2-192.168.1.103-1] [CGetTCPStream::Start] Stream Head Data Callback End
-[2025-05-22 17:52:32.082][INF] ID-IP-CHAN[5-192.168.2.104-1] [CGetTCPStream::Start] Stream Head Data Callback Start
-[2025-05-22 17:52:32.082][INF] ID-IP-CHAN[5-192.168.2.104-1] [CGetTCPStream::Start] Stream Head Data Callback End
-[2025-05-22 17:52:32.085][INF] ID-IP-CHAN[3-192.168.2.105-1] [CGetTCPStream::Start] Stream Head Data Callback Start
-[2025-05-22 17:52:32.085][INF] ID-IP-CHAN[3-192.168.2.105-1] [CGetTCPStream::Start] Stream Head Data Callback End
-[2025-05-22 17:52:32.087][INF] ID-IP-CHAN[1-192.168.2.106-1] [CGetTCPStream::Start] Stream Head Data Callback Start
-[2025-05-22 17:52:32.087][INF] ID-IP-CHAN[1-192.168.2.106-1] [CGetTCPStream::Start] Stream Head Data Callback End
-[2025-05-22 17:52:32.088][INF] ID-IP-CHAN[9-192.168.4.110-1] [CGetTCPStream::Start] Stream Head Data Callback Start
-[2025-05-22 17:52:32.088][INF] ID-IP-CHAN[9-192.168.4.110-1] [CGetTCPStream::Start] Stream Head Data Callback End
-[2025-05-22 17:52:32.088][INF] ID-IP-CHAN[6-192.168.3.107-1] [CGetTCPStream::Start] Stream Head Data Callback Start
-[2025-05-22 17:52:32.088][INF] ID-IP-CHAN[6-192.168.3.107-1] [CGetTCPStream::Start] Stream Head Data Callback End
-[2025-05-22 17:52:32.089][INF] ID-IP-CHAN[7-192.168.4.112-1] [CGetTCPStream::Start] Stream Head Data Callback Start
-[2025-05-22 17:52:32.089][INF] ID-IP-CHAN[7-192.168.4.112-1] [CGetTCPStream::Start] Stream Head Data Callback End
-[2025-05-22 17:52:32.090][INF] ID-IP-CHAN[4-192.168.4.111-1] [CGetTCPStream::Start] Stream Head Data Callback Start
-[2025-05-22 17:52:32.090][INF] ID-IP-CHAN[4-192.168.4.111-1] [CGetTCPStream::Start] Stream Head Data Callback End
-[2025-05-22 17:52:32.091][INF] ID-IP-CHAN[0-192.168.1.102-1] [CGetTCPStream::Start] Stream Head Data Callback Start
-[2025-05-22 17:52:32.091][INF] ID-IP-CHAN[0-192.168.1.102-1] [CGetTCPStream::Start] Stream Head Data Callback End
-[2025-05-22 17:52:32.092][DBG] CCoreGlobalCtrl::LoadDSo, HPR_LoadDSo, hHandleRet[2121465856], enumDllType[2], Path[SystemTransform.dll], syserror[0]
-[2025-05-22 17:52:32.092][INF] CStreamConvert::LoadConvertLib Load Succ, m_iInitCount = 1
-[2025-05-22 17:52:32.092][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 2
-[2025-05-22 17:52:32.092][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 3
-[2025-05-22 17:52:32.092][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 4
-[2025-05-22 17:52:32.092][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 5
-[2025-05-22 17:52:32.092][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 6
-[2025-05-22 17:52:32.092][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 7
-[2025-05-22 17:52:32.092][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 8
-[2025-05-22 17:52:32.092][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 9
-[2025-05-22 17:52:32.092][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 10
-[2025-05-22 17:52:32.092][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 11
-[2025-05-22 17:52:32.092][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 12
-[2025-05-22 17:52:32.100][DBG] ID-IP-CHAN[0-192.168.1.102-1] RTP Format
-[2025-05-22 17:52:32.100][DBG] ID-IP-CHAN[6-192.168.3.107-1] RTP Format
-[2025-05-22 17:52:32.100][DBG] ID-IP-CHAN[10-192.168.3.109-1] RTP Format
-[2025-05-22 17:52:32.100][DBG] ID-IP-CHAN[1-192.168.2.106-1] RTP Format
-[2025-05-22 17:52:32.100][DBG] ID-IP-CHAN[3-192.168.2.105-1] RTP Format
-[2025-05-22 17:52:32.100][DBG] ID-IP-CHAN[11-192.168.1.101-1] RTP Format
-[2025-05-22 17:52:32.100][DBG] ID-IP-CHAN[9-192.168.4.110-1] RTP Format
-[2025-05-22 17:52:32.100][DBG] ID-IP-CHAN[8-192.168.3.108-1] RTP Format
-[2025-05-22 17:52:32.100][DBG] ID-IP-CHAN[5-192.168.2.104-1] RTP Format
-[2025-05-22 17:52:32.100][DBG] ID-IP-CHAN[4-192.168.4.111-1] RTP Format
-[2025-05-22 17:52:32.100][DBG] ID-IP-CHAN[7-192.168.4.112-1] RTP Format
-[2025-05-22 17:52:32.100][DBG] ID-IP-CHAN[2-192.168.1.103-1] RTP Format
+[2025-05-24 21:40:23.190][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[D:/Project/NG_COOL_BED/src/lib/zlib1.dll], hHandleRet[1678180352]
+[2025-05-24 21:40:23.190][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-24 21:40:23.190][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-24 21:40:23.190][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-24 21:40:23.190][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-24 21:40:23.190][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-24 21:40:23.190][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-24 21:40:23.190][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-24 21:40:23.190][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-24 21:40:23.190][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-24 21:40:23.190][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-24 21:40:23.190][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-24 21:40:23.190][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-24 21:40:23.190][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-24 21:40:23.190][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-24 21:40:23.190][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-24 21:40:23.190][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-24 21:40:23.190][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-24 21:40:23.190][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-24 21:40:23.190][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-24 21:40:23.190][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-24 21:40:23.190][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-24 21:40:23.190][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-24 21:40:23.190][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-24 21:40:23.190][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-24 21:40:23.190][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-24 21:40:23.190][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-24 21:40:23.190][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-24 21:40:23.190][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-24 21:40:23.190][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-24 21:40:23.190][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-24 21:40:23.190][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-24 21:40:23.190][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-24 21:40:23.190][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-24 21:40:23.191][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-05-24 21:40:23.191][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-05-24 21:40:23.191][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-05-24 21:40:23.191][INF] Login dev 192.168.3.107:8000.
+[2025-05-24 21:40:23.191][INF] dwTotalNum[2048]
+[2025-05-24 21:40:23.191][INF] Login dev 192.168.4.112:8000.
+[2025-05-24 21:40:23.191][INF] Login dev 192.168.1.103:8000.
+[2025-05-24 21:40:23.191][INF] Login dev 192.168.3.108:8000.
+[2025-05-24 21:40:23.191][INF] Login dev 192.168.1.102:8000.
+[2025-05-24 21:40:23.191][INF] Login dev 192.168.4.111:8000.
+[2025-05-24 21:40:23.191][INF] Login dev 192.168.3.109:8000.
+[2025-05-24 21:40:23.191][INF] Login dev 192.168.4.110:8000.
+[2025-05-24 21:40:23.191][INF] Login dev 192.168.2.105:8000.
+[2025-05-24 21:40:23.191][INF] Login dev 192.168.1.101:8000.
+[2025-05-24 21:40:23.191][INF] Login dev 192.168.2.104:8000.
+[2025-05-24 21:40:23.191][INF] Login dev 192.168.2.106:8000.
+[2025-05-24 21:40:23.191][INF] Private connect 192.168.1.103:8000 sock=3252 this=0x46ca7a88 cmd=0x10000 port=49749
+[2025-05-24 21:40:23.191][INF] Private connect 192.168.4.110:8000 sock=3264 this=0x46ca9838 cmd=0x10000 port=49752
+[2025-05-24 21:40:23.191][INF] Private connect 192.168.4.111:8000 sock=3248 this=0x46ca8960 cmd=0x10000 port=49748
+[2025-05-24 21:40:23.191][INF] LogonDev1 in[192.168.1.103:8000]
+[2025-05-24 21:40:23.191][INF] LogonDev1 in[192.168.4.110:8000]
+[2025-05-24 21:40:23.191][INF] Private connect 192.168.3.109:8000 sock=2436 this=0x46ca90cc cmd=0x10000 port=49751
+[2025-05-24 21:40:23.191][INF] Private connect 192.168.4.112:8000 sock=3244 this=0x46ca731c cmd=0x10000 port=49750
+[2025-05-24 21:40:23.191][INF] LogonDev1 in[192.168.3.109:8000]
+[2025-05-24 21:40:23.191][INF] LogonDev1 in[192.168.4.111:8000]
+[2025-05-24 21:40:23.191][INF] LogonDev1 in[192.168.4.112:8000]
+[2025-05-24 21:40:23.192][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[D:/Project/NG_COOL_BED/src/lib/libcrypto-1_1-x64.dll], hHandleRet[1476984832]
+[2025-05-24 21:40:23.192][DBG] Load [libcrypto-1_1-x64.dll] SUCC, Real Path[D:\Project\NG_COOL_BED\src\lib\libcrypto-1_1-x64.dll]
+[2025-05-24 21:40:23.192][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[D:/Project/NG_COOL_BED/src/lib/libssl-1_1-x64.dll], hHandleRet[1499136000]
+[2025-05-24 21:40:23.192][DBG] Load [libssl-1_1-x64.dll] SUCC, Real Path[D:\Project\NG_COOL_BED\src\lib\libssl-1_1-x64.dll]
+[2025-05-24 21:40:23.192][INF] SSLTRANSAPI::IsAllAPILoaded, SSL_library_init Unload
+[2025-05-24 21:40:23.192][INF] OpenSSL, Not All Function Loaded!
+[2025-05-24 21:40:23.192][INF] SSLTRANSAPI::PrintVersion, OpenSSL version info [OpenSSL 1.1.1l  24 Aug 2021]
+[2025-05-24 21:40:23.192][INF] CSSLTrans::SSLCtxInit, dwSSLVersion[6], m_fnTLSServerMethod
+[2025-05-24 21:40:23.193][ERR] CSSLTrans::SSLTrans_CTX_Load_CA, invalid path[D:/Project/NG_COOL_BED/src/lib/cert/\]
+[2025-05-24 21:40:23.204][INF] Private connect 192.168.1.101:8000 sock=3296 this=0x46caa710 cmd=0x10000 port=49754
+[2025-05-24 21:40:23.204][INF] Private connect 192.168.1.102:8000 sock=2108 this=0x46ca81f4 cmd=0x10000 port=49747
+[2025-05-24 21:40:23.204][INF] Private connect 192.168.3.108:8000 sock=2688 this=0x46ca6bb0 cmd=0x10000 port=49746
+[2025-05-24 21:40:23.204][INF] LogonDev1 in[192.168.1.101:8000]
+[2025-05-24 21:40:23.204][INF] LogonDev1 in[192.168.1.102:8000]
+[2025-05-24 21:40:23.204][INF] LogonDev1 in[192.168.3.108:8000]
+[2025-05-24 21:40:23.204][INF] Private connect 192.168.2.106:8000 sock=3312 this=0x46cab5e8 cmd=0x10000 port=49756
+[2025-05-24 21:40:23.204][INF] Private connect 192.168.2.105:8000 sock=3284 this=0x46ca9fa4 cmd=0x10000 port=49753
+[2025-05-24 21:40:23.204][INF] Private connect 192.168.3.107:8000 sock=3240 this=0x46ca6444 cmd=0x10000 port=49745
+[2025-05-24 21:40:23.204][INF] Private connect 192.168.2.104:8000 sock=3308 this=0x46caae7c cmd=0x10000 port=49755
+[2025-05-24 21:40:23.204][INF] LogonDev1 in[192.168.3.107:8000]
+[2025-05-24 21:40:23.204][INF] LogonDev1 in[192.168.2.106:8000]
+[2025-05-24 21:40:23.204][INF] LogonDev1 in[192.168.2.104:8000]
+[2025-05-24 21:40:23.204][INF] LogonDev1 in[192.168.2.105:8000]
+[2025-05-24 21:40:24.404][DBG] CComBase::Load, Load szDllPath[D:/Project/NG_COOL_BED/src/lib/HCNetSDKCom/HCPreview.dll] SUCC
+[2025-05-24 21:40:24.404][INF] AbilityAnalyze---Init-- start
+[2025-05-24 21:40:24.404][ERR] AbilityAnalyze---open zip package error, package path D:/Project/NG_COOL_BED/src/SDK/lib/LocalXml.zip
+[2025-05-24 21:40:24.404][INF] The COM:Preview ver is 6.1.9.48, 2023_04_10.
+[2025-05-24 21:40:24.405][INF] Private connect 192.168.2.104:8000 sock=3336 this=0x46ca8960 cmd=0x30000 port=49762
+[2025-05-24 21:40:24.424][INF] Private connect 192.168.4.110:8000 sock=3752 this=0x46ca731c cmd=0x30000 port=49766
+[2025-05-24 21:40:24.424][INF] Private connect 192.168.1.101:8000 sock=4428 this=0x46caa710 cmd=0x30000 port=49769
+[2025-05-24 21:40:24.424][INF] Private connect 192.168.3.109:8000 sock=4416 this=0x46ca9838 cmd=0x30000 port=49761
+[2025-05-24 21:40:24.424][INF] Private connect 192.168.2.106:8000 sock=2024 this=0x46ca81f4 cmd=0x30000 port=49759
+[2025-05-24 21:40:24.424][INF] Private connect 192.168.1.103:8000 sock=4424 this=0x46ca6444 cmd=0x30000 port=49767
+[2025-05-24 21:40:24.424][INF] Private connect 192.168.3.107:8000 sock=4328 this=0x46ca6bb0 cmd=0x30000 port=49760
+[2025-05-24 21:40:24.424][INF] Private connect 192.168.2.105:8000 sock=4420 this=0x46ca90cc cmd=0x30000 port=49768
+[2025-05-24 21:40:24.424][INF] Private connect 192.168.3.108:8000 sock=4432 this=0x46caae7c cmd=0x30000 port=49771
+[2025-05-24 21:40:24.424][INF] Private connect 192.168.4.111:8000 sock=4436 this=0x46cab5e8 cmd=0x30000 port=49770
+[2025-05-24 21:40:24.424][INF] Private connect 192.168.4.112:8000 sock=3760 this=0x46ca7a88 cmd=0x30000 port=49763
+[2025-05-24 21:40:24.424][INF] Private connect 192.168.1.102:8000 sock=4244 this=0x46ca9fa4 cmd=0x30000 port=49764
+[2025-05-24 21:40:24.455][INF] ID-IP-CHAN[1-192.168.2.104-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-24 21:40:24.455][INF] ID-IP-CHAN[1-192.168.2.104-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-24 21:40:24.455][INF] CCoreGlobalCtrl::LoadDSo, enumDllType[2], cTempPath[D:/Project/NG_COOL_BED/src/lib/HCNetSDKCom/]
+[2025-05-24 21:40:24.456][DBG] CCoreGlobalCtrl::LoadDSo, HPR_LoadDSo, hHandleRet[1226964992], enumDllType[2], Path[SystemTransform.dll], syserror[0]
+[2025-05-24 21:40:24.456][INF] CStreamConvert::LoadConvertLib Load Succ, m_iInitCount = 1
+[2025-05-24 21:40:24.456][DBG] ID-IP-CHAN[1-192.168.2.104-1] RTP Format
+[2025-05-24 21:40:24.463][INF] ID-IP-CHAN[7-192.168.1.103-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-24 21:40:24.463][INF] ID-IP-CHAN[7-192.168.1.103-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-24 21:40:24.463][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 2
+[2025-05-24 21:40:24.463][DBG] ID-IP-CHAN[7-192.168.1.103-1] RTP Format
+[2025-05-24 21:40:24.463][INF] ID-IP-CHAN[10-192.168.3.108-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-24 21:40:24.463][INF] ID-IP-CHAN[10-192.168.3.108-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-24 21:40:24.463][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 3
+[2025-05-24 21:40:24.463][DBG] ID-IP-CHAN[10-192.168.3.108-1] RTP Format
+[2025-05-24 21:40:24.465][INF] ID-IP-CHAN[9-192.168.1.101-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-24 21:40:24.465][INF] ID-IP-CHAN[9-192.168.1.101-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-24 21:40:24.465][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 4
+[2025-05-24 21:40:24.465][DBG] ID-IP-CHAN[9-192.168.1.101-1] RTP Format
+[2025-05-24 21:40:24.465][INF] ID-IP-CHAN[4-192.168.2.105-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-24 21:40:24.465][INF] ID-IP-CHAN[4-192.168.2.105-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-24 21:40:24.465][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 5
+[2025-05-24 21:40:24.465][DBG] ID-IP-CHAN[4-192.168.2.105-1] RTP Format
+[2025-05-24 21:40:24.466][INF] ID-IP-CHAN[8-192.168.1.102-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-24 21:40:24.466][INF] ID-IP-CHAN[8-192.168.1.102-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-24 21:40:24.466][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 6
+[2025-05-24 21:40:24.466][DBG] ID-IP-CHAN[8-192.168.1.102-1] RTP Format
+[2025-05-24 21:40:24.466][INF] ID-IP-CHAN[11-192.168.4.111-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-24 21:40:24.466][INF] ID-IP-CHAN[11-192.168.4.111-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-24 21:40:24.466][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 7
+[2025-05-24 21:40:24.466][DBG] ID-IP-CHAN[11-192.168.4.111-1] RTP Format
+[2025-05-24 21:40:24.466][INF] ID-IP-CHAN[6-192.168.4.112-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-24 21:40:24.466][INF] ID-IP-CHAN[6-192.168.4.112-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-24 21:40:24.466][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 8
+[2025-05-24 21:40:24.466][DBG] ID-IP-CHAN[6-192.168.4.112-1] RTP Format
+[2025-05-24 21:40:24.467][INF] ID-IP-CHAN[3-192.168.4.110-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-24 21:40:24.467][INF] ID-IP-CHAN[3-192.168.4.110-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-24 21:40:24.467][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 9
+[2025-05-24 21:40:24.467][DBG] ID-IP-CHAN[3-192.168.4.110-1] RTP Format
+[2025-05-24 21:40:24.467][INF] ID-IP-CHAN[2-192.168.2.106-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-24 21:40:24.467][INF] ID-IP-CHAN[2-192.168.2.106-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-24 21:40:24.467][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 10
+[2025-05-24 21:40:24.467][DBG] ID-IP-CHAN[2-192.168.2.106-1] RTP Format
+[2025-05-24 21:40:24.468][INF] ID-IP-CHAN[5-192.168.3.107-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-24 21:40:24.468][INF] ID-IP-CHAN[5-192.168.3.107-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-24 21:40:24.468][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 11
+[2025-05-24 21:40:24.468][DBG] ID-IP-CHAN[5-192.168.3.107-1] RTP Format
+[2025-05-24 21:40:24.471][INF] ID-IP-CHAN[0-192.168.3.109-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-05-24 21:40:24.471][INF] ID-IP-CHAN[0-192.168.3.109-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-05-24 21:40:24.471][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 12
+[2025-05-24 21:40:24.471][DBG] ID-IP-CHAN[0-192.168.3.109-1] RTP Format

@@ -50,3 +50,4 @@ pyinstaller
 HslCommunication
 python-snap7
 av
+lxml

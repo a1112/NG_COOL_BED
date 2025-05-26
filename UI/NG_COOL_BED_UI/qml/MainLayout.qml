@@ -11,7 +11,7 @@ ApplicationWindow {
     width: Screen.width*0.7
     height: Screen.height*0.85
     visible: true
-    background: Rectangle{color: "#000"}
+    background: Rectangle{color: "#000" }
 
 
     title: app_core.title_text
@@ -25,8 +25,10 @@ ApplicationWindow {
 
             Repeater{
                 model: app_core.coolBedListModel
-                delegate:CoolBedView{
-                    }
+                delegate: CoolBedView{
+
+
+                }
             }
 
 

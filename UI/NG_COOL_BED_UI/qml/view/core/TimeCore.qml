@@ -20,7 +20,7 @@ Item {
     Timer{
         interval: 150
         repeat: true
-
+        running: true
         onTriggered: {
             app_api.get_data(cool_bed_model_type.cool_bed_key,
                              (text)=>{

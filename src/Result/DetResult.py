@@ -11,16 +11,19 @@ def format_mm(mm):
     return round((int(mm) / 1000), 2)
 
 
+
 class DetResult:
     """
     单独的 单帧检出数据
     """
-    def __init__(self,image,rec_list, map_config):
+    def __init__(self, image, rec_list, map_config):
         self.image = np.copy(image)
         self.time=time.time()
         self.map_config:MappingConfig = map_config
         self.rec_list = rec_list
-        self.steel_list = [SteelItem(rec, self.map_config) for rec in self.rec_list]
+        self.obj_list = [SteelItem(rec, self.map_config) for rec in self.rec_list]
+        self.steel_list = [obj for obj in self.obj_list if obj.is_steel]
+        self.t_car_list = [obj for obj in self.obj_list if obj.is_t_car]
         self.steel_list.sort(key=lambda steel: steel.name)
 
 

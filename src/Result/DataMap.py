@@ -9,7 +9,7 @@ class DataMap:
         self.l1_data:DataItem = self.data_dict["L1"]
         self.l2_data:DataItem = self.data_dict["L2"]
 
-    def get_info_by_coll_bed(self,cool_bed):
+    def get_info_by_cool_bed(self,cool_bed):
         data_item = self.data_dict[cool_bed]
 
         return {
@@ -17,8 +17,10 @@ class DataMap:
             "right_cool_bed_has_steel": data_item.has_cool_bed_steel_right,
             "left_roll_bed_has_steel": data_item.has_roll_steel_left,
             "right_roll_bed_has_steel": data_item.has_roll_steel_right,
-
-
+            "group_key": data_item.group_key,
+            "has_error": data_item.has_error,
+            "left_under_steel_to_center": data_item.left_under_steel.to_roll_center_y,
+            "right_under_steel_to_center": data_item.right_under_steel.to_roll_center_y,
         }
 
     def get_data_map(self):

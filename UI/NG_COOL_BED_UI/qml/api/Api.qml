@@ -11,6 +11,10 @@ Item {
         return ajax.get(server_url.url(server_url.serverUrl,"info"),success, failure)
     }
 
+    function get_map(success, failure){
+        return ajax.get(server_url.url(server_url.serverUrl,"map"),success, failure)
+    }
+
     function get_image_url(cool_bed_key, key, index){
         return server_url.url(server_url.serverUrl, "image",cool_bed_key, key, index)
 

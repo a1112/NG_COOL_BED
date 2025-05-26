@@ -33,7 +33,7 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         font.bold: true
         text:  value
-        background: Rectangle{color: "#000"}
+        background: Rectangle{color: "#000" }
     }
     }
 }

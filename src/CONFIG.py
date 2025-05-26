@@ -14,12 +14,21 @@ assert CONFIG_FOLDER.exists(), f"CONFIG_FOLDER 不存在： {CONFIG_FOLDER}"
 
 print(CONFIG_FOLDER)
 FIRST_SAVE_FOLDER = CONFIG_FOLDER/ "first_save"
+
+CAMERA_SAVE_FOLDER = Path(fr"D:\NgDataSave")
+CAMERA_SAVE_FOLDER.mkdir(exist_ok=True, parents=True)
+
+
 CAMERA_CONFIG_FOLDER = CONFIG_FOLDER / "camera"
+
+
 IP_LIST_CAMERA_CONFIG = CONFIG_FOLDER / "camera"/"IpList.json"
 CAMERA_MANAGE_CONFIG = CONFIG_FOLDER / "camera"/"CameraManage.json"
 
 CalibratePath = CAMERA_CONFIG_FOLDER/"calibrate"/"calibrate"
 MappingPath = CAMERA_CONFIG_FOLDER/"mapping"
+
+
 SAVE_CONFIG = CONFIG_FOLDER / "camera"/"Save.json"
 
 MODEL_FOLDER = CONFIG_FOLDER / "model"

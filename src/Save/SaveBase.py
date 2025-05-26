@@ -2,6 +2,7 @@ from pathlib import Path
 from queue import Queue
 from threading import Thread
 
+import cv2
 import numpy as np
 from PIL import Image
 
@@ -21,6 +22,7 @@ class ImageSaveBase(Thread):
             frame, save_url = self.camera_buffer.get()
             logger.debug(f"save {save_url}")
             if isinstance(frame, np.ndarray):
+                frame=cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)
                 image = Image.fromarray(frame)
             else:
                 image = frame

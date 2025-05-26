@@ -48,12 +48,16 @@ async def get_info():
 
     return camera_manage_config.info
 
+@app.get("/map")
+async def get_map(cool_bed_key = None):
+    pass
+
 @app.get("/image/{cool_bed:str}/{key:str}/{cap_index:int}")
 async def get_image(cool_bed:str, key:str, cap_index:int):
     cool_bed_thread_worker = cool_bed_thread_worker_map[cool_bed]
     cool_bed_thread_worker:CoolBedThreadWorker
     index, cv_image = cool_bed_thread_worker.get_image(key)
-    if index<0:
+    if index < 0:
         return Response(content=noFindImageByte, media_type="image/jpg")
     _, encoded_image = cv2.imencode(".jpg", cv_image)
     # 返回图像响应
@@ -61,7 +65,7 @@ async def get_image(cool_bed:str, key:str, cap_index:int):
 
 @app.get("/data/{cool_bed:str}")
 async def get_data(cool_bed:str):
-    return business_main.data_map.get_info_by_coll_bed(cool_bed)
+    return business_main.data_map.get_info_by_cool_bed(cool_bed)
 
 
 if __name__=="__main__":

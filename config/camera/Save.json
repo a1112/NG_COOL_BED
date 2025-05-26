@@ -1,12 +1,12 @@
 {
   "camera": {
   "enable": true,
-  "folder": "../data/相机采集保存",
+  "folder": "相机采集保存",
   "name": "camera"
 },
   "data": {
     "enable": true,
-    "folder": "../data/相机数据保存",
+    "folder": "相机数据保存",
     "name": "data"
   }
 }

@@ -6,6 +6,8 @@ from Configs.MappingConfig import MappingConfig
 def format_mm(mm):
     return round((int(mm) / 1000), 2)
 
+def id_to_name(id_):
+    return ["steel","t_car"][id_]
 
 class SteelItem:
     """
@@ -20,6 +22,16 @@ class SteelItem:
         self.px_w = w
         self.px_h = h
         self.mm_rec = self.map_config.get_rect(self.rec[:4])
+
+    @property
+    def name(self):
+        return id_to_name(self.type_)
+
+    def is_steel(self):
+        return self.name == "name"
+
+    def is_t_car(self):
+        return self.name == "t_car"
 
     @property
     def x_mm(self):
@@ -69,12 +81,6 @@ class SteelItem:
     def mm_str(self):
         x_mm, y_mm, w_mm, h_mm = self.mm_rec
         return f"x: {format_mm(x_mm)} y: {format_mm(y_mm)} w: {format_mm(w_mm)} h: {format_mm(h_mm)}"
-
-    @property
-    def name(self):
-        if self.type_ == 0:
-            return "steel" + self.mm_str
-        return "t_car"
 
     @property
     def color(self):
