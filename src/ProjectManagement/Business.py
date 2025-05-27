@@ -7,12 +7,22 @@ class Business:
     def __init__(self):
         self.data_item_l1 = None
         self.data_item_l2 = None
-        self.data_map:DataMap|None = None
+        self.data_map:DataMap | None = None
         self.count = 0
         self.cool_beds=['L1','L2']
+        self.steel_infos = {}
+        self.data_item_dict = {}
+
+    def get_current_steels(self,steels_dict):
+        for key, steels in steels_dict.items():
+            steels: DetResult
+            if steels.can_get_data:
+                return steels
+        return None
 
 
-    def do_base(self,steels,key):
+    def _do_base_(self,key, steels) -> DataItem:
+
         data_item = DataItem(key, steels)
         steels: DetResult
         if steels.has_roll_steel:
@@ -32,23 +42,29 @@ class Business:
 
         return data_item
 
-    def do_l1(self, steels):
+    def do_base(self,steels_dict,key):
+        self.data_item_dict[key] = {key_:self._do_base_(key_, steels) for key_, steels in steels_dict.items()}
+        steels = self.get_current_steels(steels_dict)
+        return self._do_base_(key, steels)
+
+    def do_l1(self, steels_dict):
         """
         处理1号冷床数据
         :param steels:
         :return:
         """
-        return self.do_base(steels,"L1")
+
+        return self.do_base(steels_dict,"L1")
 
 
 
-    def do_l2(self,steels):
+    def do_l2(self, steels_dict):
         """
         处理二号冷床逻辑
         :param steels:
         :return:
         """
-        return self.do_base(steels,"L2")
+        return self.do_base(steels_dict,"L2")
 
     def up_count(self):
         self.count += 1
@@ -58,12 +74,9 @@ class Business:
 
     def update(self,steel_infos:dict):
         print(f"update Business {steel_infos}")
-        assert "L1" in steel_infos,"error"
-        assert "L2" in steel_infos, "error"
         self.data_item_l1 = self.do_l1(steel_infos["L1"])
         self.data_item_l2 = self.do_l2(steel_infos["L2"])
-
-
+        self.steel_infos = steel_infos
         self.up_count()
         self.data_map = DataMap(self.count,{"L1":self.data_item_l1,"L2":self.data_item_l2})
         self.data_map.send()

@@ -39,4 +39,12 @@ Item {
     property var cool_bed_rect: data["cool_bed"]
 
 
+    function get_rect(x,y,w,h){
+        return Qt.rect(
+                        x*x_asp,
+                        y*y_asp,
+                        w*x_asp,
+                        h*y_asp,
+                    )
+    }
 }

@@ -19,7 +19,6 @@ def main():
             config: CoolBedGroupConfig  # 冷床 参数中心，用于管理冷床参数
             worker = cool_bed_thread_worker_map[key]
             steel_infos[key] = worker.get_steel_info()
-
         business_main.update(steel_infos)
 
 

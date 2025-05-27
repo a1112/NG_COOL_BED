@@ -15,14 +15,9 @@ ColumnLayout {
     property CoolBedCore cool_bed_core : CoolBedCore{}
     property MapConfig map_config : MapConfig{}
 
-    Head{
-    }
+    Head{ }
 
-    ImageView{
+    ImageView{ }
 
-    }
-
-    DataView{
-
-    }
+    DataView{ }
 }

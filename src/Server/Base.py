@@ -75,7 +75,8 @@ async def get_image(cool_bed:str, key:str, cap_index:int):
 
 @app.get("/data/{cool_bed:str}")
 async def get_data(cool_bed:str):
-    return business_main.data_map.get_info_by_cool_bed(cool_bed)
+    return {key:item.get_info() for key, item in business_main.data_item_dict[cool_bed].items()}
+    #  return business_main.data_map.get_info_by_cool_bed(cool_bed)
 
 
 if __name__=="__main__":

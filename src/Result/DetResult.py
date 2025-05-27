@@ -40,7 +40,9 @@ class DetResult:
 
     @property
     def can_get_data(self):
-        return False
+        # for t_car in self.t_car_list:
+        #     return False
+        return True
 
     def draw_steel_in_roll(self):
         """

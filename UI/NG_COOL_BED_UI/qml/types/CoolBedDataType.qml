@@ -22,7 +22,7 @@ Item {
     property var objcet_list: data["objects"]
     onObjcet_listChanged: {
         objcetList.clear()
-        app_tool.for_list(objcetList, (item) =>{
+        app_tool.for_list(data["objects"], (item) =>{
                             objcetList.append(item)
                           })
     }
@@ -33,8 +33,8 @@ Item {
     }
 
     function set_data_str(text){
-        console.log(text)
-        data = JSON.parse(text)
+        // console.log(text)
+        data = JSON.parse(text)[cool_bed_core.current_key]
 
     }
 

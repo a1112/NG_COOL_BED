@@ -17,6 +17,7 @@ from Save.CapJoinSave import CapJoinSave
 from alg.YoloModel import SteelDetModel
 from Result.DetResult import DetResult
 from tool import show_cv2
+from collections import OrderedDict
 
 class CoolBedThreadWorker(Thread):
     """
@@ -72,7 +73,7 @@ class CoolBedThreadWorker(Thread):
             start_time = time.time()
             # 工作2 采集 1 CAPTURE
             cap_dict = {key: cap_ture.get_cap() for key, cap_ture in self.camera_map.items()}
-            steel_info = None
+            steel_info_dict = {}
             # 工作3 处理 透视 表
             for group_config in self.config.groups:  # 注意排序规则
                 group_config: GroupConfig
@@ -83,16 +84,18 @@ class CoolBedThreadWorker(Thread):
                 self.save_thread.save_buffer(group_config.group_key, join_image)
                 model_data = model.get_steel_rect(join_image)
                 steel_info = DetResult(join_image, model_data, group_config.map_config)
-                if steel_info.can_get_data: # 如果有符合（无冷床遮挡）则返回数据
-                    continue
-                show_cv2(steel_info.show_image,title=fr"j_{self.key}_"+group_config.msg)
 
+                show_cv2(steel_info.show_image,title=fr"j_{self.key}_"+group_config.msg)
+                steel_info_dict[group_config.group_key] = steel_info
+                # if steel_info.can_get_data: # 如果有符合（无冷床遮挡）则返回数据
+                #     continue
 
             # 工作5 识别结果 的逻辑处理
-            if steel_info is not None:
-                self.steel_data_queue.put(steel_info)
-            else:
-                self.steel_data_queue.put(CoolBedError("无法获取有效数据：过多相机失联，或无有效数据"))
+            self.steel_data_queue.put(steel_info_dict)
+            # if steel_info is not None:
+            #     self.steel_data_queue.put(steel_info)
+            # else:
+            #     self.steel_data_queue.put(CoolBedError("无法获取有效数据：过多相机失联，或无有效数据"))
             end_time=time.time()
             use_time =end_time-start_time
             print(f"FPS： {self.FPS} use time： {use_time}  ")

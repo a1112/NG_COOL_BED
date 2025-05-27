@@ -6,6 +6,7 @@ def byte_join(*args):
 
 
 def get_int_byte(value:int):
+    value=int(value)
     return bytearray(value.to_bytes(2,"little"))
 
 def get_bools_byte(original:list):
@@ -176,7 +177,7 @@ class DataMap:
                 + get_int_byte(data["I_NAI_Y_dis_F6"])
                 + get_int_byte(data["I_NAI_Ang_F6"])
 
-                + get_int_byte(data["c"])
+                + get_int_byte(data["I_NAI_W30_spare"])
                 + get_int_byte(data["I_NAI_W31_spare"])
 
 
