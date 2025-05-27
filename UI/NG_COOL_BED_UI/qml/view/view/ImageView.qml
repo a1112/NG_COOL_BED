@@ -1,9 +1,17 @@
 import QtQuick
 import QtQuick.Layouts
-
+import "../core"
 Item {
     Layout.fillWidth: true
     Layout.fillHeight: true
+
+    property MapConfigItem map_config_item: MapConfigItem{
+        draw_width:map_view.width
+        draw_height: map_view.height
+
+    }
+
+
     Image{
         id:old_image
         width: parent.width
@@ -11,8 +19,10 @@ Item {
         fillMode: Image.PreserveAspectFit
         cache: false
     }
+
     Image{
-         cache: false
+        id:show_image
+        cache: false
         width: parent.width
         height: parent.height
         source: cool_bed_core.source_url
@@ -35,4 +45,18 @@ Item {
             cool_bed_core.flush_source()
         }
     }
+
+    MapView{
+        id:map_view
+        anchors.centerIn: parent
+        width: show_image.paintedWidth
+        height: show_image.paintedHeight
+    }
+
+    ObjView{
+        anchors.centerIn: parent
+        width: show_image.paintedWidth
+        height: show_image.paintedHeight
+    }
+
 }

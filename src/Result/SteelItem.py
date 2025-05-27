@@ -113,6 +113,21 @@ class SteelItem:
         # 距离中心线的建立
         return (self.y2_mm+ self.h_mm/2) - self.map_config.roll_center_y
 
+    @property
+    def dict(self):
+        return {
+            "x_px":self.rec[0],
+            "y_px": self.rec[1],
+            "w_px": self.rec[2],
+            "h_px": self.rec[3],
+
+            "x_mm": self.mm_rec[0],
+            "y_mm": self.mm_rec[1],
+            "w_mm": self.mm_rec[2],
+            "h_mm": self.mm_rec[3],
+
+            "name": self.name
+        }
 
 class SteelItemList:
     def __init__(self,map_config, steels:List[SteelItem]):

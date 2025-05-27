@@ -11,8 +11,9 @@ import "data"
 ColumnLayout {
     Layout.fillWidth: true
     Layout.fillHeight: true
-    property CoolBedModelType cool_bed_model_type:CoolBedModelType{}
-    property CoolBedCore cool_bed_core: CoolBedCore{}
+    property CoolBedModelType cool_bed_model_type : CoolBedModelType{}
+    property CoolBedCore cool_bed_core : CoolBedCore{}
+    property MapConfig map_config : MapConfig{}
 
     Head{
     }
@@ -20,6 +21,7 @@ ColumnLayout {
     ImageView{
 
     }
+
     DataView{
 
     }
