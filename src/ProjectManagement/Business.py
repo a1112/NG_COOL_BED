@@ -12,6 +12,7 @@ class Business:
         self.cool_beds=['L1','L2']
         self.steel_infos = {}
         self.data_item_dict = {}
+        self.send_data = {}
 
     def get_current_steels(self,steels_dict):
         for key, steels in steels_dict.items():
@@ -80,6 +81,7 @@ class Business:
         self.up_count()
         self.data_map = DataMap(self.count,{"L1":self.data_item_l1,"L2":self.data_item_l2})
         try:
+            self.send_data = self.data_map.get_data_map()
             self.data_map.send()
         except BaseException as e:
             print(e)

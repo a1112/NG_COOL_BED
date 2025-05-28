@@ -81,6 +81,9 @@ async def get_data(cool_bed:str):
         return {}
     #  return business_main.data_map.get_info_by_cool_bed(cool_bed)
 
+@app.get("/send_data")
+async def send_data():
+    return business_main.send_data
 
 if __name__=="__main__":
     import uvicorn
