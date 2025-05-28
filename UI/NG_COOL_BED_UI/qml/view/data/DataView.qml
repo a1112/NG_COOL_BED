@@ -74,5 +74,14 @@ RowLayout{
         }
     }
 
+
+    Item{
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        SteelInfoList{
+
+        }
+    }
+
 }
 }

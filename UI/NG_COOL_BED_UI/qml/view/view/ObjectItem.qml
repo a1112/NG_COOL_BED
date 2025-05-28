@@ -1,15 +1,41 @@
 import QtQuick
+import QtQuick.Controls
 import "../core"
 Rectangle {
 
-    //property rect rect_box: value
+    // property rect rect_box: value
     property ObjectType objectType: ObjectType{}
-    color: "#22000000"
-    border.width: 2
-    border.color: "green"
-    x:objectType.rect_.x
-    y:objectType.rect_.y
-    width:objectType.rect_.width
-    height:objectType.rect_.height
+    color : "#22000000"
+    border.width : 2
+    border.color : "green"
+    x : objectType.rect_.x
+    y : objectType.rect_.y
+    width:  objectType.rect_.width
+    height : objectType.rect_.height
 
+    Label{
+        text : objectType.vis_str
+        background : Rectangle{
+            color : "#000"
+        }
+    }
+
+    Label{
+        font.pixelSize: 18
+        anchors.bottom : parent.bottom
+        anchors.right : parent.right
+        text : objectType.y_t_c
+        background : Rectangle{
+            color : "#000"
+        }
+    }
+
+    Label{
+        font.pixelSize: 18
+        anchors.top : parent.top
+        anchors.right : parent.right
+        text : objectType.name
+        font.bold: true
+        color: "green"
+    }
 }

@@ -27,8 +27,6 @@ ApplicationWindow {
             Repeater{
                 model: app_core.coolBedListModel
                 delegate: CoolBedView{
-
-
                 }
             }
 

@@ -18,4 +18,14 @@ Item {
     property int m_h: parseInt(h_mm)
 
     property string name_: name
+
+    function get_vis_str(){
+
+        return "x: "+(m_x/1000)+" y: "+(m_y/1000)+" w: "+(m_w/1000) + " h: "+ (m_h/1000)
+    }
+
+    property string type_name: "base"
+    property string vis_str: get_vis_str(type_name)
+
+    property real y_t_c :  (m_y-m_h/2 -5000/2)/1000
 }
