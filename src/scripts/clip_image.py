@@ -18,3 +18,21 @@ for f_ in tqdm(from_folder.glob(fr"*\*\*.jpg")):
             c_image = image.crop((x_index,0,x_index+i[0],i[1]))
             x_index+=i[0]
             c_image.save(out_folder/(str(index)+f_.name))
+
+    elif "L2_g0_2345" in str(f_):
+        x_index = 0
+        index=0
+        for i in [1303, 1024],[1117, 1024],[1117, 1024],[1024, 1024]:
+            index+=1
+            c_image = image.crop((x_index,0,x_index+i[0],i[1]))
+            x_index+=i[0]
+            c_image.save(out_folder/(str(index)+f_.name))
+    else:
+        x_index = 0
+        index=0
+        iw = int(w/4)
+        for i in [iw, h],[iw, h],[iw, h],[iw, h]:
+            index+=1
+            c_image = image.crop((x_index,0,x_index+i[0],i[1]))
+            x_index+=i[0]
+            c_image.save(out_folder/(str(index)+f_.name))
