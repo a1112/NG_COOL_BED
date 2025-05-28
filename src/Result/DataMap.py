@@ -6,7 +6,7 @@ def byte_join(*args):
 
 
 def get_int_byte(value:int):
-    value=int(value)
+    value=int(value/10)
     return bytearray(value.to_bytes(2,"little"))
 
 def get_bools_byte(original:list):

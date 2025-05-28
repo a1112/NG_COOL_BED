@@ -79,4 +79,7 @@ class Business:
         self.steel_infos = steel_infos
         self.up_count()
         self.data_map = DataMap(self.count,{"L1":self.data_item_l1,"L2":self.data_item_l2})
-        self.data_map.send()
+        try:
+            self.data_map.send()
+        except BaseException as e:
+            print(e)

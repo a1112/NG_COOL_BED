@@ -75,7 +75,10 @@ async def get_image(cool_bed:str, key:str, cap_index:int):
 
 @app.get("/data/{cool_bed:str}")
 async def get_data(cool_bed:str):
-    return {key:item.get_info() for key, item in business_main.data_item_dict[cool_bed].items()}
+    try:
+        return {key:item.get_info() for key, item in business_main.data_item_dict[cool_bed].items()}
+    except KeyError:
+        return {}
     #  return business_main.data_map.get_info_by_cool_bed(cool_bed)
 
 
