@@ -7,15 +7,14 @@ Item {
     width: 300
     height: 30
 
-    property string msg: ""
 
     property alias key_color: key_id.color
     property alias value_color: value_id.color
 
     ItemDelegate{
         anchors.fill: parent
-        ToolTip.visible: hovered && msg
-        ToolTip.text: msg
+        ToolTip.visible: hovered
+        ToolTip.text: app_config.key_to_msg(title)
     }
 
     RowLayout{

@@ -25,6 +25,10 @@ class DataItem:
         return self.steels.left_under_steel
 
     @property
+    def left_cool_bed_steel(self):
+        return
+
+    @property
     def right_under_steel(self):
         return self.steels.right_under_steel
 

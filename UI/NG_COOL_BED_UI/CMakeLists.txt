@@ -48,6 +48,7 @@ qt_add_qml_module(appNG_COOL_BED_UI
         QML_FILES qml/view/data/SteelInfoList.qml
         QML_FILES qml/dialogs/SendDialog.qml
         QML_FILES qml/dialogs/TextViewItem.qml
+        QML_FILES qml/api/Config.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

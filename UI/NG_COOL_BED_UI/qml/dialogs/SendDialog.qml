@@ -9,17 +9,26 @@ Menu {
     property var send_data: {return {}}
     property string send_byte: ""
     onSend_dataChanged: {
-        dataModel.clear()
-
-        for (let key in send_data){
-            dataModel.append(
-                        {
-                        "title":key,
-                        "value":send_data[key]
-                        }
-                        )
+      for (let key in send_data){
+        let has_data=false
+        for (let i=0;i<dataModel.count;i++){
+            if (dataModel.get(i).title == key)
+            {
+                dataModel.setProperty(i,"value",send_data[key])
+                has_data=true
+                break
+            }
 
         }
+        if (!has_data){
+            dataModel.append({
+                             "title":key,
+                             "value":send_data[key]
+                             })
+
+        }
+      }
+
 
     }
 
@@ -31,10 +40,7 @@ Menu {
         Repeater{
             anchors.fill: parent
             model: dataModel
-
             TextViewItem{
-
-
             }
 
         }

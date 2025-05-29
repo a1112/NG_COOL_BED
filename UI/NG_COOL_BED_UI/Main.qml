@@ -7,6 +7,8 @@ MainLayout {
     property Api app_api: Api{}
     property Tool app_tool: Tool{}
 
+    property Config app_config:Config{}
+
     property SendDialog send_dialog: SendDialog{
 
     }

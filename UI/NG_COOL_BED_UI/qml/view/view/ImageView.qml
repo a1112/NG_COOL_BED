@@ -54,6 +54,7 @@ Item {
     }
 
     ObjView{
+        visible: cool_bed_core.show_det_view
         anchors.centerIn: parent
         width: show_image.paintedWidth
         height: show_image.paintedHeight
