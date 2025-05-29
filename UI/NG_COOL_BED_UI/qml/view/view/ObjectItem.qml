@@ -34,7 +34,7 @@ Rectangle {
         font.pixelSize: 18
         anchors.top : parent.top
         anchors.right : parent.right
-        text : objectType.name
+        text : objectType.name_
         font.bold: true
         color: "green"
     }
