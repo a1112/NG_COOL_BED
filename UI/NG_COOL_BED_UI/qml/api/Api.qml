@@ -23,4 +23,8 @@ Item {
     function get_data(cool_bed_key, success, failure){
         return ajax.get(server_url.url(server_url.serverUrl,"data",cool_bed_key),success, failure)
     }
+
+    function get_send_data(success, failure){
+        return ajax.get(server_url.url(server_url.serverUrl, "send_data"), success, failure)
+    }
 }

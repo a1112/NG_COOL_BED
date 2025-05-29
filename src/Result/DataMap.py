@@ -4,9 +4,10 @@ from CommPlc.communication import com
 def byte_join(*args):
     return b''.join(args)
 
+def format_int(data_item):
+    return int(data_item/10)
 
 def get_int_byte(value:int):
-    value=int(value/10)
     return bytearray(value.to_bytes(2,"little"))
 
 def get_bools_byte(original:list):
@@ -57,63 +58,63 @@ class DataMap:
 
         left_under_steel_l1 = self.l1_data.left_under_steel
         data.update({
-            "I_NAI_X_dis_CB1G3": left_under_steel_l1.x_mm,
-            "I_NAI_Y_dis_CB1G3": left_under_steel_l1.y_mm,
-            "I_NAI_Len_CB1G3": left_under_steel_l1.w_mm,
-            "I_NAI_Wid_CB1G3": left_under_steel_l1.h_mm,
+            "I_NAI_X_dis_CB1G3":format_int( left_under_steel_l1.x_mm),
+            "I_NAI_Y_dis_CB1G3":format_int(  left_under_steel_l1.y_mm),
+            "I_NAI_Len_CB1G3": format_int( left_under_steel_l1.w_mm),
+            "I_NAI_Wid_CB1G3": format_int( left_under_steel_l1.h_mm),
             "I_NAI_Ang_CB1G3": 0,
         })
         right_under_steel_l1 = self.l1_data.right_under_steel
         data.update({
-            "I_NAI_X_dis_CB1G4":right_under_steel_l1.x_mm,
-            "I_NAI_Y_dis_CB1G4":right_under_steel_l1.y_mm,
-            "I_NAI_Len_CB1G4":right_under_steel_l1.w_mm,
-            "I_NAI_Wid_CB1G4":right_under_steel_l1.h_mm,
+            "I_NAI_X_dis_CB1G4":format_int( right_under_steel_l1.x_mm),
+            "I_NAI_Y_dis_CB1G4":format_int( right_under_steel_l1.y_mm),
+            "I_NAI_Len_CB1G4":format_int( right_under_steel_l1.w_mm),
+            "I_NAI_Wid_CB1G4":format_int( right_under_steel_l1.h_mm),
             "I_NAI_Ang_CB1G4":0,
         })
 
         left_under_steel_l2 = self.l2_data.left_under_steel
         data.update({
-            "I_NAI_X_dis_CB2G3": left_under_steel_l2.x_mm,
-            "I_NAI_Y_dis_CB2G3": left_under_steel_l2.y_mm,
-            "I_NAI_Len_CB2G3": left_under_steel_l2.w_mm,
-            "I_NAI_Wid_CB2G3": left_under_steel_l2.h_mm,
+            "I_NAI_X_dis_CB2G3": format_int( left_under_steel_l2.x_mm),
+            "I_NAI_Y_dis_CB2G3": format_int( left_under_steel_l2.y_mm),
+            "I_NAI_Len_CB2G3": format_int( left_under_steel_l2.w_mm),
+            "I_NAI_Wid_CB2G3": format_int( left_under_steel_l2.h_mm),
             "I_NAI_Ang_CB2G3": 0,
         })
         right_under_steel_l2 = self.l2_data.right_under_steel
 
         data.update({
-            "I_NAI_X_dis_CB2G4":right_under_steel_l2.x_mm,
-            "I_NAI_Y_dis_CB2G4":right_under_steel_l2.y_mm,
-            "I_NAI_Len_CB2G4":right_under_steel_l2.w_mm,
-            "I_NAI_Wid_CB2G4":right_under_steel_l2.h_mm,
+            "I_NAI_X_dis_CB2G4":format_int( right_under_steel_l2.x_mm),
+            "I_NAI_Y_dis_CB2G4":format_int( right_under_steel_l2.y_mm),
+            "I_NAI_Len_CB2G4":format_int( right_under_steel_l2.w_mm),
+            "I_NAI_Wid_CB2G4":format_int( right_under_steel_l2.h_mm),
             "I_NAI_Ang_CB2G4":0,
         })
 
         data.update(
             {
-            "I_NAI_Y_dis_F1":left_under_steel_l1.to_roll_center_y,
+            "I_NAI_Y_dis_F1":format_int(left_under_steel_l1.to_roll_center_y),
             "I_NAI_Ang_F1": 0
             }
         )
 
         data.update(
             {
-            "I_NAI_Y_dis_F2":right_under_steel_l1.to_roll_center_y,
+            "I_NAI_Y_dis_F2":format_int(right_under_steel_l1.to_roll_center_y),
             "I_NAI_Ang_F2": 0
             }
         )
 
         data.update(
             {
-            "I_NAI_Y_dis_F5":left_under_steel_l2.to_roll_center_y,
+            "I_NAI_Y_dis_F5":format_int(left_under_steel_l2.to_roll_center_y),
             "I_NAI_Ang_F5": 0
             }
         )
 
         data.update(
             {
-            "I_NAI_Y_dis_F6":right_under_steel_l2.to_roll_center_y,
+            "I_NAI_Y_dis_F6":format_int(right_under_steel_l2.to_roll_center_y),
             "I_NAI_Ang_F6": 0
             }
         )
@@ -185,6 +186,5 @@ class DataMap:
 
 
 
-    def send(self):
-        data = self.get_data_map()
-        byte_data = self.data_to_byte(data)
+    def send(self,send_data_byte):
+        pass

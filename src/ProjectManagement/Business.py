@@ -12,7 +12,10 @@ class Business:
         self.cool_beds=['L1','L2']
         self.steel_infos = {}
         self.data_item_dict = {}
-        self.send_data = {}
+        self.send_data_dict = {}
+        self.send_data_byte = bytearray(b"")
+
+
 
     def get_current_steels(self,steels_dict):
         for key, steels in steels_dict.items():
@@ -72,6 +75,13 @@ class Business:
         if self.count > 999:
             self.count = 0
 
+    @property
+    def send_data(self):
+        return {
+            "bytes":str(bytes(self.send_data_byte)),
+            "data":self.send_data_dict,
+        }
+
 
     def update(self,steel_infos:dict):
         print(f"update Business {steel_infos}")
@@ -81,7 +91,9 @@ class Business:
         self.up_count()
         self.data_map = DataMap(self.count,{"L1":self.data_item_l1,"L2":self.data_item_l2})
         try:
-            self.send_data = self.data_map.get_data_map()
-            self.data_map.send()
+            self.send_data_dict = self.data_map.get_data_map()
+            self.send_data_byte = self.data_map.data_to_byte(self.send_data_dict)
+
+            self.data_map.send(self.send_data_byte)
         except BaseException as e:
             print(e)

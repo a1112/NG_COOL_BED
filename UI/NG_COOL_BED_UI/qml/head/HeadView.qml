@@ -6,6 +6,7 @@ import QtQuick.Controls.Material
 import "../base"
 
 HeadBase {
+    id:root
     Layout.fillWidth: true
     height: 35
     RowLayout{
@@ -15,7 +16,7 @@ HeadBase {
             height: 1
         }
         Label {
-                        Material.foreground: Material.BlueGrey
+                Material.foreground: Material.BlueGrey
 
             font.pointSize: 20
             font.bold: true
@@ -33,6 +34,21 @@ HeadBase {
         Item{
             Layout.fillWidth: true
         }
+        ItemDelegate{
+            height: root.height
+            implicitHeight: height
+            text: "send..."
+            background: Rectangle{
+                border.color: "blue"
+                border.width: 1
+                color: "#00000000"
+            }
+            onClicked: {
+                send_dialog.open_()
+
+            }
+        }
+
         Label {
             textFormat: Text.RichText
 
