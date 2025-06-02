@@ -6,15 +6,17 @@ Menu {
     width: 630
     height: 800
 
-    property var send_data: {return {}}
+
+
+    property var send_data: { return {}}
     property string send_byte: ""
     onSend_dataChanged: {
       for (let key in send_data){
         let has_data=false
         for (let i=0;i<dataModel.count;i++){
-            if (dataModel.get(i).title == key)
+            if (dataModel.get(i).title === key)
             {
-                dataModel.setProperty(i,"value",send_data[key])
+                dataModel.setProperty(i,"value",""+send_data[key])
                 has_data=true
                 break
             }
@@ -23,7 +25,7 @@ Menu {
         if (!has_data){
             dataModel.append({
                              "title":key,
-                             "value":send_data[key]
+                             "value": "" + send_data[key]
                              })
 
         }
@@ -35,8 +37,6 @@ Menu {
     property ListModel dataModel: ListModel{}
     Flow{
         anchors.fill: parent
-
-
         Repeater{
             anchors.fill: parent
             model: dataModel
@@ -72,7 +72,7 @@ Menu {
                         },
                         (err)=>{
                             console.log("get_send_data error")
-                        },
+                        }
                         )
 
         }

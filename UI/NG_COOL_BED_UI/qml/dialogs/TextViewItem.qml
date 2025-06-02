@@ -22,7 +22,7 @@ Item {
     Label{
         font.bold: true
         id : key_id
-        text:  title+" : "
+        text:  title + " : "
     }
 
     Label{
@@ -30,7 +30,7 @@ Item {
         Layout.fillWidth: true
         horizontalAlignment: Text.AlignHCenter
         font.bold: true
-        text:  value
+        text:  "" + value
         background: Rectangle{color: "#000" }
     }
     }

@@ -3,13 +3,13 @@ import QtQuick
 Item {
 
     function key_to_msg(key){
-        if (key == "I_NAI_W0_ALV_CNT"){
+        if (key === "I_NAI_W0_ALV_CNT"){
             return "心跳"
         }
-        if (key=="I_NAI_MET_F1"){
+        if (key==="I_NAI_MET_F1"){
             return "F1辊道（一号冷床左半段辊道）有钢"
         }
-        if (key=="I_NAI_MET_F2"){
+        if (key==="I_NAI_MET_F2"){
             return "F2辊道（一号冷床右半段辊道）有钢"
         }
         if (key==="I_NAI_MET_F5"){

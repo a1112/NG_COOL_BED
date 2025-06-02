@@ -54,7 +54,7 @@ class Business:
     def do_l1(self, steels_dict):
         """
         处理1号冷床数据
-        :param steels:
+        :param steels_dict:
         :return:
         """
 

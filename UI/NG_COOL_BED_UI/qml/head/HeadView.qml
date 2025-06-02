@@ -11,6 +11,7 @@ HeadBase {
     height: 35
     RowLayout{
         anchors.fill: parent
+        spacing: 10
         Item{
             width: 20
             height: 1
@@ -37,7 +38,7 @@ HeadBase {
         ItemDelegate{
             height: root.height
             implicitHeight: height
-            text: "send..."
+            text: "SEND  - " + send_dialog.send_data["I_NAI_W0_ALV_CNT"]
             background: Rectangle{
                 border.color: "blue"
                 border.width: 1
@@ -45,7 +46,6 @@ HeadBase {
             }
             onClicked: {
                 send_dialog.open_()
-
             }
         }
 
