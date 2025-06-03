@@ -54,11 +54,14 @@ def test_one_image(mask_model,text_image):
     # print(alpha_mask)
     # return Image.alpha_composite(text_image.convert("RGBA"), alpha_mask)
 
+
+
 if __name__ =="__main__":
     ssm = SteelSegModel()
 
-    folder =Path(fr"G:\LG\NG_COOL_BED_DATA\YOLOv8Dataset\train\images")
+    folder =Path(__file__).parent.parent.parent/"test"/"seg"
+    print(folder)
     for f_ in folder.glob("*.png"):
         text_image_ = get_image(f_)
-        test_one_image(ssm,text_image_).show()
-        input()
+        test_one_image(ssm, text_image_).show()
+        # input()

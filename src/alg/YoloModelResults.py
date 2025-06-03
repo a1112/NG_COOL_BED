@@ -12,7 +12,7 @@ class YoloModelResultsBase:
             self.image = np.array(image)
         else:
             self.image = image
-
+        self.image: np.ndarray
 
 
     @property
@@ -33,9 +33,7 @@ class YoloModelSegResults(YoloModelResultsBase):
 
     @property
     def contour(self):
-
         cons = []
-
         for i, (box, mask) in enumerate(zip(self.result.boxes, self.result.masks)):
             contours = mask.xy
             # 绘制轮廓（在原图上）
@@ -62,17 +60,26 @@ class YoloModelSegResults(YoloModelResultsBase):
                 # for j, cnt in enumerate(contours):
                 #     print(f"Contour {j + 1} has {len(cnt)} points")
 
+    def get_draw(self,image=None):
+        if image is None:
+            image = self.image.copy()
 
-    def show(self):
         cv2.drawContours(
-            self.image,
+            image,
             self.contour.copy(),
             -1,  # 绘制所有轮廓
             (0, 255, 0),  # 绿色
             2  # 线宽
         )
+        return image
+
+    def show(self):
+        """
+         opencv 显示轮廓
+        """
+        draw_image = self.get_draw()
 
         # 显示结果
-        cv2.imshow(f"Object Contours", self.image)
+        cv2.imshow(f"Object Contours", draw_image)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
