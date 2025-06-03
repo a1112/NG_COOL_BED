@@ -173,6 +173,14 @@ class DetResult:
         return re_list
 
     @property
+    def left_cool_bed_steel(self):
+        re_list = []
+        for steel in self.cool_bed_steel:
+            if steel.in_left:
+                re_list.append(steel)
+        return re_list
+
+    @property
     def show_image(self):
         self.draw_map()
         self.draw_steel()

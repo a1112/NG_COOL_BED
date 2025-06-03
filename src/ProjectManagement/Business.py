@@ -1,3 +1,5 @@
+from typing import Optional
+
 from Result.DataItem import DataItem
 from Result.DataMap import DataMap
 from Result.DetResult import DetResult
@@ -7,7 +9,7 @@ class Business:
     def __init__(self):
         self.data_item_l1 = None
         self.data_item_l2 = None
-        self.data_map:DataMap | None = None
+        self.data_map: Optional[DataMap] = None
         self.count = 0
         self.cool_beds=['L1','L2']
         self.steel_infos = {}
@@ -18,33 +20,22 @@ class Business:
 
 
     def get_current_steels(self,steels_dict):
-        for key, steels in steels_dict.items():
-            steels: DetResult
-            if steels.can_get_data:
-                return steels
+        """
+        获取当前的钢坯数据
+
+
+        """
+
+        # for key, steels in steels_dict.items():
+        #     steels: DetResult
+        #     if steels.can_get_data:
+        #         return steels
         return None
 
 
     def _do_base_(self,key, steels) -> DataItem:
 
-        data_item = DataItem(key, steels)
-        steels: DetResult
-        if steels.has_roll_steel:
-
-            for steel in steels.roll_steel:
-                if steel.in_left:
-                    data_item.has_roll_steel_left = True
-                if steel.in_right:
-                    data_item.has_roll_steel_right = True
-
-        if steels.has_cool_bed_steel:
-            for steel in steels.cool_bed_steel:
-                if steel.in_left:
-                    data_item.has_cool_bed_steel_left = True
-                if steel.in_right:
-                    data_item.has_cool_bed_steel_right = True
-
-        return data_item
+        return DataItem(key, steels)
 
     def do_base(self,steels_dict,key):
         self.data_item_dict[key] = {key_:self._do_base_(key_, steels) for key_, steels in steels_dict.items()}
@@ -65,7 +56,7 @@ class Business:
     def do_l2(self, steels_dict):
         """
         处理二号冷床逻辑
-        :param steels:
+        :param steels_dict:
         :return:
         """
         return self.do_base(steels_dict,"L2")
@@ -90,10 +81,13 @@ class Business:
         self.steel_infos = steel_infos
         self.up_count()
         self.data_map = DataMap(self.count,{"L1":self.data_item_l1,"L2":self.data_item_l2})
-        try:
-            self.send_data_dict = self.data_map.get_data_map()
-            self.send_data_byte = self.data_map.data_to_byte(self.send_data_dict)
 
-            self.data_map.send(self.send_data_byte)
-        except BaseException as e:
-            print(e)
+        self.send_data_dict = self.data_map.get_data_map()
+        self.send_data_byte = self.data_map.data_to_byte(self.send_data_dict)
+
+        self.data_map.send(self.send_data_byte)
+
+
+    @property
+    def current_info(self):
+        return {}

@@ -1,16 +1,56 @@
 from Result.DetResult import DetResult
+from Result.SteelItem import SteelItemNone
 
 
 class DataItem:
     def __init__(self,key, steels: DetResult):
         self.key = key
         self.steels = steels
-        self.has_roll_steel_left = False  #  辊道存在板子 左侧
-        self.has_roll_steel_right = False  # 辊道存在板子 右侧
 
-        self.has_cool_bed_steel_left = False
-        self.has_cool_bed_steel_right = False
-        self.has_error = False
+    @property
+    def has_error(self):
+        return self.steels is None
+
+    @property
+    def has_roll_steel_left(self):
+        if self.steels is None:
+            return False
+
+        for steel in self.steels.roll_steel:
+            if steel.in_left:
+                return True
+        return False
+
+    @property
+    def has_roll_steel_right(self):
+        if self.steels is None:
+            return False
+
+        for steel in self.steels.roll_steel:
+            if steel.in_right:
+                return True
+        return False
+
+    @property
+    def has_cool_bed_steel_left(self):
+        if self.steels is None:
+            return False
+
+        for steel in self.steels.cool_bed_steel:
+            if steel.in_left:
+                return True
+        return False
+
+    @property
+    def has_cool_bed_steel_right(self):
+        if self.steels is None:
+            return False
+
+        for steel in self.steels.cool_bed_steel:
+            if steel.in_right:
+                return True
+        return False
+
 
     @property
     def roll_steel(self):
@@ -22,14 +62,22 @@ class DataItem:
 
     @property
     def left_under_steel(self):
+        if self.steels is None:
+            return SteelItemNone()
+
         return self.steels.left_under_steel
 
     @property
     def left_cool_bed_steel(self):
-        return
+        if self.steels is None:
+            return SteelItemNone()
+        return self.steels.left_cool_bed_steel
 
     @property
     def right_under_steel(self):
+        if self.steels is None:
+            return SteelItemNone()
+
         return self.steels.right_under_steel
 
     @property

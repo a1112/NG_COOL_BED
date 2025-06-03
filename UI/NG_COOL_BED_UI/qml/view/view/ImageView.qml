@@ -37,7 +37,7 @@ Item {
 
     Timer{
         id: t
-        interval: 200
+        interval: 300
         running: false
         repeat: false
         onTriggered: {

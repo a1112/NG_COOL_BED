@@ -4,9 +4,15 @@ project(NG_COOL_BED_UI VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(RCSOURCES ${RCSOURCES} resources.rc)
+
 find_package(Qt6 REQUIRED COMPONENTS Quick)
 
 qt_standard_project_setup(REQUIRES 6.8)
+
+# if(WIN32)
+
+# endif()
 
 qt_add_executable(appNG_COOL_BED_UI
     main.cpp
@@ -49,6 +55,10 @@ qt_add_qml_module(appNG_COOL_BED_UI
         QML_FILES qml/dialogs/SendDialog.qml
         QML_FILES qml/dialogs/TextViewItem.qml
         QML_FILES qml/api/Config.qml
+        RESOURCES icons/app_icon.png
+        RESOURCES resources.rc
+        RESOURCES icons/app_icon.ico
+        RESOURCES app_icon.ico
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
