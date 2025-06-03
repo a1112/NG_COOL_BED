@@ -85,6 +85,7 @@ async def send_data():
 
 @app.get("/current_info")
 def current_info():
+
     return business_main.current_info
 
 
