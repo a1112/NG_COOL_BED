@@ -40,6 +40,7 @@ class DataMap:
 
     def get_data_map(self):
         data =  {
+            "VERSION":"1.0.0",
             "I_NAI_W0_ALV_CNT":self.count, # 心跳
             "I_NAI_MET_F1": self.l1_data.has_roll_steel_left, # L1 左侧是否有板子
             "I_NAI_MET_F2": self.l1_data.has_roll_steel_right, # L1 右侧是否有板子

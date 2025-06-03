@@ -89,14 +89,21 @@ class DataItem:
         return self.steels.map_config.key
 
     def get_info(self):
+
+        if self.steels is None:
+            group_key = ""
+            objects = []
+        else:
+            group_key = self.group_key
+            objects = self.steels.infos
         return {
             "left_cool_bed_has_steel":self.has_cool_bed_steel_left,
             "right_cool_bed_has_steel": self.has_cool_bed_steel_right,
             "left_roll_bed_has_steel": self.has_roll_steel_left,
             "right_roll_bed_has_steel": self.has_roll_steel_right,
-            "group_key": self.group_key,
+            "group_key":group_key ,
             "has_error": self.has_error,
             "left_under_steel_to_center": self.left_under_steel.to_roll_center_y,
             "right_under_steel_to_center": self.right_under_steel.to_roll_center_y,
-            "objects" : self.steels.infos
+            "objects" : objects
         }

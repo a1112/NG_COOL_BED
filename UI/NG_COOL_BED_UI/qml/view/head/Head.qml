@@ -20,7 +20,16 @@ HeadBase {
         GroupButtonListView{
             height: root.height
         }
-
+        Item{
+            Layout.fillWidth: true
+        }
+        Label {
+            Material.foreground: Material.Red
+            font.pointSize: 15
+            text : "存在错误！- 无可用数据"
+            font.bold: true
+            visible: cool_bed_core.coolBedDataType.use_item.has_error
+        }
         Item{
             Layout.fillWidth: true
         }
@@ -43,18 +52,18 @@ HeadBase {
              height: root.height+5
              scale: 0.7
                implicitHeight: root.height+5
-            model: ["透视-视图 ","模拟-视图 "]
+            model: ["透视-视图 ", "模拟-视图 "]
         }
 
         CheckDelegate{
             implicitHeight: root.height
-            text: qsTr("背景标注")
+            text: qsTr("定位")
             checked: cool_bed_core.show_map_view
             onCheckedChanged: cool_bed_core.show_map_view = checked
         }
         CheckDelegate{
             implicitHeight: root.height
-            text: qsTr("检测标注")
+            text: qsTr("标注")
             checked: cool_bed_core.show_det_view
             onCheckedChanged: cool_bed_core.show_det_view = checked
         }

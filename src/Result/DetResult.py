@@ -40,8 +40,10 @@ class DetResult:
 
     @property
     def can_get_data(self):
-        # for t_car in self.t_car_list:
-        #     return False
+        for t_car in self.t_car_list:
+            t_car: SteelItem
+            if t_car.h_mm > self.map_config.MAX_T_CAR_HEIGHT or t_car.w_mm > self.map_config.MAX_T_CAR_WIDTH :
+                return False
         return True
 
     def draw_steel_in_roll(self):

@@ -47,7 +47,7 @@ Item {
     function in_list(key,list_){
         let re = false
         for_list(list_,(value)=>{
-                 if(key==value){
+                 if(key===value){
                         re=true
                      }
                  })

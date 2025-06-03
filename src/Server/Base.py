@@ -26,14 +26,14 @@ def get_data_item_info(data:DataItem):
         return "w无数据，刷新后再尝试吧。"
     return {
         "key":data.group_key,
-        "左侧辊道有板":data.has_roll_steel_left,
-        "右侧辊道有板":data.has_roll_steel_right,
-        "左侧冷床辊道有板":data.has_cool_bed_steel_left,
-        "右侧冷床辊道有板":data.has_cool_bed_steel_right,
-        "操作错误": data.has_error,
-        "左侧距离下辊道距离":data.left_under_steel.y2_mm,
-        "左侧距离辊道中心距离": data.left_under_steel.to_roll_center_y,
-        "steel_rect":data.steel_info
+        "左侧辊道有板" : data.has_roll_steel_left,
+        "右侧辊道有板" : data.has_roll_steel_right,
+        "左侧冷床辊道有板" : data.has_cool_bed_steel_left,
+        "右侧冷床辊道有板" : data.has_cool_bed_steel_right,
+        "操作错误" : data.has_error,
+        "左侧距离下辊道距离" : data.left_under_steel.y2_mm,
+        "左侧距离辊道中心距离" : data.left_under_steel.to_roll_center_y,
+        "steel_rect" : data.steel_info
     }
 
 @app.get("/steel_msg")
@@ -75,8 +75,9 @@ async def get_image(cool_bed:str, key:str, cap_index:int):
 
 @app.get("/data/{cool_bed:str}")
 async def get_data(cool_bed:str):
-    return {key:item.get_info() for key, item in business_main.data_item_dict[cool_bed].items()}
-
+    cool_bed_data =  {key:item.get_info() for key, item in business_main.data_item_dict[cool_bed].items()}
+    cool_bed_data["current"] = business_main.get_current_data(cool_bed)
+    return cool_bed_data
     #  return business_main.data_map.get_info_by_cool_bed(cool_bed)
 
 @app.get("/send_data")

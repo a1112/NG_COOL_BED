@@ -3,6 +3,9 @@ import QtQuick
 Item {
 
     function key_to_msg(key){
+        if (key === "VERSION"){
+            return "版本"
+        }
         if (key === "I_NAI_W0_ALV_CNT"){
             return "心跳"
         }

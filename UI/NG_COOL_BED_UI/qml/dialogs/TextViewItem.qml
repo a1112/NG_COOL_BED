@@ -23,6 +23,7 @@ Item {
         font.bold: true
         id : key_id
         text:  title + " : "
+
     }
 
     Label{
@@ -30,7 +31,8 @@ Item {
         Layout.fillWidth: true
         horizontalAlignment: Text.AlignHCenter
         font.bold: true
-        text:  "" + value
+        text:  value
+        color: parseInt(value)?"green" : "red"
         background: Rectangle{color: "#000" }
     }
     }

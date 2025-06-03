@@ -15,6 +15,14 @@ class GlobalCoolBedConfigBase:
         self.cool_bed_height = 5810
 
     @property
+    def MAX_T_CAR_HEIGHT(self):
+        return self.cool_bed_height
+
+    @property
+    def MAX_T_CAR_WIDTH(self):
+        return self.cool_bed_width/ 2
+
+    @property
     def up_seat_d(self):
         return self.roll_height
 

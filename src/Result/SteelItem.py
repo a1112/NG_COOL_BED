@@ -193,7 +193,7 @@ class SteelItemList(SteelItemBase):
         # 距离中心线的建立
         return (self.y2_mm+ self.h_mm/2) - self.map_config.roll_center_y
 
-class SteelItemNone():
+class SteelItemNone:
     """
     没有钢卷的情况
     """

@@ -22,12 +22,12 @@ RowLayout{
         DataLabelItem{
             msg:"使用的相机组合"
             key:"KEY"
-            value:cool_bed_core.coolBedDataType.use_group_key
+            value:cool_bed_core.coolBedDataType.current_item.use_group_key
         }
         DataLabelEx{
             msg: "是否存在错误？"
             key: "ERROR?"
-            has: cool_bed_core.coolBedDataType.has_error
+            has: cool_bed_core.coolBedDataType.current_item.has_error
         }
     }
 
@@ -37,24 +37,24 @@ RowLayout{
         DataLabelEx{
             msg:"冷床左侧是否有板"
             key:"CL"
-            has: cool_bed_core.coolBedDataType.left_cool_bed_has_steel
+            has: cool_bed_core.coolBedDataType.current_item.left_cool_bed_has_steel
         }
         DataLabelEx{
             msg:"冷床右侧是否有板"
             key:"CR"
-            has:  cool_bed_core.coolBedDataType.right_cool_bed_has_steel
+            has:  cool_bed_core.coolBedDataType.current_item.right_cool_bed_has_steel
         }
     }
     Row{
         DataLabelEx{
             msg:"辊道左侧是否有板"
             key:"RL"
-            has:cool_bed_core.coolBedDataType.left_roll_bed_has_steel
+            has:cool_bed_core.coolBedDataType.current_item.left_roll_bed_has_steel
         }
         DataLabelEx{
             msg:"辊道右侧是否有板"
             key:"RR"
-            has:cool_bed_core.coolBedDataType.right_roll_bed_has_steel
+            has:cool_bed_core.coolBedDataType.current_item.right_roll_bed_has_steel
         }
     }
 
