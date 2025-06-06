@@ -8,7 +8,7 @@ import "../base"
 HeadBase {
     id:root
     Layout.fillWidth: true
-    height: 35
+    height: 45
     RowLayout{
         anchors.fill: parent
         spacing: 10
@@ -36,7 +36,7 @@ HeadBase {
             Layout.fillWidth: true
         }
         ItemDelegate{
-            height: root.height
+            height: root.height-5
             implicitHeight: height
             text: "SEND  - " + send_dialog.send_data["I_NAI_W0_ALV_CNT"]
             background: Rectangle{
@@ -60,9 +60,19 @@ HeadBase {
                              }
         }
         Item{
-            width: 20
+            width: 10
             height: 1
         }
-
+        SettingButton{
+            height: parent.height
+            width: parent.width
+            onClicked: {
+                tool_menu.popup()
+            }
+        }
+        Item{
+            width: 5
+            height: 1
+        }
     }
 }

@@ -40,4 +40,13 @@ Item {
         width:map_config_item.down.width
         height:map_config_item.down.height
     }
+
+    Rectangle{
+        // 中心
+        color: "yellow"
+        width: 2
+        x:map_config_item.center_x-1
+        y:0
+        height:root.height
+    }
 }
