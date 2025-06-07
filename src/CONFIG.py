@@ -10,10 +10,17 @@ CONFIG_FOLDER = Path(__file__).parent.parent/"config"
 if not CONFIG_FOLDER.is_dir():
     CONFIG_FOLDER = Path("D:/NG_CONFIG")
 
+
 assert CONFIG_FOLDER.exists(), f"CONFIG_FOLDER 不存在： {CONFIG_FOLDER}"
 
 print(CONFIG_FOLDER)
-FIRST_SAVE_FOLDER = CONFIG_FOLDER/ "first_save"
+SOFT_FOLDER = ""
+for folder in [CONFIG_FOLDER / "soft", CONFIG_FOLDER.parent / "soft", Path(__file__).parent.parent/"soft"]:
+    if folder.exists():
+        SOFT_FOLDER = folder
+        break
+
+FIRST_SAVE_FOLDER = CONFIG_FOLDER / "first_save"
 
 
 CAMERA_CONFIG_FOLDER = CONFIG_FOLDER / "camera"

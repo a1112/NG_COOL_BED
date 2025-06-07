@@ -25,8 +25,6 @@ class Business:
     def get_current_steels(self,steels_dict):
         """
         获取当前的钢坯数据
-
-
         """
 
         for key, steels in steels_dict.items():

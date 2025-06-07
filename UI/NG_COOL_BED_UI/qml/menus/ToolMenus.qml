@@ -3,6 +3,17 @@ import QtQuick.Controls
 
 
 Menu {
+    function has_app(name){
+        let app_url =app_core.app_dict[name]
+        if (app_url)
+            return true
+        return false
+    }
+
+    function open_app(name){
+        let app_url =app_core.app_dict[name]
+        Qt.openUrlExternally("file:///"+app_url)
+    }
 
     MenuItem{
         text: qsTr("API DOC")
@@ -25,9 +36,15 @@ Menu {
         title: qsTr("打开")
         MenuItem{
                     text: qsTr("labelme")
+                    onClicked: {
+                        open_app("labelme")
+                    }
         }
         MenuItem{
                     text: qsTr("labelimg")
+                    onClicked: {
+                        open_app("labelimg")
+                    }
         }
     }
 }

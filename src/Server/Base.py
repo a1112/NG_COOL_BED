@@ -1,6 +1,7 @@
 import cv2
 from fastapi import FastAPI
 
+from Configs.AppConfigs import app_configs
 from Configs.CameraManageConfig import camera_manage_config
 from Configs.CoolBedGroupConfig import CoolBedGroupConfig
 from Configs.GroupConfig import GroupConfig
@@ -49,8 +50,14 @@ def steel_info():
 @app.get("/info")
 async def get_info():
 
-    return camera_manage_config.info
+    info = camera_manage_config.info
+    info.update(
+        {
+            "app": app_configs.info
+        }
+    )
 
+    return info
 
 @app.get("/map/{cool_bed_key:str}")
 async def get_map(cool_bed_key):
