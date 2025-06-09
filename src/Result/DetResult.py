@@ -96,22 +96,22 @@ class DetResult:
         # 绘制文本标签
         cv2.putText(self.image, text, (line_p[0][0],int((line_p[0][1] + line_p[1][1])/2)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), thickness)
 
-    def get_under_steel(self,in_roll_only=False,in_cool_bed_only=False,in_left=True,in_right=True):
+    def get_under_steel(self,in_roll=False, in_cool_bed=False, in_left=True,in_right=True):
+        steels = self.steel_list
+        if in_roll:
+            steels = [steel for steel in steels if steel.in_roll]
 
+        if in_cool_bed:
+            steels = [steel for steel in steels if steel.in_cool_bed]
 
-        if in_roll_only:
-            steels= self.cool_bed_steel
-        elif in_cool_bed_only:
-            steels = self.cool_bed_steel
-        else:
-            steels = self.steel_list
+        if in_left:
+            steels = [steel for steel in steels if steel.in_left]
+
+        if in_right:
+            steels = [steel for steel in steels if steel.in_right]
+
         if not steels:
             return SteelItemList(self.map_config, [])
-        # 过滤
-        if not in_left:
-            steels = [steel for steel in steels if steel.in_right]
-        if not in_right:
-            steels = [steel for steel in steels if steel.in_left]
 
         re_list = []
         base_steel = steels[0]
@@ -124,24 +124,28 @@ class DetResult:
         return SteelItemList(self.map_config, re_list)
 
     @property
-    def under_steel(self):
-        return self.get_under_steel(in_roll_only=True)
-
-    @property
-    def under_roll_steel(self):
-        return self.get_under_steel(in_roll_only=True)
-
-    @property
-    def under_cool_bed_steel(self):
-        return self.get_under_steel(in_cool_bed_only=True)
-
-    @property
     def left_under_steel(self):
-        return self.get_under_steel(in_left=True)
+        return self.get_under_steel(in_roll = True, in_cool_bed = True, in_left = True)
 
     @property
     def right_under_steel(self):
-        return self.get_under_steel(in_right=True)
+        return self.get_under_steel(in_roll = True, in_cool_bed = True, in_right = True)
+
+    @property
+    def left_under_cool_bed_steel(self):
+        return self.get_under_steel(in_cool_bed=True, in_left=True)
+
+    @property
+    def right_under_cool_bed_steel(self):
+        return self.get_under_steel(in_cool_bed=True, in_right=True)
+
+    @property
+    def left_under_roll_steel(self):
+        return self.get_under_steel(in_roll=True, in_left=True)
+
+    @property
+    def right_under_roll_steel(self):
+        return self.get_under_steel(in_roll=True, in_right=True)
 
     @property
     def has_roll_steel(self):
