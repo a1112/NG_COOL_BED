@@ -134,13 +134,13 @@ class DataMap:
 
     def data_to_byte(self, data):
         return (get_int_byte(data["I_NAI_W0_ALV_CNT"])
-                +get_bools_byte([data["I_NAI_MET_F1"],data["I_NAI_MET_F2"],
-                                 data["I_NAI_MET_F5"],data["I_NAI_MET_F6"],
+                +get_bools_byte([data["I_NAI_MET_F1"], data["I_NAI_MET_F2"],
+                                 data["I_NAI_MET_F5"], data["I_NAI_MET_F6"],
                                  data["I_NAI_LONG_CB1"], data["I_NAI_LONG_CB2"],
                                  data["I_NAI_ERROR_CB1"], data["I_NAI_ERROR_CB2"],
                                  ])
-                +get_bools_byte([data["I_NAI_LONG_F12"],data["I_NAI_LONG_F56"],
-                                 data["I_NAI_W1_spare1"],data["I_NAI_W1_spare2"],
+                +get_bools_byte([data["I_NAI_LONG_F12"], data["I_NAI_LONG_F56"],
+                                 data["I_NAI_W1_spare1"], data["I_NAI_W1_spare2"],
                                  data["I_NAI_W1_spare3"], data["I_NAI_W1_spare4"],
                                  data["I_NAI_W1_spare5"], data["I_NAI_W1_spare6"],
                                  ])
