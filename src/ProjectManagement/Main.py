@@ -3,6 +3,7 @@ from typing import Optional
 
 from tqdm import tqdm
 
+import CONFIG
 from Base import RollingQueue
 from Base.Error import CoolBedError
 from Configs.GlobalConfig import GlobalConfig
@@ -103,7 +104,8 @@ class CoolBedThreadWorker(Thread):
                 time.sleep(1 / self.FPS - use_time)
             else:
                 logger.warning(f"单帧处理时间 {use_time}")
-
+            if CONFIG.DEBUG_MODEL:
+                time.sleep(5)
 
         # join
         # for key, cap_ture in self.camera_map.items():

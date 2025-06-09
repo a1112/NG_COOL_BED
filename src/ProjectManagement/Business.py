@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict
 
 from Result.DataItem import DataItem
 from Result.DataMap import DataMap
@@ -13,7 +13,7 @@ class Business:
         self.count = 0
         self.cool_beds=['L1','L2']
         self.steel_infos = {}
-        self.data_item_dict = {}
+        self.data_item_dict : Dict[str, Dict[str, DataItem]] = {}
         self.send_data_dict = {}
         self.current_datas = {}
         self.send_data_byte = bytearray(b"")
@@ -34,8 +34,7 @@ class Business:
         return None
 
 
-    def _do_base_(self,key, steels) -> DataItem:
-
+    def _do_base_(self,key, steels:DetResult) -> DataItem:
         return DataItem(key, steels)
 
     def do_base(self,steels_dict,key):
@@ -76,7 +75,6 @@ class Business:
 
 
     def update(self,steel_infos:dict):
-        print(f"update Business {steel_infos}")
         self.data_item_l1 = self.do_l1(steel_infos["L1"])
         self.data_item_l2 = self.do_l2(steel_infos["L2"])
         self.steel_infos = steel_infos

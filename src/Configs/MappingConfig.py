@@ -33,6 +33,7 @@ class MappingConfig:
     def MAX_T_CAR_HEIGHT(self):
         return self.glob_cool_bed_config.MAX_T_CAR_HEIGHT
 
+    @property
     def MAX_T_CAR_WIDTH(self):
         return self.glob_cool_bed_config.MAX_T_CAR_WIDTH
 

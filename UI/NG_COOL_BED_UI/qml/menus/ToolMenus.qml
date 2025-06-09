@@ -16,6 +16,14 @@ Menu {
     }
 
     MenuItem{
+        text: qsTr("刷新")
+        onClicked: {
+            app_core.flush()
+        }
+
+    }
+
+    MenuItem{
         text: qsTr("API DOC")
         onClicked: {
             Qt.openUrlExternally(app_api.server_url.serverUrl+"/docs")

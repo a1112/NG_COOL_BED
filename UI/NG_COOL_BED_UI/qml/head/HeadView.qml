@@ -18,19 +18,22 @@ HeadBase {
         }
         Label {
                 Material.foreground: Material.BlueGrey
-
-            font.pointSize: 20
-            font.bold: true
-            text: app_core.title_text
+                font.pointSize: 20
+                font.bold: true
+                text: app_core.title_text
         }
         Label {
             Material.foreground: Material.Pink
-
             font.pointSize: 13
             font.bold: true
             text: "(1.0.0)"
         }
-
+        Label{
+            text: app_core.debug ? "   测试" : "   在线"
+            font.pointSize: 15
+            font.bold: true
+            Material.foreground:app_core.debug ? Material.Red : Material.Green
+        }
 
         Item{
             Layout.fillWidth: true

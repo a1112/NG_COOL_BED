@@ -17,13 +17,15 @@ class DetResult:
     单独的 单帧检出数据
     """
     def __init__(self, image, rec_list, map_config):
+
         self.image = np.copy(image)
         self.time=time.time()
         self.map_config:MappingConfig = map_config
-        self.rec_list = rec_list
-        self.obj_list = [SteelItem(rec, self.map_config) for rec in self.rec_list]
+        self.obj_list = [SteelItem(rec, self.map_config) for rec in rec_list]
         self.steel_list = [obj for obj in self.obj_list if obj.is_steel]
         self.t_car_list = [obj for obj in self.obj_list if obj.is_t_car]
+
+
         self.steel_list.sort(key=lambda steel: steel.name)
 
     @property
@@ -42,7 +44,7 @@ class DetResult:
     def can_get_data(self):
         for t_car in self.t_car_list:
             t_car: SteelItem
-            if t_car.h_mm > self.map_config.MAX_T_CAR_HEIGHT or t_car.w_mm > self.map_config.MAX_T_CAR_WIDTH :
+            if t_car.h_mm > self.map_config.MAX_T_CAR_HEIGHT or ( t_car.w_mm > self.map_config.MAX_T_CAR_WIDTH) :
                 return False
         return True
 
@@ -153,11 +155,7 @@ class DetResult:
 
     @property
     def roll_steel(self):
-        re_list=[]
-        for steel in self.steel_list:
-            if steel.in_roll:
-                re_list.append(steel)
-        return re_list
+        return [steel for steel in self.steel_list if steel.in_roll]
 
     @property
     def has_cool_bed_steel(self):
@@ -168,11 +166,7 @@ class DetResult:
 
     @property
     def cool_bed_steel(self):
-        re_list=[]
-        for steel in self.steel_list:
-            if steel.in_cool_bed:
-                re_list.append(steel)
-        return re_list
+        return [steel for steel in self.steel_list if steel.in_cool_bed]
 
     @property
     def left_cool_bed_steel(self):
@@ -187,3 +181,6 @@ class DetResult:
         self.draw_map()
         self.draw_steel()
         return self.image
+
+    def __repr__(self):
+        return f"DetResult(time={self.time}, steel_count={len(self.steel_list)}, t_car_count={len(self.t_car_list)})"

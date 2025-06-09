@@ -19,13 +19,37 @@ Item {
 
     property string name_: name
 
+    property bool i_left: in_left
+    property bool i_right: in_right
+    property bool i_cool_bed: in_cool_bed
+    property bool i_roll: in_roll
+    property bool c_to_roll_center_y: to_roll_center_y
+
+    // "in_left": self.in_left,
+    // "in_right": self.in_right,
+    // "in_cool_bed": self.in_cool_bed,
+    // "in_roll": self.in_roll,
+    // "to_roll_center_y": self.to_roll_center_y
+
     function get_vis_str(){
 
         return "x: "+(m_x/1000)+" y: "+(m_y/1000)+" w: "+(m_w/1000) + " h: "+ (m_h/1000)
     }
 
+    function get_info_str(){
+            return "左："+i_left+" 右:"+i_right+" 冷床:"+i_cool_bed+" 辊道:"+i_roll+" 距离中心:"+c_to_roll_center_y
+    }
+    function get_in_item_str(it){
+        return it?"<font color=\"green\">T</font>":"<font color=\"red\">F</font>"
+    }
+    property string in_str1:get_in_item_str(i_left && i_cool_bed) +" "+get_in_item_str(i_right && i_cool_bed)
+    property string in_str2:get_in_item_str(i_left && i_roll)+" " +get_in_item_str(i_right && i_roll)
+    // property string in_str:"l:"+get_in_item_str(i_left)+"r:"+get_in_item_str(i_right)+
+    //                        "co:"+get_in_item_str(i_cool_bed)+"ro:"+get_in_item_str(i_roll)
     property string type_name: "base"
     property string vis_str: get_vis_str(type_name)
+
+    property string info_str: get_info_str()
 
     property real y_t_c :  (m_y-m_h/2 -5000/2)/1000
 }

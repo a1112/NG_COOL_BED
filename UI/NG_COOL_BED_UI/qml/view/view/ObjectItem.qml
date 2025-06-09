@@ -5,6 +5,7 @@ Rectangle {
 
     // property rect rect_box: value
     property ObjectType objectType: ObjectType{}
+
     color : "#22000000"
     border.width : 2
     border.color : "green"
@@ -38,4 +39,30 @@ Rectangle {
         font.bold: true
         color: "green"
     }
+    ItemDelegate{
+        anchors.fill: parent
+        ToolTip.visible: hovered
+        ToolTip.text: objectType.info_str
+    }
+    Column{
+        anchors.bottom : parent.bottom
+        anchors.left:parent.left
+    Row{
+        HasRec{
+            has: objectType.i_left && objectType.i_cool_bed
+        }
+        HasRec{
+            has: objectType.i_right && objectType.i_cool_bed
+        }
+    }
+    Row{
+        HasRec{
+            has: objectType.i_left && objectType.i_roll
+        }
+        HasRec{
+            has: objectType.i_right && objectType.i_roll
+        }
+    }
+    }
+
 }

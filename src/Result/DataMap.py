@@ -8,7 +8,7 @@ def format_int(data_item):
     return int(data_item/10)
 
 def get_int_byte(value:int):
-    return bytearray(value.to_bytes(2,"little"))
+    return bytearray(value.to_bytes(2, "little", signed = True))
 
 def get_bools_byte(original:list):
     bits = [int(b) for b in original]
@@ -25,7 +25,7 @@ class DataMap:
 
     def get_info_by_cool_bed(self,cool_bed):
         data_item = self.data_dict[cool_bed]
-
+        data_item:DataItem
         return {
             "left_cool_bed_has_steel":data_item.has_cool_bed_steel_left,
             "right_cool_bed_has_steel": data_item.has_cool_bed_steel_right,
@@ -35,6 +35,8 @@ class DataMap:
             "has_error": data_item.has_error,
             "left_under_steel_to_center": data_item.left_under_steel.to_roll_center_y,
             "right_under_steel_to_center": data_item.right_under_steel.to_roll_center_y,
+
+
             "objects" : data_item.steels.infos
         }
 

@@ -53,11 +53,13 @@ async def get_info():
     info = camera_manage_config.info
     info.update(
         {
-            "app": app_configs.info
+            "app": app_configs.info,
+            "debug": global_config.debug,
         }
     )
 
     return info
+
 
 @app.get("/map/{cool_bed_key:str}")
 async def get_map(cool_bed_key):
@@ -68,6 +70,7 @@ async def get_map(cool_bed_key):
         map_config :MappingConfig = g_config.map_config
         re_data[g_key] = map_config.info
     return re_data
+
 
 @app.get("/image/{cool_bed:str}/{key:str}/{cap_index:int}")
 async def get_image(cool_bed:str, key:str, cap_index:int):
@@ -80,6 +83,7 @@ async def get_image(cool_bed:str, key:str, cap_index:int):
     # 返回图像响应
     return Response(content=encoded_image.tobytes(), media_type="image/jpeg")
 
+
 @app.get("/data/{cool_bed:str}")
 async def get_data(cool_bed:str):
     cool_bed_data =  {key:item.get_info() for key, item in business_main.data_item_dict[cool_bed].items()}
@@ -87,9 +91,11 @@ async def get_data(cool_bed:str):
     return cool_bed_data
     #  return business_main.data_map.get_info_by_cool_bed(cool_bed)
 
+
 @app.get("/send_data")
 async def send_data():
     return business_main.send_data
+
 
 @app.get("/current_info")
 def current_info():

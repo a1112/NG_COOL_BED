@@ -32,9 +32,10 @@ class SteelItem(SteelItemBase):
     def name(self):
         return id_to_name(self.type_)
 
+    @property
     def is_steel(self):
-        return self.name == "name"
-
+        return self.name == "steel"
+    @property
     def is_t_car(self):
         return self.name == "t_car"
 
@@ -111,7 +112,7 @@ class SteelItem(SteelItemBase):
 
     @property
     def in_right(self):
-        return self.x_mm+self.w_mm < self.map_config.mm_center_x-100
+        return self.x_mm+self.w_mm > self.map_config.mm_center_x-100
 
     @property
     def to_roll_center_y(self):
@@ -130,8 +131,12 @@ class SteelItem(SteelItemBase):
             "y_mm": self.mm_rec[1],
             "w_mm": self.mm_rec[2],
             "h_mm": self.mm_rec[3],
-
-            "name": self.name
+            "name": self.name,
+            "in_left": self.in_left,
+            "in_right": self.in_right,
+            "in_cool_bed": self.in_cool_bed,
+            "in_roll": self.in_roll,
+            "to_roll_center_y": self.to_roll_center_y
         }
 
 class SteelItemList(SteelItemBase):
