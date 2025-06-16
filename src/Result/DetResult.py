@@ -17,13 +17,15 @@ class DetResult:
     单独的 单帧检出数据
     """
     def __init__(self, image, rec_list, map_config):
+
         self.image = np.copy(image)
         self.time=time.time()
         self.map_config:MappingConfig = map_config
-        self.rec_list = rec_list
-        self.obj_list = [SteelItem(rec, self.map_config) for rec in self.rec_list]
+        self.obj_list = [SteelItem(rec, self.map_config) for rec in rec_list]
         self.steel_list = [obj for obj in self.obj_list if obj.is_steel]
         self.t_car_list = [obj for obj in self.obj_list if obj.is_t_car]
+
+
         self.steel_list.sort(key=lambda steel: steel.name)
 
     @property
@@ -40,8 +42,10 @@ class DetResult:
 
     @property
     def can_get_data(self):
-        # for t_car in self.t_car_list:
-        #     return False
+        for t_car in self.t_car_list:
+            t_car: SteelItem
+            if t_car.h_mm > self.map_config.MAX_T_CAR_HEIGHT or ( t_car.w_mm > self.map_config.MAX_T_CAR_WIDTH) :
+                return False
         return True
 
     def draw_steel_in_roll(self):
@@ -92,22 +96,22 @@ class DetResult:
         # 绘制文本标签
         cv2.putText(self.image, text, (line_p[0][0],int((line_p[0][1] + line_p[1][1])/2)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), thickness)
 
-    def get_under_steel(self,in_roll_only=False,in_cool_bed_only=False,in_left=True,in_right=True):
+    def get_under_steel(self,in_roll=False, in_cool_bed=False, in_left=True,in_right=True):
+        steels = self.steel_list
+        if in_roll:
+            steels = [steel for steel in steels if steel.in_roll]
 
+        if in_cool_bed:
+            steels = [steel for steel in steels if steel.in_cool_bed]
 
-        if in_roll_only:
-            steels= self.cool_bed_steel
-        elif in_cool_bed_only:
-            steels = self.cool_bed_steel
-        else:
-            steels = self.steel_list
+        if in_left:
+            steels = [steel for steel in steels if steel.in_left]
+
+        if in_right:
+            steels = [steel for steel in steels if steel.in_right]
+
         if not steels:
             return SteelItemList(self.map_config, [])
-        # 过滤
-        if not in_left:
-            steels = [steel for steel in steels if steel.in_right]
-        if not in_right:
-            steels = [steel for steel in steels if steel.in_left]
 
         re_list = []
         base_steel = steels[0]
@@ -120,24 +124,28 @@ class DetResult:
         return SteelItemList(self.map_config, re_list)
 
     @property
-    def under_steel(self):
-        return self.get_under_steel(in_roll_only=True)
-
-    @property
-    def under_roll_steel(self):
-        return self.get_under_steel(in_roll_only=True)
-
-    @property
-    def under_cool_bed_steel(self):
-        return self.get_under_steel(in_cool_bed_only=True)
-
-    @property
     def left_under_steel(self):
-        return self.get_under_steel(in_left=True)
+        return self.get_under_steel(in_roll = True, in_cool_bed = True, in_left = True)
 
     @property
     def right_under_steel(self):
-        return self.get_under_steel(in_right=True)
+        return self.get_under_steel(in_roll = True, in_cool_bed = True, in_right = True)
+
+    @property
+    def left_under_cool_bed_steel(self):
+        return self.get_under_steel(in_cool_bed=True, in_left=True)
+
+    @property
+    def right_under_cool_bed_steel(self):
+        return self.get_under_steel(in_cool_bed=True, in_right=True)
+
+    @property
+    def left_under_roll_steel(self):
+        return self.get_under_steel(in_roll=True, in_left=True)
+
+    @property
+    def right_under_roll_steel(self):
+        return self.get_under_steel(in_roll=True, in_right=True)
 
     @property
     def has_roll_steel(self):
@@ -151,11 +159,7 @@ class DetResult:
 
     @property
     def roll_steel(self):
-        re_list=[]
-        for steel in self.steel_list:
-            if steel.in_roll:
-                re_list.append(steel)
-        return re_list
+        return [steel for steel in self.steel_list if steel.in_roll]
 
     @property
     def has_cool_bed_steel(self):
@@ -166,9 +170,13 @@ class DetResult:
 
     @property
     def cool_bed_steel(self):
-        re_list=[]
-        for steel in self.steel_list:
-            if steel.in_cool_bed:
+        return [steel for steel in self.steel_list if steel.in_cool_bed]
+
+    @property
+    def left_cool_bed_steel(self):
+        re_list = []
+        for steel in self.cool_bed_steel:
+            if steel.in_left:
                 re_list.append(steel)
         return re_list
 
@@ -177,3 +185,6 @@ class DetResult:
         self.draw_map()
         self.draw_steel()
         return self.image
+
+    def __repr__(self):
+        return f"DetResult(time={self.time}, steel_count={len(self.steel_list)}, t_car_count={len(self.t_car_list)})"

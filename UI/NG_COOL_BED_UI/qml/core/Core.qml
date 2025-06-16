@@ -4,7 +4,8 @@ Item {
     property string title_text: qsTr("冷床下料定位系统")
 
     property var global_info: {return {}}
-
+    property bool debug: global_info ["debug"]
+    property var app_dict: {return {}}
     property var global_map_info: {return {}}
 
     property ListModel coolBedListModel: ListModel{
@@ -21,12 +22,13 @@ Item {
                                                           data_: JSON.stringify(global_info["data"][key])
                                                       })
                           })
+        app_dict = global_info["app"]
     }
 
 
     function flush(){
         app_api.get_info((text)=>{
-                             // console.log("global_info ", text)
+                            // console.log("global_info ", text)
                              global_info = JSON.parse(text)
                          },(err)=>{
                              console.log("global_info get error  ",err)
@@ -42,6 +44,8 @@ Item {
                     )
 
     }
+
+
 
     Component.onCompleted: {
         flush()

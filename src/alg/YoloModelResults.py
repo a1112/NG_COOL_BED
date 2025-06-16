@@ -12,7 +12,7 @@ class YoloModelResultsBase:
             self.image = np.array(image)
         else:
             self.image = image
-
+        self.image: np.ndarray
 
 
     @property
@@ -33,9 +33,7 @@ class YoloModelSegResults(YoloModelResultsBase):
 
     @property
     def contour(self):
-
         cons = []
-
         for i, (box, mask) in enumerate(zip(self.result.boxes, self.result.masks)):
             contours = mask.xy
             # 绘制轮廓（在原图上）
@@ -43,36 +41,56 @@ class YoloModelSegResults(YoloModelResultsBase):
             contour_int = np.round(contour).astype(np.int32)
             cons.append(contour_int)
         return cons
-                # cv2.drawContours(
-                #     contour_image,
-                #     contour_int,
-                #     -1,  # 绘制所有轮廓
-                #     (0, 255, 0),  # 绿色
-                #     2  # 线宽
-                # )
-                #
-                # # 显示结果
-                # cv2.imshow(f"Object {i + 1} Contours", contour_image)
-                # cv2.waitKey(0)
-                # cv2.destroyAllWindows()
-                #
-                # # 打印轮廓信息
-                # print(f"Object {i + 1} - {result.names[int(box.cls)]}")
-                # print(f"Found {len(contours)} contour(s)")
-                # for j, cnt in enumerate(contours):
-                #     print(f"Contour {j + 1} has {len(cnt)} points")
 
+    def get_draw(self,image=None):
+        if image is None:
+            image = self.image.copy()
 
-    def show(self):
         cv2.drawContours(
-            self.image,
+            image,
             self.contour.copy(),
             -1,  # 绘制所有轮廓
             (0, 255, 0),  # 绿色
             2  # 线宽
         )
+        return image
+
+    def show(self):
+        """
+         opencv 显示轮廓
+        """
+        draw_image = self.get_draw()
 
         # 显示结果
-        cv2.imshow(f"Object Contours", self.image)
+        cv2.imshow(f"Object Contours", draw_image)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
+
+    def to_labelme_json(self):
+        """
+        Convert the segmentation results to a labelme format.
+        """
+        self.image: np.ndarray
+        labelme_data = {
+            "version": "4.5.6",
+            "flags": {},
+            "shapes": [],
+            "imagePath": "",
+            "imageData": None,
+            "imageHeight": self.image.shape[0],
+            "imageWidth": self.image.shape[1]
+        }
+
+        for i, (box, mask) in enumerate(zip(self.result.boxes, self.result.masks)):
+            contours = mask.xy
+            contour = np.array(contours, dtype=np.float32)
+            contour_int = np.round(contour).astype(np.int32).tolist()
+            labelme_data["shapes"].append({
+                "label": self.all_names[box.cls],
+                "points": contour_int,
+                "group_id": None,
+                "shape_type": "polygon",
+                "flags": {}
+            })
+
+        return labelme_data

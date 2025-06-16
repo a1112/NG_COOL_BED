@@ -15,6 +15,14 @@ class GlobalCoolBedConfigBase:
         self.cool_bed_height = 5810
 
     @property
+    def MAX_T_CAR_HEIGHT(self):
+        return self.cool_bed_height
+
+    @property
+    def MAX_T_CAR_WIDTH(self):
+        return self.cool_bed_width/ 2
+
+    @property
     def up_seat_d(self):
         return self.roll_height
 
@@ -23,8 +31,14 @@ class GlobalCoolBedConfigBase:
         return self.roll_height+self.up_seat_height
 
     @property
+    def center_x(self):
+        return self.cool_bed_width/2
+
+    @property
     def up_cool_bed(self):
         return self.roll_height+self.up_seat_height+self.cool_bed_height
+
+
 
     @property
     def info(self):
@@ -39,6 +53,7 @@ class GlobalCoolBedConfigBase:
             "up_seat_d_mm":self.up_seat_d,
             "up_seat_u_mm":self.up_seat_u,
             "up_cool_bed_mm":self.up_cool_bed,
+            "center_x_mm":self.center_x
         }
 
 

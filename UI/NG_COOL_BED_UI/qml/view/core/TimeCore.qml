@@ -12,6 +12,7 @@ Item {
             to_auto_true_count -= 1
         }
     }
+
     function start_to_auto_timer(){
         to_auto_timer.start()
     }
@@ -29,11 +30,7 @@ Item {
                              (err)=>{
                                 console.log("get_data error")
                              }
-
                              )
-
-
-
         }
     }
 }

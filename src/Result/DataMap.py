@@ -8,7 +8,7 @@ def format_int(data_item):
     return int(data_item/10)
 
 def get_int_byte(value:int):
-    return bytearray(value.to_bytes(2,"little"))
+    return bytearray(value.to_bytes(2, "little", signed = True))
 
 def get_bools_byte(original:list):
     bits = [int(b) for b in original]
@@ -25,7 +25,7 @@ class DataMap:
 
     def get_info_by_cool_bed(self,cool_bed):
         data_item = self.data_dict[cool_bed]
-
+        data_item:DataItem
         return {
             "left_cool_bed_has_steel":data_item.has_cool_bed_steel_left,
             "right_cool_bed_has_steel": data_item.has_cool_bed_steel_right,
@@ -35,11 +35,14 @@ class DataMap:
             "has_error": data_item.has_error,
             "left_under_steel_to_center": data_item.left_under_steel.to_roll_center_y,
             "right_under_steel_to_center": data_item.right_under_steel.to_roll_center_y,
+
+
             "objects" : data_item.steels.infos
         }
 
     def get_data_map(self):
         data =  {
+            "VERSION":"1.0.0",
             "I_NAI_W0_ALV_CNT":self.count, # 心跳
             "I_NAI_MET_F1": self.l1_data.has_roll_steel_left, # L1 左侧是否有板子
             "I_NAI_MET_F2": self.l1_data.has_roll_steel_right, # L1 右侧是否有板子
@@ -131,13 +134,13 @@ class DataMap:
 
     def data_to_byte(self, data):
         return (get_int_byte(data["I_NAI_W0_ALV_CNT"])
-                +get_bools_byte([data["I_NAI_MET_F1"],data["I_NAI_MET_F2"],
-                                 data["I_NAI_MET_F5"],data["I_NAI_MET_F6"],
+                +get_bools_byte([data["I_NAI_MET_F1"], data["I_NAI_MET_F2"],
+                                 data["I_NAI_MET_F5"], data["I_NAI_MET_F6"],
                                  data["I_NAI_LONG_CB1"], data["I_NAI_LONG_CB2"],
                                  data["I_NAI_ERROR_CB1"], data["I_NAI_ERROR_CB2"],
                                  ])
-                +get_bools_byte([data["I_NAI_LONG_F12"],data["I_NAI_LONG_F56"],
-                                 data["I_NAI_W1_spare1"],data["I_NAI_W1_spare2"],
+                +get_bools_byte([data["I_NAI_LONG_F12"], data["I_NAI_LONG_F56"],
+                                 data["I_NAI_W1_spare1"], data["I_NAI_W1_spare2"],
                                  data["I_NAI_W1_spare3"], data["I_NAI_W1_spare4"],
                                  data["I_NAI_W1_spare5"], data["I_NAI_W1_spare6"],
                                  ])

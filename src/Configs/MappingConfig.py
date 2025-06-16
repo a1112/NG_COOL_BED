@@ -28,6 +28,15 @@ class MappingConfig:
         print(f'x_map  {self.x_map}')
         print(f"y_map  {self.y_map}")
 
+
+    @property
+    def MAX_T_CAR_HEIGHT(self):
+        return self.glob_cool_bed_config.MAX_T_CAR_HEIGHT
+
+    @property
+    def MAX_T_CAR_WIDTH(self):
+        return self.glob_cool_bed_config.MAX_T_CAR_WIDTH
+
     @property
     def up_seat_d(self):
         return self.glob_cool_bed_config.roll_height

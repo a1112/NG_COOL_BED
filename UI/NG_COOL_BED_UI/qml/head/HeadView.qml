@@ -8,7 +8,7 @@ import "../base"
 HeadBase {
     id:root
     Layout.fillWidth: true
-    height: 35
+    height: 45
     RowLayout{
         anchors.fill: parent
         spacing: 10
@@ -18,25 +18,28 @@ HeadBase {
         }
         Label {
                 Material.foreground: Material.BlueGrey
-
-            font.pointSize: 20
-            font.bold: true
-            text: app_core.title_text
+                font.pointSize: 20
+                font.bold: true
+                text: app_core.title_text
         }
         Label {
             Material.foreground: Material.Pink
-
             font.pointSize: 13
             font.bold: true
             text: "(1.0.0)"
         }
-
+        Label{
+            text: app_core.debug ? "   测试" : "   在线"
+            font.pointSize: 15
+            font.bold: true
+            Material.foreground:app_core.debug ? Material.Red : Material.Green
+        }
 
         Item{
             Layout.fillWidth: true
         }
         ItemDelegate{
-            height: root.height
+            height: root.height-5
             implicitHeight: height
             text: "SEND  - " + send_dialog.send_data["I_NAI_W0_ALV_CNT"]
             background: Rectangle{
@@ -60,9 +63,19 @@ HeadBase {
                              }
         }
         Item{
-            width: 20
+            width: 10
             height: 1
         }
-
+        SettingButton{
+            height: parent.height
+            width: parent.width
+            onClicked: {
+                tool_menu.popup()
+            }
+        }
+        Item{
+            width: 5
+            height: 1
+        }
     }
 }

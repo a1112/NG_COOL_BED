@@ -17,7 +17,6 @@ Item {
 
     function get_image_url(cool_bed_key, key, index){
         return server_url.url(server_url.serverUrl, "image",cool_bed_key, key, index)
-
     }
 
     function get_data(cool_bed_key, success, failure){

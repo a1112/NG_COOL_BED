@@ -9,13 +9,18 @@ def format_mm(mm):
 def id_to_name(id_):
     return ["steel","t_car"][id_]
 
-class SteelItem:
+class SteelItemBase:
+    def __init__(self, map_config: MappingConfig):
+        self.map_config = map_config
+
+
+class SteelItem(SteelItemBase):
     """
     单独的 item
     """
-    def __init__(self,rec,map_config):
+    def __init__(self, rec, map_config):
+        super().__init__(map_config)
         self.rec=rec
-        self.map_config:MappingConfig = map_config
         x,y,w,h, self.type_ = self.rec
         self.px_x = x
         self.px_y = y
@@ -27,9 +32,10 @@ class SteelItem:
     def name(self):
         return id_to_name(self.type_)
 
+    @property
     def is_steel(self):
-        return self.name == "name"
-
+        return self.name == "steel"
+    @property
     def is_t_car(self):
         return self.name == "t_car"
 
@@ -106,7 +112,7 @@ class SteelItem:
 
     @property
     def in_right(self):
-        return self.x_mm+self.w_mm < self.map_config.mm_center_x-100
+        return self.x_mm+self.w_mm > self.map_config.mm_center_x-100
 
     @property
     def to_roll_center_y(self):
@@ -125,13 +131,17 @@ class SteelItem:
             "y_mm": self.mm_rec[1],
             "w_mm": self.mm_rec[2],
             "h_mm": self.mm_rec[3],
-
-            "name": self.name
+            "name": self.name,
+            "in_left": self.in_left,
+            "in_right": self.in_right,
+            "in_cool_bed": self.in_cool_bed,
+            "in_roll": self.in_roll,
+            "to_roll_center_y": self.to_roll_center_y
         }
 
-class SteelItemList:
-    def __init__(self,map_config, steels:List[SteelItem]):
-        self.map_config:MappingConfig = map_config
+class SteelItemList(SteelItemBase):
+    def __init__(self, map_config, steels: List[SteelItem]):
+        super().__init__(map_config)
         self.steels = steels
         self.has_steel =  bool(len(steels))
 
@@ -187,3 +197,34 @@ class SteelItemList:
     def to_roll_center_y(self):
         # 距离中心线的建立
         return (self.y2_mm+ self.h_mm/2) - self.map_config.roll_center_y
+
+class SteelItemNone:
+    """
+    没有钢卷的情况
+    """
+    def __init__(self):
+        pass
+
+    @property
+    def has_steel(self):
+        return False
+
+    @property
+    def x_mm(self):
+        return 0
+
+    @property
+    def y_mm(self):
+        return 0
+
+    @property
+    def w_mm(self):
+        return 0
+
+    @property
+    def h_mm(self):
+        return 0
+
+    @property
+    def to_roll_center_y(self):
+        return 0

@@ -33,13 +33,13 @@ class SteelDetModel:
         return bounding_boxes
 
 
-class SteelSegModel:
+class SteelAreaSegModel:
     def __init__(self):
-        self.model = YOLO(str(CONFIG.MODEL_FOLDER / "steelSeg.pt"))   # load a custom model
+        self.model = YOLO(str(CONFIG.MODEL_FOLDER / "area_seg.pt"))   # load a custom model
 
     def predict(self, image):
         results = self.model(image)
-        res_data = YoloModelSegResults(image,results[0])
+        res_data = YoloModelSegResults(image, results[0])
         return res_data
 
 
@@ -54,11 +54,14 @@ def test_one_image(mask_model,text_image):
     # print(alpha_mask)
     # return Image.alpha_composite(text_image.convert("RGBA"), alpha_mask)
 
-if __name__ =="__main__":
-    ssm = SteelSegModel()
 
-    folder =Path(fr"G:\LG\NG_COOL_BED_DATA\YOLOv8Dataset\train\images")
+
+if __name__ =="__main__":
+    ssm = SteelAreaSegModel()
+    print(ssm)
+    folder =Path(__file__).parent.parent.parent/"test"/"seg"
+    print(folder)
     for f_ in folder.glob("*.png"):
         text_image_ = get_image(f_)
-        test_one_image(ssm,text_image_).show()
-        input()
+        test_one_image(ssm, text_image_).show()
+        # input()
