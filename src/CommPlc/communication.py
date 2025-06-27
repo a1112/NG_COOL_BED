@@ -39,7 +39,7 @@ class ComPlc(threading.Thread):
                 self.PLC_DATA = self.siemens.Read(self.DB_AD, self.DB_LEN).Content
                 now = datetime.datetime.now()
                 end_time = time.time()
-                # logger.error(f"PLC DATA ： { self.PLC_DATA}")
+                logger.error(f"PLC DATA ： { self.PLC_DATA}")
             except BaseException as e:
                 logger.error(f"{self.DB_AD} PLC 读取 出现错误： {e}")
             else:

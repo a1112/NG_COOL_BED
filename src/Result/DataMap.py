@@ -59,36 +59,36 @@ class DataMap:
             "I_NAI_W1_spare5": False, "I_NAI_W1_spare6": False
         }
 
-        left_under_steel_l1 = self.l1_data.left_under_steel
+        left_under_steel_l1 = self.l1_data.left_under_cool_bed_steel
         data.update({
             "I_NAI_X_dis_CB1G3":format_int( left_under_steel_l1.x_mm),
-            "I_NAI_Y_dis_CB1G3":format_int(  left_under_steel_l1.y_mm),
+            "I_NAI_Y_dis_CB1G3":int(left_under_steel_l1.to_under_mm),#format_int(  left_under_steel_l1.to_under_mm),
             "I_NAI_Len_CB1G3": format_int( left_under_steel_l1.w_mm),
             "I_NAI_Wid_CB1G3": format_int( left_under_steel_l1.h_mm),
             "I_NAI_Ang_CB1G3": 0,
         })
-        right_under_steel_l1 = self.l1_data.right_under_steel
+        right_under_steel_l1 = self.l1_data.right_under_cool_bed_steel
         data.update({
             "I_NAI_X_dis_CB1G4":format_int( right_under_steel_l1.x_mm),
-            "I_NAI_Y_dis_CB1G4":format_int( right_under_steel_l1.y_mm),
+            "I_NAI_Y_dis_CB1G4":int(right_under_steel_l1.to_under_mm), #format_int( right_under_steel_l1.y_mm),
             "I_NAI_Len_CB1G4":format_int( right_under_steel_l1.w_mm),
             "I_NAI_Wid_CB1G4":format_int( right_under_steel_l1.h_mm),
             "I_NAI_Ang_CB1G4":0,
         })
 
-        left_under_steel_l2 = self.l2_data.left_under_steel
+        left_under_steel_l2 = self.l2_data.left_under_cool_bed_steel
         data.update({
             "I_NAI_X_dis_CB2G3": format_int( left_under_steel_l2.x_mm),
-            "I_NAI_Y_dis_CB2G3": format_int( left_under_steel_l2.y_mm),
+            "I_NAI_Y_dis_CB2G3":int(left_under_steel_l2.to_under_mm),# format_int( left_under_steel_l2.y_mm),
             "I_NAI_Len_CB2G3": format_int( left_under_steel_l2.w_mm),
             "I_NAI_Wid_CB2G3": format_int( left_under_steel_l2.h_mm),
             "I_NAI_Ang_CB2G3": 0,
         })
-        right_under_steel_l2 = self.l2_data.right_under_steel
+        right_under_steel_l2 = self.l2_data.right_under_cool_bed_steel
 
         data.update({
             "I_NAI_X_dis_CB2G4":format_int( right_under_steel_l2.x_mm),
-            "I_NAI_Y_dis_CB2G4":format_int( right_under_steel_l2.y_mm),
+            "I_NAI_Y_dis_CB2G4":int(right_under_steel_l2.to_under_mm),#format_int( right_under_steel_l2.y_mm),
             "I_NAI_Len_CB2G4":format_int( right_under_steel_l2.w_mm),
             "I_NAI_Wid_CB2G4":format_int( right_under_steel_l2.h_mm),
             "I_NAI_Ang_CB2G4":0,
@@ -183,11 +183,9 @@ class DataMap:
 
                 + get_int_byte(data["I_NAI_W30_spare"])
                 + get_int_byte(data["I_NAI_W31_spare"])
-
-
                 )
 
 
 
     def send(self,send_data_byte):
-        pass
+        self.com.write_byte(send_data_byte)
