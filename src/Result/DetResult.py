@@ -15,6 +15,9 @@ def format_mm(mm):
 class DetResult:
     """
     单独的 单帧检出数据
+    ?  需要怎加 seg
+
+
     """
     def __init__(self, image, rec_list, map_config):
 

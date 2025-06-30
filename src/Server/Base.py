@@ -102,7 +102,13 @@ def current_info():
 
     return business_main.current_info
 
+@app.get("/test_pre_image")
+def test_pre_image():
+    pass
 
+@app.get("/test_pre_data")
+def test_pre_data():
+    pass
 
 if __name__=="__main__":
     import uvicorn
