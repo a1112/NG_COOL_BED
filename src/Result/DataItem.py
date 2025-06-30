@@ -68,6 +68,18 @@ class DataItem:
         return self.steels.left_under_steel
 
     @property
+    def left_under_cool_bed_steel(self):
+        if self.steels is None:
+            return SteelItemNone()
+        return self.steels.left_under_cool_bed_steel
+
+    @property
+    def right_under_cool_bed_steel(self):
+        if self.steels is None:
+            return SteelItemNone()
+        return self.steels.right_under_cool_bed_steel
+
+    @property
     def left_cool_bed_steel(self):
         if self.steels is None:
             return SteelItemNone()

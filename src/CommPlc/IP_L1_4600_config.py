@@ -42,7 +42,8 @@ class L1_4600(threading.Thread):
                         "getTimeLen": endTime - startTime  # PLC 读取延时
                     })
                 except BaseException as e:
-                    logging.error(f"{self.DB_AD} PLC 解析 出现错误： {e}  : {self.PLC_DATA}")
+                    pass
+                    # logger.error(f"{self.DB_AD} PLC 解析 出现错误： {e}  : {self.PLC_DATA}")
         logging.info(f"exit： {self.DB_AD} 读取线程自然推出！ ")
 
 

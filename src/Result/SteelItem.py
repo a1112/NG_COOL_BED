@@ -176,6 +176,11 @@ class SteelItemList(SteelItemBase):
         return 0
 
     @property
+    def to_under_mm(self):
+        print(fr"self.y_mm  {self.y_mm} {self.h_mm} {self.y_mm - self.h_mm - 5760}")
+        return self.y_mm-self.h_mm - 5760
+
+    @property
     def y2_mm(self):
         if self.has_steel:
             btn = self.steels[0].y2_mm
@@ -215,6 +220,10 @@ class SteelItemNone:
 
     @property
     def y_mm(self):
+        return 0
+
+    @property
+    def to_under_mm(self):
         return 0
 
     @property
