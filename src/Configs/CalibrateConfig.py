@@ -35,5 +35,5 @@ class CalibrateConfig:
         image_list = self.image_list
         if len(self.image_list) == 1:
             image_list = split_image_horizontally(self.image_list[0])
-        print(f"sub_images {[i.shape for i in image_list]}")
+        # print(f"sub_images {[i.shape for i in image_list]}")
         return image_list

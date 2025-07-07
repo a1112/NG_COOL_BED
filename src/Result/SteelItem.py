@@ -173,7 +173,7 @@ def get_box(contour_list):
 class SteelItemSeg(SteelItem):
     def __init__(self, contour, map_config):
         self.rec = contour_to_rec(contour)+[0]
-        print(fr"self.rec {self.rec}")
+        # print(fr"self.rec {self.rec}")
         super().__init__(self.rec, map_config)
 
 
