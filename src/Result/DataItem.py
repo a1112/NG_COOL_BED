@@ -117,5 +117,7 @@ class DataItem:
             "has_error": self.has_error,
             "left_under_steel_to_center": self.left_under_steel.to_roll_center_y,
             "right_under_steel_to_center": self.right_under_steel.to_roll_center_y,
+            "left_cool_bed_steel_to_up":self.left_under_cool_bed_steel.to_under_mm,
+            "right_cool_bed_steel_to_up": self.right_under_cool_bed_steel.to_under_mm,
             "objects" : objects
         }

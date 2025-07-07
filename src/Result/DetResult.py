@@ -108,8 +108,9 @@ class DetResult(ResultBase):
         # 绘制文本标签
         cv2.putText(self.image, text, (line_p[0][0],int((line_p[0][1] + line_p[1][1])/2)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), thickness)
 
-    def get_under_steel(self,in_roll=False, in_cool_bed=False, in_left=True,in_right=True):
+    def get_under_steel(self,in_roll=False, in_cool_bed=False, in_left=False,in_right=False):
         steels = self.steel_list
+
         if in_roll:
             steels = [steel for steel in steels if steel.in_roll]
 
@@ -123,6 +124,9 @@ class DetResult(ResultBase):
             steels = [steel for steel in steels if steel.in_right]
 
         if not steels:
+            # print(fr"get_under_steel in_roll:{in_roll} in_cool_bed {in_cool_bed} {in_left} {in_right} ")
+            # print(self.steel_list)
+            # raise
             return SteelItemList(self.map_config, [])
 
         re_list = []
@@ -199,7 +203,7 @@ class DetResult(ResultBase):
         return self.image
 
     def __repr__(self):
-        return f"DetResult(time={self.time}, steel_count={len(self.steel_list)}, t_car_count={len(self.t_car_list)})"
+        return f"DetResult(time={self.time}, steel_count={len(self.steel_list)}, {self.steel_list}, t_car_count={len(self.t_car_list)})"
 
 def get_contour(mask):
     binary_mask = cv2.bitwise_and(mask, mask)

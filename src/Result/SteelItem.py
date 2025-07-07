@@ -140,6 +140,9 @@ class SteelItem(SteelItemBase):
             "to_roll_center_y": self.to_roll_center_y
         }
 
+    def __repr__(self):
+        return fr"SteelItem {self.name} {self.rec} {self.mm_rec}"
+
 def contour_to_rec(contour_item):
     x_mm, y_mm, x_max, y_max = None, None, None,None
     for point in contour_item:
@@ -214,8 +217,9 @@ class SteelItemList(SteelItemBase):
 
     @property
     def to_under_mm(self):
-        print(fr"self.y_mm  {self.y_mm} {self.h_mm} {self.y_mm - self.h_mm - 5760}")
-        return self.y_mm-self.h_mm - 5760
+        if self.y_mm==0 and self.h_mm==0:
+            return self.map_config.to_up_seat_height
+        return int(self.y_mm-self.h_mm - self.map_config.to_up_seat_height)
 
     @property
     def y2_mm(self):
@@ -239,6 +243,9 @@ class SteelItemList(SteelItemBase):
     def to_roll_center_y(self):
         # 距离中心线的建立
         return (self.y2_mm+ self.h_mm/2) - self.map_config.roll_center_y
+
+    def __repr__(self):
+        return fr"SteelItemList {self.steels}"
 
 class SteelItemNone:
     """
@@ -274,3 +281,6 @@ class SteelItemNone:
     @property
     def to_roll_center_y(self):
         return 0
+
+    def __repr__(self):
+        return fr"SteelItemNone"

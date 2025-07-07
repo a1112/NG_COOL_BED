@@ -85,7 +85,7 @@ class DataMap:
             "I_NAI_Ang_CB2G3": 0,
         })
         right_under_steel_l2 = self.l2_data.right_under_cool_bed_steel
-
+        print(fr"self.l2_data.right_under_cool_bed_steel {self.l2_data.right_under_cool_bed_steel}")
         data.update({
             "I_NAI_X_dis_CB2G4":format_int( right_under_steel_l2.x_mm),
             "I_NAI_Y_dis_CB2G4":int(right_under_steel_l2.to_under_mm),#format_int( right_under_steel_l2.y_mm),

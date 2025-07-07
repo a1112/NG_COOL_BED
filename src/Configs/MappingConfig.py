@@ -160,6 +160,10 @@ class MappingConfig:
         return self.glob_cool_bed_config.roll_height/2
 
     @property
+    def to_up_seat_height(self):
+        return self.glob_cool_bed_config.roll_height+ self.glob_cool_bed_config.up_seat_height
+
+    @property
     def info(self):
         re_data = {
             "key": self.key,
