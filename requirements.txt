@@ -9,7 +9,6 @@ scikit-learn
 matplotlib
 tqdm
 scipy
-huggingface-hub
 setuptools
 seaborn
 ipython
@@ -19,18 +18,12 @@ ultralytics
 colorlog
 XlsxWriter
 psutil
-GPUtil
-pymssql
-PyMySQL
-harvesters
 timm
 scikit-image
-open3d
 argparse
 six
 wsproto
 cryptography
-fastapi-cache[redis]
 redis
 python-multipart
 typing_extensions

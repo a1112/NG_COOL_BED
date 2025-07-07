@@ -20,7 +20,8 @@ Item {
     property var left_under_steel_to_center: data["left_under_steel_to_center"]
     property var right_under_steel_to_center: data["left_under_steel_to_center"]
 
-
+    property var left_cool_bed_steel_to_up: data["left_cool_bed_steel_to_up"]
+    property var right_cool_bed_steel_to_up: data["right_cool_bed_steel_to_up"]
 
 
     property var objcet_list: data["objects"]

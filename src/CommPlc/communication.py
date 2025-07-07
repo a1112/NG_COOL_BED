@@ -91,7 +91,8 @@ class ComPlc(threading.Thread):
 
 
 class ComDebug:
-    pass
+    def write_byte(self,bytes__):
+        print(bytes__)
 
 if DEBUG_MODEL:
     com = ComDebug()

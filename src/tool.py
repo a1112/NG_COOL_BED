@@ -55,6 +55,27 @@ class ShowThread(Thread):
 
 
 show_thread=ShowThread()
+
+
+class TempSaveThread(Thread):
+    def __init__(self):
+        super().__init__()
+        self.image_save_queue = Queue()
+        self.start()
+
+    def run(self):
+        while True:
+            filename,img = self.image_save_queue.get()
+            cv2.imwrite(filename, img)
+
+    def add(self,filename,img):
+        self.image_save_queue.put([filename, img])
+
+temp_save_thread=TempSaveThread()
+
+def save_temp(filename,img):
+    return temp_save_thread.add(filename,img)
+
 def show_cv2(img,title="image"):
     """避免多线程显示失败"""
     return show_thread.add(title,img)

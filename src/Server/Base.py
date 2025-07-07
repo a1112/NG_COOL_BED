@@ -16,7 +16,7 @@ from Server.tool import noFindImageByte
 
 business_main: Business
 
-app = FastAPI()
+app = FastAPI(debug=False)
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
@@ -72,11 +72,11 @@ async def get_map(cool_bed_key):
     return re_data
 
 
-@app.get("/image/{cool_bed:str}/{key:str}/{cap_index:int}")
-async def get_image(cool_bed:str, key:str, cap_index:int):
+@app.get("/image/{cool_bed:str}/{key:str}/{cap_index:int}/{show_mask:int}")
+async def get_image(cool_bed:str, key:str, cap_index:int,show_mask=0):
     cool_bed_thread_worker = cool_bed_thread_worker_map[cool_bed]
     cool_bed_thread_worker:CoolBedThreadWorker
-    index, cv_image = cool_bed_thread_worker.get_image(key)
+    index, cv_image = cool_bed_thread_worker.get_image(key,show_mask)
     if index < 0:
         return Response(content=noFindImageByte, media_type="image/jpg")
     _, encoded_image = cv2.imencode(".jpg", cv_image)
@@ -106,8 +106,8 @@ def current_info():
 def test_pre_image():
     pass
 
-@app.get("/test_pre_data")
-def test_pre_data():
+@app.get("/test_next_data")
+def test_next_data():
     pass
 
 if __name__=="__main__":

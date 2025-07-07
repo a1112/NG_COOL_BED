@@ -1,27 +1,36 @@
 import time
+from typing import List
+
 import cv2
 import numpy as np
 
+import tool
+from Configs.CalibrateConfig import CalibrateConfig
 from Configs.MappingConfig import MappingConfig
 from Result import SteelItem
-from Result.SteelItem import SteelItemList
+from Result.SteelItem import SteelItemList, SteelItemSeg
+from alg.YoloModelResults import YoloModelResults
 
 
 def format_mm(mm):
     return round((int(mm) / 1000), 2)
 
+class ResultBase:
+    pass
 
 
-class DetResult:
+class DetResult(ResultBase):
     """
     单独的 单帧检出数据
     ?  需要怎加 seg
 
 
     """
-    def __init__(self, image, rec_list, map_config):
+    def __init__(self, calibrate:CalibrateConfig, rec_list, map_config):
 
-        self.image = np.copy(image)
+        self.calibrate = calibrate
+        self.rec_list = rec_list
+        self.image = np.copy(calibrate.image)
         self.time=time.time()
         self.map_config:MappingConfig = map_config
         self.obj_list = [SteelItem(rec, self.map_config) for rec in rec_list]
@@ -99,8 +108,9 @@ class DetResult:
         # 绘制文本标签
         cv2.putText(self.image, text, (line_p[0][0],int((line_p[0][1] + line_p[1][1])/2)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), thickness)
 
-    def get_under_steel(self,in_roll=False, in_cool_bed=False, in_left=True,in_right=True):
+    def get_under_steel(self,in_roll=False, in_cool_bed=False, in_left=False,in_right=False):
         steels = self.steel_list
+
         if in_roll:
             steels = [steel for steel in steels if steel.in_roll]
 
@@ -114,6 +124,9 @@ class DetResult:
             steels = [steel for steel in steels if steel.in_right]
 
         if not steels:
+            # print(fr"get_under_steel in_roll:{in_roll} in_cool_bed {in_cool_bed} {in_left} {in_right} ")
+            # print(self.steel_list)
+            # raise
             return SteelItemList(self.map_config, [])
 
         re_list = []
@@ -190,4 +203,38 @@ class DetResult:
         return self.image
 
     def __repr__(self):
-        return f"DetResult(time={self.time}, steel_count={len(self.steel_list)}, t_car_count={len(self.t_car_list)})"
+        return f"DetResult(time={self.time}, steel_count={len(self.steel_list)}, {self.steel_list}, t_car_count={len(self.t_car_list)})"
+
+def get_contour(mask):
+    binary_mask = cv2.bitwise_and(mask, mask)
+    contours, _ = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    return contours
+
+class SegResult(DetResult):
+    def __init__(self, det_result: DetResult, yolo_model_results: List[YoloModelResults]):
+        super().__init__(det_result.calibrate, det_result.rec_list, det_result.map_config)
+        self.det_result = det_result
+        self.yolo_model_results = yolo_model_results
+        self.mask_list = [res.mask() for res in self.yolo_model_results]
+        self.mask = np.hstack(self.mask_list)
+
+        # 定义一个横向膨胀的结构元素（核）
+        horizontal_kernel = np.ones((1, 5), np.uint8)  # 创建一个1行5列的全1数组
+
+        # 应用膨胀操作
+        self.mask = cv2.dilate(self.mask, horizontal_kernel, iterations=1)
+
+        self.contour = get_contour(self.mask)
+
+        self.image = self.det_result.image
+        self.map_config:MappingConfig = self.det_result.map_config
+
+        self.obj_list = [SteelItemSeg(contour_item, self.map_config) for contour_item in self.contour]
+
+
+    @property
+    def draw_image(self):
+        return self.mask
+
+class SteelResult:
+    pass

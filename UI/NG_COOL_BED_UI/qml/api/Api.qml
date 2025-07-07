@@ -15,8 +15,8 @@ Item {
         return ajax.get(server_url.url(server_url.serverUrl,"map",cool_bed_keey),success, failure)
     }
 
-    function get_image_url(cool_bed_key, key, index){
-        return server_url.url(server_url.serverUrl, "image",cool_bed_key, key, index)
+    function get_image_url(cool_bed_key, key, index, show_mask){
+        return server_url.url(server_url.serverUrl, "image",cool_bed_key, key, index,parseInt(show_mask+0))
     }
 
     function get_data(cool_bed_key, success, failure){

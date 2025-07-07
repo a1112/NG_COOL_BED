@@ -2,6 +2,11 @@
 入口
 
 """
+import logging
+
+# 禁用日志记录
+logging.disable(logging.WARNING)
+
 from multiprocessing import freeze_support
 
 from Configs.CameraManageConfig import camera_manage_config
@@ -17,6 +22,7 @@ def main():
         steel_infos = {}
         for key, config in camera_manage_config.group_dict.items():
             print(fr"start main get {key}")
+
             config: CoolBedGroupConfig  # 冷床 参数中心，用于管理冷床参数
             worker = cool_bed_thread_worker_map[key]
             steel_infos[key] = worker.get_steel_info()

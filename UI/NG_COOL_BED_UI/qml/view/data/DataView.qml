@@ -74,6 +74,7 @@ RowLayout{
             key:"LC"
             value:parseInt(cool_bed_core.coolBedDataType.current_item.left_under_steel_to_center) /1000
         }
+
         DataLabelItem{
             width: 120
             msg: "右侧距离辊道中心距离"
@@ -81,7 +82,21 @@ RowLayout{
             value:parseInt( cool_bed_core.coolBedDataType.current_item.right_under_steel_to_center) /1000
         }
     }
+    Row{
+        DataLabelItem{
+            width: 120
+            msg:"左侧下料值"
+            key:"LT"
+            value:parseInt(cool_bed_core.coolBedDataType.current_item.left_cool_bed_steel_to_up)
+        }
 
+        DataLabelItem{
+            width: 120
+            msg: "右侧下料值"
+            key: "RT"
+            value:parseInt( cool_bed_core.coolBedDataType.current_item.right_cool_bed_steel_to_up)
+        }
+    }
 
     Item{
         Layout.fillHeight: true

@@ -1,12 +1,14 @@
 import numpy as np
 
 from CameraStreamer.ConversionImage import ConversionImage
+from .CalibrateConfig import CalibrateConfig
 from .ConfigBase import ConfigBase
 from .MappingConfig import MappingConfig
 
 
 def join_conversion_image_list(image_list):
     return np.hstack(image_list)
+
 
 
 class GroupConfig(ConfigBase):
@@ -33,7 +35,7 @@ class GroupConfig(ConfigBase):
         image_list = [cap_dict[key] for key in self.camera_list]  # 拿到 对应的 透视 参数
         conversion_image_list = [conv.image_conversion(image.frame) for image,conv in zip(image_list,self.conversion_list)]
         # 透视拼接
-        return join_conversion_image_list(conversion_image_list)
+        return CalibrateConfig(conversion_image_list) # join_conversion_image_list(conversion_image_list)
 
     @property
     def info(self):
