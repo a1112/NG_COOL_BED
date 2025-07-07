@@ -26,7 +26,7 @@ HeadBase {
             Material.foreground: Material.Pink
             font.pointSize: 13
             font.bold: true
-            text: "(1.0.0)"
+            text: "(1.0.1)"
         }
         Label{
             text: app_core.debug ? "   测试" : "   在线"
@@ -34,10 +34,14 @@ HeadBase {
             font.bold: true
             Material.foreground:app_core.debug ? Material.Red : Material.Green
         }
-
         Item{
             Layout.fillWidth: true
         }
+
+        TestBtns{
+            visible: app_core.debug
+        }
+
         ItemDelegate{
             height: root.height-5
             implicitHeight: height
@@ -73,6 +77,8 @@ HeadBase {
                 tool_menu.popup()
             }
         }
+
+
         Item{
             width: 5
             height: 1

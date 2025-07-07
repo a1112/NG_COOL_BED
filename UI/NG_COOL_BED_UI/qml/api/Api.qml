@@ -26,4 +26,13 @@ Item {
     function get_send_data(success, failure){
         return ajax.get(server_url.url(server_url.serverUrl, "send_data"), success, failure)
     }
+
+    function test_pre_image(success, failure){
+        return ajax.get(server_url.url(server_url.serverUrl, "test_pre_image"), success, failure)
+    }
+
+    function test_next_image(success, failure){
+        return ajax.get(server_url.url(server_url.serverUrl, "test_next_image"), success, failure)
+    }
+
 }
