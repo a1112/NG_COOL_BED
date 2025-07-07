@@ -67,6 +67,13 @@ HeadBase {
             checked: cool_bed_core.show_det_view
             onCheckedChanged: cool_bed_core.show_det_view = checked
         }
+        CheckDelegate{
+            implicitHeight: root.height
+            text: qsTr("MASK")
+            enabled: cool_bed_core.can_show_mask
+            checked: cool_bed_core.show_mask
+            onCheckedChanged: cool_bed_core.show_mask = checked
+        }
         Item{
             width: 50
         }

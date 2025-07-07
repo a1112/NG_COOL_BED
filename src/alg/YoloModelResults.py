@@ -1,7 +1,12 @@
+from pathlib import Path
+
 import cv2
 import numpy as np
 from ultralytics.engine.results import Results
 from PIL import Image
+
+import tool
+
 
 class YoloModelResultsBase:
     def __init__(self, image, result):
@@ -13,7 +18,7 @@ class YoloModelResultsBase:
         else:
             self.image = image
         self.image: np.ndarray
-
+        self.threshold = 0.4
 
     @property
     def all_names(self):
@@ -23,74 +28,185 @@ class YoloModelResultsBase:
     def boxes(self):
         return self.result.boxes
 
-class YoloModelDetResults(YoloModelResultsBase):
-    def __init__(self, image, result):
-        super(YoloModelDetResults, self).__init__(image, result)
 
-class YoloModelSegResults(YoloModelResultsBase):
-    def __init__(self, image, result):
-        super(YoloModelSegResults, self).__init__(image, result)
+
+class YoloModelResults(YoloModelResultsBase):
+    def __init__(self,index,len_, image, result):
+        self.index = index
+        self.len_ = len_
+        super(YoloModelResults, self).__init__(image, result)
 
     @property
+    def contour_by_data(self):
+        """
+        获取轮廓数据
+        :return: 返回轮廓数据列表
+        """
+        if self.result.masks is None:
+            print("No masks found in the result.")
+            return []
+        contours_list = []
+        for i, (box, mask) in enumerate(zip(self.result.boxes, self.result.masks)):
+            if box.conf < self.threshold:
+                continue
+            binary_mask = (mask.data[0].cpu().numpy() > 0.5).astype(np.uint8) * 255
+            # 查找轮廓
+            contours, _ = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            max_contour = max(contours, key=cv2.contourArea)
+            # max_area = cv2.contourArea(max_contour)
+            # 缩放轮廓点
+            scaled_contour = []
+            for point in max_contour:
+                x, y = point[0]
+                scaled_contour.append([[int(x * self.scale_x), int(y * self.scale_y)]])
+            contours_list.append(np.array(scaled_contour))
+
+        return contours_list
+
+    @property
+    def scale_x(self):
+        """
+        获取图像的宽度缩放比例
+        :return: 返回宽度缩放比例
+        """
+        return self.image.shape[1] / self.result.masks[0][0].data[0].shape[1]
+
+    @property
+    def scale_y(self):
+        """
+        获取图像的高度缩放比例
+        :return: 返回高度缩放比例
+        """
+        return self.image.shape[0] / self.result.masks[0].data[0].shape[0]
+
+
     def contour(self):
         cons = []
+        if self.result.masks is None:
+            return cons
         for i, (box, mask) in enumerate(zip(self.result.boxes, self.result.masks)):
+            if box.conf < self.threshold:
+                continue
+
             contours = mask.xy
             # 绘制轮廓（在原图上）
             contour = np.array(contours, dtype=np.float32)  # 保持浮点精度
-            contour_int = np.round(contour).astype(np.int32)
+            contour_int = np.round(contour).astype(np.int32).tolist()
+            for point_index, point in enumerate(contour_int[0]):
+                if self.index > 0:
+                    if point[0]<15:
+                        point[0]=0
+                if self.index < len(contour_int) - 1:
+                    if point[0]> self.image.shape[1]-15:
+                        point[0] =  self.image.shape[1]
+            contour_int = np.round(contour_int).astype(np.int32)
             cons.append(contour_int)
         return cons
 
     def get_draw(self,image=None):
         if image is None:
             image = self.image.copy()
-
         cv2.drawContours(
             image,
-            self.contour.copy(),
+            self.contour(),
             -1,  # 绘制所有轮廓
             (0, 255, 0),  # 绿色
-            2  # 线宽
+            3  # 线宽
         )
         return image
+
+    def mask(self):
+        mask_image = np.zeros(self.image.shape[:2], dtype=np.uint8)
+        cv2.drawContours(mask_image, self.contour(), -1, (255, 255, 255),-1)
+        return mask_image
+
+    def get_mask(self):
+        """
+        获取掩码
+        """
+        pass
+        # mask = self.result.masks.data.cpu().numpy()
+        # mask = np.sum(mask, axis=0)
+        # mask = np.squeeze(mask)
+        # mask = (mask * 255).astype(np.uint8)
+        # mask=cv2.resize(mask,(self.image.shape[1],self.image.shape[0]))
+        # return mask
+
 
     def show(self):
         """
          opencv 显示轮廓
         """
         draw_image = self.get_draw()
+        tool.show_cv2(draw_image,title = f"Object Contours")
 
-        # 显示结果
-        cv2.imshow(f"Object Contours", draw_image)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-
-    def to_labelme_json(self):
+    def to_labelme_json(self,file_path):
         """
         Convert the segmentation results to a labelme format.
         """
         self.image: np.ndarray
         labelme_data = {
-            "version": "4.5.6",
+            "version": "4.5.13",
             "flags": {},
             "shapes": [],
-            "imagePath": "",
+            "imagePath": Path(file_path).with_suffix(".jpg").name,
             "imageData": None,
             "imageHeight": self.image.shape[0],
             "imageWidth": self.image.shape[1]
         }
+        if self.result.masks is None:
+            print("No masks found in the result.")
+            return labelme_data
+
+        for i, (box, mask) in enumerate(zip(self.result.boxes, self.result.masks)):
+
+            contours = mask.xy
+            if box.conf<self.threshold:
+                continue
+
+            contour = np.array(contours, dtype=np.float32)
+            contour_int = np.round(contour).astype(np.int32).tolist()
+            labelme_data["shapes"].append({
+                "label": self.all_names[int(box.cls[0])],
+                "points": contour_int[0],
+                "group_id": None,
+                "shape_type": "polygon",
+                "flags": {}
+            })
+        return labelme_data
+
+    def save_json(self, file_path):
+        """
+        Save the labelme format to a JSON file.
+        """
+        import json
+        labelme_data = self.to_labelme_json(file_path)
+        with open(file_path, 'w') as f:
+            json.dump(labelme_data, f, indent=4)
+
+    def save_xml(self, file_path):
+        """
+        Save the segmentation results to an XML file.
+        """
+        import xml.etree.ElementTree as ET
+
+        root = ET.Element("annotation")
+        ET.SubElement(root, "filename").text = Path(file_path).with_suffix(".jpg").name
+        ET.SubElement(root, "size").text = f"{self.image.shape[1]} {self.image.shape[0]}"
+
+        if self.result.masks is None:
+            print("No masks found in the result.")
+            return
 
         for i, (box, mask) in enumerate(zip(self.result.boxes, self.result.masks)):
             contours = mask.xy
             contour = np.array(contours, dtype=np.float32)
             contour_int = np.round(contour).astype(np.int32).tolist()
-            labelme_data["shapes"].append({
-                "label": self.all_names[box.cls],
-                "points": contour_int,
-                "group_id": None,
-                "shape_type": "polygon",
-                "flags": {}
-            })
+            obj = ET.SubElement(root, "object")
+            ET.SubElement(obj, "name").text = self.all_names[int(box.cls[0])]
+            polygon = ET.SubElement(obj, "polygon")
+            for point in contour_int[0]:
+                ET.SubElement(polygon, "pt").text = f"{point[0]} {point[1]}"
 
-        return labelme_data
+        tree = ET.ElementTree(root)
+        tree.write(file_path)

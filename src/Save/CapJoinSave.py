@@ -1,6 +1,7 @@
 import CONFIG
 import tool
 from Configs import save_config
+from Configs.CalibrateConfig import CalibrateConfig
 from Configs.CoolBedGroupConfig import CoolBedGroupConfig
 from Loger import logger
 from Save.SaveBase import ImageSaveBase
@@ -20,12 +21,13 @@ class CapJoinSave(ImageSaveBase):
         save_url = save_folder/fr"{key}.{CONFIG.IMAGE_SAVE_TYPE}"
         self.camera_buffer.put([frame, save_url])
 
-    def save_buffer(self,key, frame):
+    def save_buffer(self,key, calibrate:CalibrateConfig):
         """
         采集保存
         """
+        frame = calibrate.image
         if key not in self.save_first_dict:
-            self.save_first_image(key, frame)
+            self.save_first_image(key,frame)
             self.save_first_dict[key] = 1
         self.save_first_dict[key]+=1
         if not self.save_first_dict[key] % 50:

@@ -35,9 +35,10 @@ class SteelItem(SteelItemBase):
     @property
     def is_steel(self):
         return self.name == "steel"
+
     @property
     def is_t_car(self):
-        return self.name == "t_car"
+        return self.name in ["t_car", "d_car" ]
 
     @property
     def x_mm(self):
@@ -138,6 +139,42 @@ class SteelItem(SteelItemBase):
             "in_roll": self.in_roll,
             "to_roll_center_y": self.to_roll_center_y
         }
+
+def contour_to_rec(contour_item):
+    x_mm, y_mm, x_max, y_max = None, None, None,None
+    for point in contour_item:
+        x,y=point[0]
+        if x_mm is None:
+            x_mm=x
+        if y_mm is None:
+            y_mm=y
+        if x_max is None:
+            x_max=x
+        if y_max is None:
+            y_max=y
+        if x_mm > x:
+            x_mm=x
+        if y_mm > y:
+            y_mm = y
+        if x_max < x:
+            x_max = x
+        if y_max < y:
+            y_max = y
+    return [int(x_mm), int(y_mm), int(x_max-x_mm), int(y_max-y_mm)]
+
+def get_box(contour_list):
+
+    for contour in contour_list:
+        rec = contour_to_rec(contour)
+
+class SteelItemSeg(SteelItem):
+    def __init__(self, contour, map_config):
+        self.rec = contour_to_rec(contour)+[0]
+        print(fr"self.rec {self.rec}")
+        super().__init__(self.rec, map_config)
+
+
+
 
 class SteelItemList(SteelItemBase):
     def __init__(self, map_config, steels: List[SteelItem]):
