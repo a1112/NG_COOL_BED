@@ -95,8 +95,8 @@ class CoolBedThreadWorker(Thread):
 
                 steel_info = predictor.predict(calibrate, group_config)
 
-                if self.key == "L2":
-                    print(fr" steel_info: {steel_info} ")
+                # if self.key == "L2":
+                #     print(fr" steel_info: {steel_info} ")
 
                 steel_info_dict[group_config.group_key] = steel_info
                 # if steel_info.can_get_data: # 如果有符合（无冷床遮挡）则返回数据
@@ -118,7 +118,7 @@ class CoolBedThreadWorker(Thread):
             else:
                 logger.warning(f"单帧处理时间 {use_time}")
             if CONFIG.DEBUG_MODEL:
-                time.sleep(5)
+                time.sleep(0.2)
 
         # join
         # for key, cap_ture in self.camera_map.items():

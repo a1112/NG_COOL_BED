@@ -68,6 +68,8 @@ Item {
         property int roll_count: data["roll_count"]
         property real cool_bed_width_mm: data["cool_bed_width_mm"]
         property real cool_bed_height_mm: data["cool_bed_height_mm"]
+    property real y_mm_asp:  cool_bed.height/cool_bed_height_mm
+
         property real up_seat_d_mm: data["up_seat_d_mm"]
         property real up_seat_u_mm: data["up_seat_u_mm"]
         property real up_cool_bed_mm: data["up_cool_bed_mm"]

@@ -81,3 +81,21 @@ TIME_FMT="%H_%M_%S"
 DATETIME_FMT = f"{DATA_FMT}-{TIME_FMT}"
 IMAGE_SAVE_TYPE = "jpg"
 APP_RUN = True
+
+
+class DebugControl:
+    def __init__(self):
+        self.debug_test_index=0
+
+    def next(self):
+        print(fr"next:{self.debug_test_index}")
+        self.debug_test_index+=1
+        return self.debug_test_index
+
+    def prev(self):
+        print(fr"prev:{self.debug_test_index}")
+        self.debug_test_index-=1
+        return self.debug_test_index
+
+
+debug_control = DebugControl()

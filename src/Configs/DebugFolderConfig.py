@@ -22,6 +22,7 @@ class DebugFolderConfig:
             "L2_g1_6": FOLDER_L2_g1_6,
             "L2_g2_1": FOLDER_L2_g2_1
         }
+
 if __name__ == "__main__":
     print(socket.gethostname())
     print(DebugFolderConfig.DATA_FOLDER.exists())

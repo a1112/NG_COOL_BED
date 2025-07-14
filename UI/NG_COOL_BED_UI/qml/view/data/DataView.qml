@@ -88,6 +88,10 @@ RowLayout{
             msg:"左侧下料值"
             key:"LT"
             value:parseInt(cool_bed_core.coolBedDataType.current_item.left_cool_bed_steel_to_up)
+            onHoveredChanged: {
+                cool_bed_core.controlConfig.left_move_to_up_hov
+            }
+
         }
 
         DataLabelItem{
@@ -95,6 +99,10 @@ RowLayout{
             msg: "右侧下料值"
             key: "RT"
             value:parseInt( cool_bed_core.coolBedDataType.current_item.right_cool_bed_steel_to_up)
+            onHoveredChanged: {
+                cool_bed_core.controlConfig.right_move_to_up_hov
+            }
+
         }
     }
 

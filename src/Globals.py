@@ -13,3 +13,4 @@ for key, config in camera_manage_config.group_dict.items():
     config: CoolBedGroupConfig  # 冷床 参数中心，用于管理冷床参数
     logger.debug(f"初始化 {key} ")
     cool_bed_thread_worker_map[key] = CoolBedThreadWorker(key, config, global_config)
+

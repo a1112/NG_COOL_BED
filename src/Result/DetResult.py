@@ -219,10 +219,10 @@ class SegResult(DetResult):
         self.mask = np.hstack(self.mask_list)
 
         # 定义一个横向膨胀的结构元素（核）
-        horizontal_kernel = np.ones((1, 5), np.uint8)  # 创建一个1行5列的全1数组
+        horizontal_kernel = np.ones((1, 11), np.uint8)  #
 
         # 应用膨胀操作
-        self.mask = cv2.dilate(self.mask, horizontal_kernel, iterations=1)
+        self.mask = cv2.dilate(self.mask, horizontal_kernel, iterations=3)
 
         self.contour = get_contour(self.mask)
 

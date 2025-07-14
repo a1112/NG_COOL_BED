@@ -10,6 +10,7 @@ from ProjectManagement.Main import CoolBedThreadWorker
 from Result.DataItem import DataItem
 from ProjectManagement.Business import Business
 from Globals import business_main, cool_bed_thread_worker_map, global_config
+from CONFIG import debug_control
 from fastapi.responses import StreamingResponse, FileResponse, Response
 
 from Server.tool import noFindImageByte
@@ -104,11 +105,11 @@ def current_info():
 
 @app.get("/test_pre_image")
 def test_pre_image():
-    pass
+    return debug_control.prev()
 
-@app.get("/test_next_data")
-def test_next_data():
-    pass
+@app.get("/test_next_image")
+def test_next_image():
+    return debug_control.next()
 
 if __name__=="__main__":
     import uvicorn

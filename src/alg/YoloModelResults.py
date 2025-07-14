@@ -6,6 +6,7 @@ from ultralytics.engine.results import Results
 from PIL import Image
 
 import tool
+from Configs.ClassConfig import name_to_color
 
 
 class YoloModelResultsBase:
@@ -82,26 +83,28 @@ class YoloModelResults(YoloModelResultsBase):
 
     def contour(self):
         cons = []
+        labels = []
         if self.result.masks is None:
             return cons
         for i, (box, mask) in enumerate(zip(self.result.boxes, self.result.masks)):
             if box.conf < self.threshold:
                 continue
-
+            label = self.all_names[int(box.cls[0])]
             contours = mask.xy
             # 绘制轮廓（在原图上）
             contour = np.array(contours, dtype=np.float32)  # 保持浮点精度
             contour_int = np.round(contour).astype(np.int32).tolist()
             for point_index, point in enumerate(contour_int[0]):
                 if self.index > 0:
-                    if point[0]<15:
+                    if point[0] < 20:
                         point[0]=0
                 if self.index < len(contour_int) - 1:
-                    if point[0]> self.image.shape[1]-15:
+                    if point[0]> self.image.shape[1]-20:
                         point[0] =  self.image.shape[1]
             contour_int = np.round(contour_int).astype(np.int32)
             cons.append(contour_int)
-        return cons
+            labels.append(label)
+        return cons, labels
 
     def get_draw(self,image=None):
         if image is None:
@@ -117,7 +120,10 @@ class YoloModelResults(YoloModelResultsBase):
 
     def mask(self):
         mask_image = np.zeros(self.image.shape[:2], dtype=np.uint8)
-        cv2.drawContours(mask_image, self.contour(), -1, (255, 255, 255),-1)
+        for cont ,label in zip(*self.contour()):
+            if name_to_color(label):
+                color = name_to_color(label)
+                cv2.drawContours(mask_image, cont, -1, color, -1)
         return mask_image
 
     def get_mask(self):

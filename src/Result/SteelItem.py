@@ -1,13 +1,14 @@
 from typing import List
 
+from Configs.ClassConfig import id_to_name
 from Configs.MappingConfig import MappingConfig
 
 
 def format_mm(mm):
     return round((int(mm) / 1000), 2)
 
-def id_to_name(id_):
-    return ["steel","t_car"][id_]
+
+
 
 class SteelItemBase:
     def __init__(self, map_config: MappingConfig):
