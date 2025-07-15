@@ -29,10 +29,6 @@ ApplicationWindow {
                 delegate: CoolBedView{
                 }
             }
-
-
-
         }
-
 }
 }
