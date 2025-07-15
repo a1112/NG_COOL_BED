@@ -29,7 +29,7 @@ HeadBase {
             text: "(1.0.1)"
         }
         Label{
-            text: app_core.debug ? "   测试" : "   在线"
+            text:""// app_core.debug ? "   测试" : "   在线"
             font.pointSize: 15
             font.bold: true
             Material.foreground:app_core.debug ? Material.Red : Material.Green
