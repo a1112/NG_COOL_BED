@@ -23,6 +23,9 @@ Item {
     property var left_cool_bed_steel_to_up: data["left_cool_bed_steel_to_up"]
     property var right_cool_bed_steel_to_up: data["right_cool_bed_steel_to_up"]
 
+    property var left_rool_to_center:data["left_rol_to_center"]
+    property var right_rool_to_center:data["right_rol_to_center"]
+
 
     property var objcet_list: data["objects"]
     onObjcet_listChanged: {

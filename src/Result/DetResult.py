@@ -190,11 +190,11 @@ class DetResult(ResultBase):
 
     @property
     def left_cool_bed_steel(self):
-        re_list = []
-        for steel in self.cool_bed_steel:
-            if steel.in_left:
-                re_list.append(steel)
-        return re_list
+        return self.get_under_steel(in_roll=True, in_left=True)
+
+    @property
+    def right_cool_bed_steel(self):
+        return self.get_under_steel(in_roll=True, in_right=True)
 
     @property
     def show_image(self):

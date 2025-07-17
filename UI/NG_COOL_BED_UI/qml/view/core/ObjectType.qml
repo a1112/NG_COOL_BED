@@ -17,6 +17,8 @@ Item {
     property int m_w: parseInt(w_mm)
     property int m_h: parseInt(h_mm)
 
+
+
     property string name_: name
 
     property bool i_left: in_left

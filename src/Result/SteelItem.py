@@ -223,6 +223,13 @@ class SteelItemList(SteelItemBase):
         return int(self.y_mm-self.h_mm - self.map_config.to_up_seat_height)
 
     @property
+    def rol_to_center(self):
+        if self.y_mm==0 and self.h_mm==0:
+            return 0
+        return  int(self.y_mm-self.h_mm/2 - self.map_config.roll_center_y )
+
+
+    @property
     def y2_mm(self):
         if self.has_steel:
             btn = self.steels[0].y2_mm
@@ -243,6 +250,8 @@ class SteelItemList(SteelItemBase):
     @property
     def to_roll_center_y(self):
         # 距离中心线的建立
+        if self.y_mm==0 and self.h_mm==0:
+            return 0
         return (self.y2_mm+ self.h_mm/2) - self.map_config.roll_center_y
 
     def __repr__(self):
@@ -272,6 +281,10 @@ class SteelItemNone:
         return 0
 
     @property
+    def rol_to_center(self):
+        return 0
+
+    @property
     def w_mm(self):
         return 0
 
@@ -281,6 +294,10 @@ class SteelItemNone:
 
     @property
     def to_roll_center_y(self):
+        return 0
+
+    @property
+    def rotate(self):
         return 0
 
     def __repr__(self):

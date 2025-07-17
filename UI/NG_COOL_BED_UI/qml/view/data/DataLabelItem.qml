@@ -4,7 +4,7 @@ import QtQuick.Layouts
 
 
 Item {
-    width: 100
+    width: 500
     height: root.height/2
     property string key: ""
     property string value: ""
