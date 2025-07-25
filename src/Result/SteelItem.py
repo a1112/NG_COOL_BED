@@ -1,5 +1,8 @@
 from typing import List
 
+import cv2
+import numpy as np
+
 from Configs.ClassConfig import id_to_name
 from Configs.MappingConfig import MappingConfig
 
@@ -122,13 +125,16 @@ class SteelItem(SteelItemBase):
         return (self.y2_mm+ self.h_mm/2) - self.map_config.roll_center_y
 
     @property
+    def rotated(self):
+        return 0
+
+    @property
     def dict(self):
         return {
             "x_px":self.rec[0],
             "y_px": self.rec[1],
             "w_px": self.rec[2],
             "h_px": self.rec[3],
-
             "x_mm": self.mm_rec[0],
             "y_mm": self.mm_rec[1],
             "w_mm": self.mm_rec[2],
@@ -138,7 +144,8 @@ class SteelItem(SteelItemBase):
             "in_right": self.in_right,
             "in_cool_bed": self.in_cool_bed,
             "in_roll": self.in_roll,
-            "to_roll_center_y": self.to_roll_center_y
+            "to_roll_center_y": self.to_roll_center_y,
+            "rotated": round(self.rotated,2),
         }
 
     def __repr__(self):
@@ -171,14 +178,30 @@ def get_box(contour_list):
     for contour in contour_list:
         rec = contour_to_rec(contour)
 
+def format_rotate(rotate_):
+    if rotate_ < 45:
+        return rotate_
+    return format_rotate(rotate_ - 90)
+
 class SteelItemSeg(SteelItem):
     def __init__(self, contour, map_config):
         self.rec = contour_to_rec(contour)+[0]
+        self.rotated_rect = cv2.minAreaRect(contour)
+        # 提取四个顶点坐标
+        box_points = cv2.boxPoints(self.rotated_rect)
+        box_points = np.int8(box_points)
+        self.rotated_ = format_rotate(self.rotated_rect[-1] )
+        # print(fr"self.rotated_ {self.rotated_} box_points: {box_points}")
+
         # print(fr"self.rec {self.rec}")
         super().__init__(self.rec, map_config)
 
+    @property
+    def rotated(self):
+        return self.rotated_
 
-
+    def __repr__(self):
+        return fr"SteelItemSeg {self.rotated_rect} {self.name} {self.rec} {self.mm_rec}"
 
 class SteelItemList(SteelItemBase):
     def __init__(self, map_config, steels: List[SteelItem]):
@@ -253,6 +276,15 @@ class SteelItemList(SteelItemBase):
         if self.y_mm==0 and self.h_mm==0:
             return 0
         return (self.y2_mm+ self.h_mm/2) - self.map_config.roll_center_y
+
+    @property
+    def rotated(self):
+        print(fr"SteelItemList get rotated: {self.steels}")
+        res = 0
+        for steel in self.steels:
+            if abs(steel.rotated) > abs(res):
+                res = steel.rotated
+        return res
 
     def __repr__(self):
         return fr"SteelItemList {self.steels}"

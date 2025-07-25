@@ -229,8 +229,19 @@ class SegResult(DetResult):
         self.image = self.det_result.image
         self.map_config:MappingConfig = self.det_result.map_config
 
+
+        self.calibrate = det_result.calibrate
+        self.rec_list = det_result.rec_list
+        self.image = np.copy(self.calibrate.image)
+        self.time=time.time()
+        self.map_config:MappingConfig = det_result.map_config
         self.obj_list = [SteelItemSeg(contour_item, self.map_config) for contour_item in self.contour]
 
+        self.steel_list = [obj for obj in self.obj_list if obj.is_steel]
+        self.t_car_list = [obj for obj in self.obj_list if obj.is_t_car]
+
+
+        self.steel_list.sort(key=lambda steel: steel.name)
 
     @property
     def draw_image(self):

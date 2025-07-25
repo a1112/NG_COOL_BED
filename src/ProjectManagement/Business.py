@@ -26,7 +26,6 @@ class Business:
         """
         获取当前的钢坯数据
         """
-
         for key, steels in steels_dict.items():
             steels: DetResult
             if steels.can_get_data:
@@ -83,9 +82,9 @@ class Business:
         self.data_map = DataMap(self.count,self.current_datas)
 
         self.send_data_dict = self.data_map.get_data_map()
-        print(fr"send_data_dict {self.send_data_dict}")
+        # print(fr"send_data_dict {self.send_data_dict}")
         self.send_data_byte = self.data_map.data_to_byte(self.send_data_dict)
-        print(fr"send data {self.send_data_byte}")
+        # print(fr"send data {self.send_data_byte}")
         self.data_map.send(self.send_data_byte)
 
 

@@ -26,6 +26,7 @@ Item {
     property bool i_cool_bed: in_cool_bed
     property bool i_roll: in_roll
     property bool c_to_roll_center_y: to_roll_center_y
+    property real rotated_:rotated
 
     // "in_left": self.in_left,
     // "in_right": self.in_right,

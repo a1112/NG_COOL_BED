@@ -7,6 +7,10 @@ def byte_join(*args):
 def format_int(data_item):
     return int(data_item/10)
 
+def format_rotate(data_item):
+    print(fr"format_rotate {data_item}")
+    return int(data_item*10)
+
 def get_int_byte(value:int):
     return bytearray(value.to_bytes(2, "little", signed = True))
 
@@ -41,6 +45,11 @@ class DataMap:
         }
 
     def get_data_map(self):
+
+        print(fr"get_data_map")
+        print( self.l1_data.steels)
+        print(self.l2_data.steels)
+
         data =  {
             "VERSION":"1.0.0",
             "I_NAI_W0_ALV_CNT":self.count, # 心跳
@@ -65,7 +74,7 @@ class DataMap:
             "I_NAI_Y_dis_CB1G3":int(left_under_steel_l1.to_under_mm),#format_int(  left_under_steel_l1.to_under_mm),
             "I_NAI_Len_CB1G3": format_int( left_under_steel_l1.w_mm),
             "I_NAI_Wid_CB1G3": format_int( left_under_steel_l1.h_mm),
-            "I_NAI_Ang_CB1G3": 0,
+            "I_NAI_Ang_CB1G3": format_rotate(left_under_steel_l1.rotated),
         })
         right_under_steel_l1 = self.l1_data.right_under_cool_bed_steel
         data.update({
@@ -73,7 +82,7 @@ class DataMap:
             "I_NAI_Y_dis_CB1G4":int(right_under_steel_l1.to_under_mm), #format_int( right_under_steel_l1.y_mm),
             "I_NAI_Len_CB1G4":format_int( right_under_steel_l1.w_mm),
             "I_NAI_Wid_CB1G4":format_int( right_under_steel_l1.h_mm),
-            "I_NAI_Ang_CB1G4":0,
+            "I_NAI_Ang_CB1G4":format_rotate(right_under_steel_l1.rotated),
         })
 
         left_under_steel_l2 = self.l2_data.left_under_cool_bed_steel
@@ -82,7 +91,7 @@ class DataMap:
             "I_NAI_Y_dis_CB2G3":int(left_under_steel_l2.to_under_mm),# format_int( left_under_steel_l2.y_mm),
             "I_NAI_Len_CB2G3": format_int( left_under_steel_l2.w_mm),
             "I_NAI_Wid_CB2G3": format_int( left_under_steel_l2.h_mm),
-            "I_NAI_Ang_CB2G3": 0,
+            "I_NAI_Ang_CB2G3": format_rotate( left_under_steel_l2.rotated),
         })
         right_under_steel_l2 = self.l2_data.right_under_cool_bed_steel
         print(fr"self.l2_data.right_under_cool_bed_steel {self.l2_data.right_under_cool_bed_steel}")
@@ -91,34 +100,34 @@ class DataMap:
             "I_NAI_Y_dis_CB2G4":int(right_under_steel_l2.to_under_mm),#format_int( right_under_steel_l2.y_mm),
             "I_NAI_Len_CB2G4":format_int( right_under_steel_l2.w_mm),
             "I_NAI_Wid_CB2G4":format_int( right_under_steel_l2.h_mm),
-            "I_NAI_Ang_CB2G4":0,
+            "I_NAI_Ang_CB2G4":format_rotate(right_under_steel_l2.rotated),
         })
 
         data.update(
             {
             "I_NAI_Y_dis_F1":format_int(left_under_steel_l1.to_roll_center_y),
-            "I_NAI_Ang_F1": 0
+            "I_NAI_Ang_F1": format_rotate(left_under_steel_l1.rotated),
             }
         )
 
         data.update(
             {
             "I_NAI_Y_dis_F2":format_int(right_under_steel_l1.to_roll_center_y),
-            "I_NAI_Ang_F2": 0
+            "I_NAI_Ang_F2": format_rotate(right_under_steel_l1.rotated),
             }
         )
 
         data.update(
             {
             "I_NAI_Y_dis_F5":format_int(left_under_steel_l2.to_roll_center_y),
-            "I_NAI_Ang_F5": 0
+            "I_NAI_Ang_F5": format_rotate(left_under_steel_l2.rotated),
             }
         )
 
         data.update(
             {
             "I_NAI_Y_dis_F6":format_int(right_under_steel_l2.to_roll_center_y),
-            "I_NAI_Ang_F6": 0
+            "I_NAI_Ang_F6": format_rotate(right_under_steel_l2.rotated)
             }
         )
 
@@ -129,7 +138,7 @@ class DataMap:
             }
 
         )
-        print(data)
+        # print(data)
         return data
 
     def data_to_byte(self, data):

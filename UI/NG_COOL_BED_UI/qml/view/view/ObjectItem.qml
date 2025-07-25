@@ -32,6 +32,15 @@ Rectangle {
     }
 
     Label{
+        anchors.centerIn: parent
+        font.pixelSize: 18
+        font.bold: true
+        color: "pink"
+        text: objectType.rotated_
+
+    }
+
+    Label{
         font.pixelSize: 18
         anchors.top : parent.top
         anchors.right : parent.right
