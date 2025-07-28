@@ -18,9 +18,9 @@
 		<difficult>0</difficult>
 		<bndbox>
 			<xmin>1</xmin>
-			<ymin>378</ymin>
-			<xmax>2048</xmax>
-			<ymax>431</ymax>
+			<ymin>366</ymin>
+			<xmax>2042</xmax>
+			<ymax>415</ymax>
 		</bndbox>
 	</object>
 	<object>
@@ -38,13 +38,13 @@
 	<object>
 		<name>cool_bed</name>
 		<pose>Unspecified</pose>
-		<truncated>1</truncated>
+		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>4</xmin>
-			<ymin>1</ymin>
-			<xmax>3068</xmax>
-			<ymax>380</ymax>
+			<xmin>8</xmin>
+			<ymin>2</ymin>
+			<xmax>2046</xmax>
+			<ymax>360</ymax>
 		</bndbox>
 	</object>
 </annotation>

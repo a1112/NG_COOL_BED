@@ -2,9 +2,9 @@ name_list=["steel","t_car","d_car"]
 color_list=[
     255
     ,
-    50
+    0
     ,
-    100
+    0
     ]
 
 
