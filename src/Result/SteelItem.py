@@ -329,7 +329,7 @@ class SteelItemNone:
         return 0
 
     @property
-    def rotate(self):
+    def rotated(self):
         return 0
 
     def __repr__(self):

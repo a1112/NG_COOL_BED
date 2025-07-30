@@ -8,7 +8,6 @@ def format_int(data_item):
     return int(data_item/10)
 
 def format_rotate(data_item):
-    print(fr"format_rotate {data_item}")
     return int(data_item*10)
 
 def get_int_byte(value:int):

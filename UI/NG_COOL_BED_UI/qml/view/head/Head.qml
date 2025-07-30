@@ -6,7 +6,6 @@ import "../../base"
 HeadBase {
     id:root
     Layout.fillWidth: true
-
     height: 30
     RowLayout{
         anchors.fill: parent
