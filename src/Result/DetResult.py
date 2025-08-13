@@ -26,10 +26,14 @@ class DetResult(ResultBase):
 
 
     """
+
+    def filter(self,rec_list):
+        return [i  for i in rec_list if i[3]>10]
+
     def __init__(self, calibrate:CalibrateConfig, rec_list, map_config):
 
         self.calibrate = calibrate
-        self.rec_list = rec_list
+        self.rec_list = self.filter(rec_list)
         self.image = np.copy(calibrate.image)
         self.time=time.time()
         self.map_config:MappingConfig = map_config
