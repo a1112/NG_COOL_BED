@@ -1,7 +1,7 @@
 <annotation>
 	<folder>mapping</folder>
 	<filename>L2_g2_1.jpg</filename>
-	<path>D:\Project\NG_COOL_BED\config\camera\mapping\L2_g2_1.jpg</path>
+	<path>I:\NG_COOL_BED\config\camera\mapping\L2_g2_1.jpg</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -41,10 +41,10 @@
 		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>8</xmin>
+			<xmin>5</xmin>
 			<ymin>2</ymin>
 			<xmax>2046</xmax>
-			<ymax>360</ymax>
+			<ymax>365</ymax>
 		</bndbox>
 	</object>
 </annotation>

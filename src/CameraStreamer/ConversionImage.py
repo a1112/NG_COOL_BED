@@ -7,26 +7,46 @@ from CONFIG import CalibratePath
 from tool import load_json
 
 
-def sort_point(points):
+def sort_point(points, key):
     # 按 y 坐标升序排列
-    sorted_by_y = sorted(points, key=lambda p: p[1])
 
-    # 分离顶部和底部点
-    top_two = sorted_by_y[:2]
-    bottom_two = sorted_by_y[2:]
+    print(fr"sort_point key {key}")
 
-    # 顶部按 x 升序排列 → 左上、右上
-    top_sorted = sorted(top_two, key=lambda p: p[0])
+    if key=="L2_7":
+        sorted_by_x = sorted(points, key=lambda p: p[0])
 
-    # 底部按 x 降序排列 → 右下、左下
-    bottom_sorted = sorted(bottom_two, key=lambda p: -p[0])
+        # 分离顶部和底部点
+        r_two = sorted_by_x[:2]
+        l_two = sorted_by_x[2:]
 
-    # 合并结果
-    ordered_points = top_sorted + bottom_sorted
+        # 顶部按 x 升序排列 → 左上、右上
+        top_sorted = sorted(r_two, key=lambda p: p[1])
+
+        # 底部按 x 降序排列 → 右下、左下
+        bottom_sorted = sorted(l_two, key=lambda p: -p[1])
+
+        # 合并结果
+        ordered_points =  top_sorted + bottom_sorted
+
+    else:
+        sorted_by_y = sorted(points, key=lambda p: p[1])
+
+        # 分离顶部和底部点
+        top_two = sorted_by_y[:2]
+        bottom_two = sorted_by_y[2:]
+
+        # 顶部按 x 升序排列 → 左上、右上
+        top_sorted = sorted(top_two, key=lambda p: p[0])
+
+        # 底部按 x 降序排列 → 右下、左下
+        bottom_sorted = sorted(bottom_two, key=lambda p: -p[0])
+
+        # 合并结果
+        ordered_points = top_sorted + bottom_sorted
 
     return ordered_points
 
-def get_trans(data):
+def get_trans(data, key):
     """
     获取数据
     :param data:
@@ -40,7 +60,7 @@ def get_trans(data):
     assert len(area_shape) == 1 , "area 数量不匹配"
     area_shape = area_shape[0]
     assert len(area_shape) == 4, "area_shape 数量 点 不匹配"
-    area_shape = sort_point(area_shape)
+    area_shape = sort_point(area_shape, key)
     return area_shape
 
 
@@ -64,7 +84,7 @@ class ConversionImage:
             json_data = load_json(calibrate_json_path)
         self.width = width
         self.height = height
-        self.trans = np.array(get_trans(json_data), np.float32)
+        self.trans = np.array(get_trans(json_data,key), np.float32)
         self.M = cv2.getPerspectiveTransform(self.trans, np.array([(0, 0), (width, 0), (width, height), (0, height)], dtype=np.float32))
 
     def __call__(self, *args, **kwargs):

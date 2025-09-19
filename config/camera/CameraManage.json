@@ -32,7 +32,7 @@
       ]
     },
     "L2":{
-      "camera_list": ["L2_1", "L2_2", "L2_3", "L2_4", "L2_5", "L2_6"],
+      "camera_list": ["L2_1", "L2_2", "L2_3", "L2_4", "L2_5", "L2_6","L2_7"],
       "type": "calibrate",
       "group": [
                 {
@@ -43,6 +43,15 @@
           "priority": 0,
           "size_list": [[1303, 1024],[1117, 1024],[1210, 1024],[1117, 1024]]
         },
+        {
+          "camera_list": ["L2_7"],
+          "calibrate": "calibrate",
+          "key": "L2_g2_7",
+          "msg": " L2 und camera only",
+          "priority": 1,
+          "size_list": [[2048, 768]]
+        },
+
         {
           "camera_list": ["L2_6"],
           "calibrate": "calibrate",

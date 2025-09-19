@@ -1,7 +1,7 @@
 <annotation>
 	<folder>mapping</folder>
 	<filename>L1_g1_6.jpg</filename>
-	<path>D:\Project\NG_COOL_BED\config\camera\mapping\L1_g1_6.jpg</path>
+	<path>I:\NG_COOL_BED\config\camera\mapping\L1_g1_6.jpg</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -30,8 +30,8 @@
 		<difficult>0</difficult>
 		<bndbox>
 			<xmin>5</xmin>
-			<ymin>736</ymin>
-			<xmax>3072</xmax>
+			<ymin>744</ymin>
+			<xmax>3064</xmax>
 			<ymax>768</ymax>
 		</bndbox>
 	</object>
@@ -55,7 +55,7 @@
 		<bndbox>
 			<xmin>10</xmin>
 			<ymin>1</ymin>
-			<xmax>3051</xmax>
+			<xmax>3050</xmax>
 			<ymax>374</ymax>
 		</bndbox>
 	</object>
