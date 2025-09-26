@@ -1,5 +1,7 @@
+import json
+from datetime import datetime
 from typing import Optional, Dict
-
+from CONFIG import CAMERA_SAVE_FOLDER
 from Result.DataItem import DataItem
 from Result.DataMap import DataMap
 from Result.DetResult import DetResult
@@ -73,7 +75,7 @@ class Business:
         }
 
 
-    def update(self,steel_infos:dict):
+    def update(self,steel_infos:Dict[str,DetResult]):
         self.data_item_l1 = self.do_l1(steel_infos["L1"])
         self.data_item_l2 = self.do_l2(steel_infos["L2"])
         self.steel_infos = steel_infos
@@ -86,6 +88,36 @@ class Business:
         self.send_data_byte = self.data_map.data_to_byte(self.send_data_dict)
         # print(fr"send data {self.send_data_byte}")
         self.data_map.send(self.send_data_byte)
+        # self.save_cap()
+
+    def save_cap(self):
+        """
+            保存切片：
+        """
+
+        print("保存单张 切片")
+
+        save_folder = CAMERA_SAVE_FOLDER/"cap"/datetime.now().strftime("%Y%m%d")/datetime.now().strftime("%H%M%S")
+        save_folder.mkdir(parents=True, exist_ok=True)
+
+        all_dict = {}
+        all_dict.update(self.steel_infos["L1"])
+        all_dict.update(self.steel_infos["L2"])
+        for key, item in all_dict.items():
+            item: DetResult
+            item.save_cap(key,save_folder)
+
+        json_data = {
+            # "steel_info":{
+            #     key:item.info()
+            #      for key,item in all_dict.items()
+            # },
+            "currentKey":[ self.data_item_l1.key, self.data_item_l2.key],
+            "send_data_dict":self.send_data_dict,
+            "send_data_byte":str(self.send_data_byte)
+        }
+        print(json_data)
+        json.dump(json_data, open(CAMERA_SAVE_FOLDER/"cap"/"cap.json","w"))
 
 
     @property

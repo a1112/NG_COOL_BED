@@ -60,7 +60,7 @@ class SteelPredict:
 
         show_cv2(steel_info.show_image, title=fr"j_{group_config.key}_" + group_config.msg)
 
-        if steel_info.can_get_data:
+        if steel_info.can_get_data and CONFIG.useSegModel:
             steel_info = SegResult(steel_info, self.seg_model.predict(calibrate.sub_images) )
             show_cv2(steel_info.draw_image, title=fr"j_seg_{group_config.key}_" + group_config.msg)
             calibrate.mask_image = steel_info.mask

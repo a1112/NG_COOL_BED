@@ -279,7 +279,7 @@ class SteelItemList(SteelItemBase):
 
     @property
     def rotated(self):
-        print(fr"SteelItemList get rotated: {self.steels}")
+        # print(fr"SteelItemList get rotated: {self.steels}")
         res = 0
         for steel in self.steels:
             if abs(steel.rotated) > abs(res):

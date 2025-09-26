@@ -97,5 +97,6 @@ class DebugControl:
         self.debug_test_index-=1
         return self.debug_test_index
 
+useSegModel=False
 
 debug_control = DebugControl()

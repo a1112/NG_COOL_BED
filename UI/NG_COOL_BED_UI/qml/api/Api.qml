@@ -35,4 +35,8 @@ Item {
         return ajax.get(server_url.url(server_url.serverUrl, "test_next_image"), success, failure)
     }
 
+
+    function save_cap(success, failure){
+        return ajax.get(server_url.url(server_url.serverUrl, "save_cap"), success, failure)
+    }
 }

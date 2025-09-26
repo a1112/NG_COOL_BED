@@ -1,8 +1,12 @@
 import time
+from datetime import datetime
+from pathlib import Path
 from typing import List
 
 import cv2
 import numpy as np
+from PIL import Image
+from lxml import etree
 
 import tool
 from Configs.CalibrateConfig import CalibrateConfig
@@ -17,6 +21,47 @@ def format_mm(mm):
 
 class ResultBase:
     pass
+
+
+def create_xml(file_name, img_shape, bounding_boxes, output_folder):
+    annotation = etree.Element("annotation")
+
+    folder = etree.SubElement(annotation, "folder")
+    folder.text = "images"
+
+    filename = etree.SubElement(annotation, "filename")
+    filename.text = str(file_name)
+
+    size = etree.SubElement(annotation, "size")
+    width = etree.SubElement(size, "width")
+    width.text = str(img_shape[1])
+    height = etree.SubElement(size, "height")
+    height.text = str(img_shape[0])
+    depth = etree.SubElement(size, "depth")
+    depth.text = str(img_shape[2]) if len(img_shape) == 3 else str(1)
+
+    for bbox in bounding_boxes:
+        xmin, ymin, xmax, ymax,label = bbox
+        obj = etree.SubElement(annotation, "object")
+
+        name = etree.SubElement(obj, "name")
+        name.text = str(label)
+
+        bndbox = etree.SubElement(obj, "bndbox")
+        xmin_elem = etree.SubElement(bndbox, "xmin")
+        xmin_elem.text = str(xmin)
+        ymin_elem = etree.SubElement(bndbox, "ymin")
+        ymin_elem.text = str(ymin)
+        xmax_elem = etree.SubElement(bndbox, "xmax")
+        xmax_elem.text = str(xmax)
+        ymax_elem = etree.SubElement(bndbox, "ymax")
+        ymax_elem.text = str(ymax)
+
+    tree = etree.ElementTree(annotation)
+    xml_path = Path(output_folder) / (Path(file_name).stem + '.xml')
+    print(xml_path)
+    tree.write(str(xml_path), pretty_print=True, xml_declaration=True, encoding="utf-8")
+    print(f"Saved XML to {xml_path}")
 
 
 class DetResult(ResultBase):
@@ -34,6 +79,9 @@ class DetResult(ResultBase):
 
         self.calibrate = calibrate
         self.rec_list = self.filter(rec_list)
+
+        self.calibrate_image = self.calibrate.image
+
         self.image = np.copy(calibrate.image)
         self.time=time.time()
         self.map_config:MappingConfig = map_config
@@ -205,6 +253,43 @@ class DetResult(ResultBase):
         self.draw_map()
         self.draw_steel()
         return self.image
+
+    def save_cap(self, key,save_folder):
+        image_save_url = save_folder/fr"{key}_{datetime.now().strftime("%Y%m%d%H%M%S")}.jpg"
+        xml_save_url = Path(image_save_url).with_suffix(".xml")
+        Image.fromarray(self.calibrate_image).save(image_save_url)
+        self.save_xml(xml_save_url)
+
+
+    def save_xml(self,xml_url):
+        import xml.etree.ElementTree as ET
+
+        root = ET.Element("annotation")
+        ET.SubElement(root, "filename").text = Path(xml_url).with_suffix(".jpg").name
+        ET.SubElement(root, "size").text = f"{self.image.shape[1]} {self.image.shape[0]}"
+
+        bounding_boxes=[]
+        if self.steel_list is not None:
+            for steel in self.steel_list:
+                steel : SteelItem
+                x, y, w, h, = steel.rect_px
+                bounding_boxes.append([x, y, x+w, y+h,steel.name])
+
+        create_xml(xml_url.with_suffix(".jpg"),self.image.shape,bounding_boxes,xml_url.parent )
+
+
+    def info(self):
+        return {
+            "steel_infos": self.steel_infos,
+            "t_car_infos": self.t_car_infos,
+            "can_get_data": self.can_get_data,
+            "left_under_steel": self.left_under_steel,
+            "right_under_steel": self.right_under_steel,
+            "left_under_cool_bed_steel": self.left_under_cool_bed_steel,
+            "right_under_cool_bed_steel": self.right_under_cool_bed_steel,
+            "left_under_roll_steel": self.left_under_roll_steel,
+            "right_under_roll_steel": self.right_under_roll_steel,
+        }
 
     def __repr__(self):
         return f"DetResult(time={self.time}, steel_count={len(self.steel_list)}, {self.steel_list}, t_car_count={len(self.t_car_list)})"

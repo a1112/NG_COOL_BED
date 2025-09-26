@@ -111,6 +111,11 @@ def test_pre_image():
 def test_next_image():
     return debug_control.next()
 
+@app.get("/save_cap")
+def save_cap():
+    business_main.save_cap()
+
+
 if __name__=="__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=6110)
