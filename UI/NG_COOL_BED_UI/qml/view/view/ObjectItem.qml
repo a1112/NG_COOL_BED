@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Material
 import "../core"
 Rectangle {
 
@@ -29,6 +29,15 @@ Rectangle {
         background : Rectangle{
             color : "#000"
         }
+    }
+
+    Label{
+        anchors.centerIn: parent
+        font.pixelSize: 18
+        font.bold: true
+        color: "pink"
+        text: objectType.rotated_
+
     }
 
     Label{
@@ -64,5 +73,7 @@ Rectangle {
         }
     }
     }
+
+
 
 }

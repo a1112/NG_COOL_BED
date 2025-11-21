@@ -10,13 +10,14 @@ from ProjectManagement.Main import CoolBedThreadWorker
 from Result.DataItem import DataItem
 from ProjectManagement.Business import Business
 from Globals import business_main, cool_bed_thread_worker_map, global_config
+from CONFIG import debug_control
 from fastapi.responses import StreamingResponse, FileResponse, Response
 
 from Server.tool import noFindImageByte
 
 business_main: Business
 
-app = FastAPI()
+app = FastAPI(debug=False)
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
@@ -72,11 +73,11 @@ async def get_map(cool_bed_key):
     return re_data
 
 
-@app.get("/image/{cool_bed:str}/{key:str}/{cap_index:int}")
-async def get_image(cool_bed:str, key:str, cap_index:int):
+@app.get("/image/{cool_bed:str}/{key:str}/{cap_index:int}/{show_mask:int}")
+async def get_image(cool_bed:str, key:str, cap_index:int,show_mask=0):
     cool_bed_thread_worker = cool_bed_thread_worker_map[cool_bed]
     cool_bed_thread_worker:CoolBedThreadWorker
-    index, cv_image = cool_bed_thread_worker.get_image(key)
+    index, cv_image = cool_bed_thread_worker.get_image(key,show_mask)
     if index < 0:
         return Response(content=noFindImageByte, media_type="image/jpg")
     _, encoded_image = cv2.imencode(".jpg", cv_image)
@@ -102,6 +103,17 @@ def current_info():
 
     return business_main.current_info
 
+@app.get("/test_pre_image")
+def test_pre_image():
+    return debug_control.prev()
+
+@app.get("/test_next_image")
+def test_next_image():
+    return debug_control.next()
+
+@app.get("/save_cap")
+def save_cap():
+    business_main.save_cap()
 
 
 if __name__=="__main__":

@@ -65,6 +65,10 @@ qt_add_qml_module(appNG_COOL_BED_UI
         RESOURCES icons/setting.png
         QML_FILES qml/dialogs/MapDialog.qml
         QML_FILES qml/view/view/HasRec.qml
+        QML_FILES qml/head/TestBtns.qml
+        QML_FILES qml/view/core/ControlConfig.qml
+        QML_FILES qml/view/view/MoveView.qml
+        QML_FILES qml/view/view/CoolBedMoveItem.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

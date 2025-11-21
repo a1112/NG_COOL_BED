@@ -15,7 +15,14 @@ Item {
 
     property int cap_index : 0
 
-    property string source_url: app_api.get_image_url(cool_bed_model_type.cool_bed_key, current_key, cap_index)
+    property string source_url: app_api.get_image_url(cool_bed_model_type.cool_bed_key, current_key, cap_index,cool_bed_core.show_mask)
+    onSource_urlChanged: {
+        console.log("source_url, "+source_url)
+
+    }
+
+    property ControlConfig controlConfig: ControlConfig{
+    }
 
     property CoolBedDataType coolBedDataType: CoolBedDataType{}
 
@@ -46,4 +53,8 @@ Item {
 
     property bool show_map_view: true
     property bool show_det_view: true
+
+    property bool can_show_mask: true// This is available in all editors.
+    property bool show_mask: false
+
 }

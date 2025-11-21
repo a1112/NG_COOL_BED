@@ -2,7 +2,8 @@
 /config/data/
 /venv/
 /src/SDK/SdkLog_Python/
-/src/SDK/lib/   
+/src/SDK/lib/
 /train/train/Dataset/
 /train/train/data/
 /.venv/
+/UI/NG_COOL_BED_UI/build/

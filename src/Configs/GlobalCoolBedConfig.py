@@ -11,8 +11,8 @@ class GlobalCoolBedConfigBase:
         self.up_seat_height = 750 # 轴承座上
         self.down_seat_height = 425 # 轴承座下
         self.roll_count = 48
-        self.cool_bed_width = 48000
-        self.cool_bed_height = 5810
+        self.cool_bed_width = 48000 # 长度
+        self.cool_bed_height = 5810  # 识别高度
 
     @property
     def MAX_T_CAR_HEIGHT(self):

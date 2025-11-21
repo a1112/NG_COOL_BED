@@ -17,6 +17,8 @@ Item {
     property int m_w: parseInt(w_mm)
     property int m_h: parseInt(h_mm)
 
+
+
     property string name_: name
 
     property bool i_left: in_left
@@ -24,6 +26,7 @@ Item {
     property bool i_cool_bed: in_cool_bed
     property bool i_roll: in_roll
     property bool c_to_roll_center_y: to_roll_center_y
+    property real rotated_:rotated
 
     // "in_left": self.in_left,
     // "in_right": self.in_right,

@@ -68,10 +68,28 @@ class DataItem:
         return self.steels.left_under_steel
 
     @property
+    def left_under_cool_bed_steel(self):
+        if self.steels is None:
+            return SteelItemNone()
+        return self.steels.left_under_cool_bed_steel
+
+    @property
+    def right_under_cool_bed_steel(self):
+        if self.steels is None:
+            return SteelItemNone()
+        return self.steels.right_under_cool_bed_steel
+
+    @property
     def left_cool_bed_steel(self):
         if self.steels is None:
             return SteelItemNone()
         return self.steels.left_cool_bed_steel
+
+    @property
+    def right_cool_bed_steel(self):
+        if self.steels is None:
+            return SteelItemNone()
+        return self.steels.right_cool_bed_steel
 
     @property
     def right_under_steel(self):
@@ -105,5 +123,9 @@ class DataItem:
             "has_error": self.has_error,
             "left_under_steel_to_center": self.left_under_steel.to_roll_center_y,
             "right_under_steel_to_center": self.right_under_steel.to_roll_center_y,
+            "left_cool_bed_steel_to_up":self.left_under_cool_bed_steel.to_under_mm,
+            "right_cool_bed_steel_to_up": self.right_under_cool_bed_steel.to_under_mm,
+            "left_rol_to_center": self.left_cool_bed_steel.to_roll_center_y,
+            "right_rol_to_center": self.right_cool_bed_steel.to_roll_center_y,
             "objects" : objects
         }

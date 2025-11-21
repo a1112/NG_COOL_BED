@@ -2,10 +2,10 @@
 from tqdm import tqdm
 from pathlib import Path
 from PIL import Image
-from_folder = Path(fr"D:\NgDataSave\相机采集保存\join")
+from_folder = Path(fr"P:\data_tool\PreData\ng\seg0611")
 out_folder = from_folder.parent/"crop____"
 out_folder.mkdir(exist_ok=True, parents=True)
-for f_ in tqdm(from_folder.glob(fr"*\*\*.jpg")):
+for f_ in tqdm(from_folder.glob(fr"*\*.jpg")):
     image = Image.open(f_)
     w,h = image.size
 

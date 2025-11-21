@@ -53,11 +53,19 @@ Item {
         height: show_image.paintedHeight
     }
 
+    //cool_bed_core.controlConfig.left_move_to_up_hov
+
     ObjView{
         visible: cool_bed_core.show_det_view
         anchors.centerIn: parent
         width: show_image.paintedWidth
         height: show_image.paintedHeight
     }
+    MoveView{
+        id:move_view
+        anchors.centerIn: parent
+        width: show_image.paintedWidth
+        height: show_image.paintedHeight
 
+    }
 }

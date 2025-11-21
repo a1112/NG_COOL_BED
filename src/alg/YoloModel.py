@@ -5,7 +5,12 @@ import numpy as np
 from ultralytics import YOLO
 from PIL import Image
 import CONFIG
-from alg.YoloModelResults import YoloModelDetResults, YoloModelSegResults
+from Configs.CalibrateConfig import CalibrateConfig
+from Configs.GroupConfig import GroupConfig
+from Result.DetResult import DetResult, SegResult
+from alg.YoloModelResults import YoloModelResults
+from tool import show_cv2
+
 
 def get_image(url_):
     return Image.open(url_)
@@ -35,14 +40,31 @@ class SteelDetModel:
 
 class SteelAreaSegModel:
     def __init__(self):
-        self.model = YOLO(str(CONFIG.MODEL_FOLDER / "area_seg.pt"))   # load a custom model
+        self.model = YOLO(str(CONFIG.MODEL_FOLDER / "steelSeg.pt"))   # load a custom model
 
-    def predict(self, image):
-        results = self.model(image)
-        res_data = YoloModelSegResults(image, results[0])
+    def predict(self, image_list):
+        results = self.model(image_list)
+        len_= len(image_list)
+        res_data = [YoloModelResults(index,len_,image, result) for index, image, result in zip(range(len_), image_list, results)]
         return res_data
 
 
+class SteelPredict:
+    def __init__(self):
+        self.det_model = SteelDetModel()
+        self.seg_model = SteelAreaSegModel()
+
+    def predict(self,calibrate:CalibrateConfig, group_config:GroupConfig):
+        model_data = self.det_model.get_steel_rect(calibrate.image)
+        steel_info = DetResult(calibrate, model_data, group_config.map_config)
+
+        show_cv2(steel_info.show_image, title=fr"j_{group_config.key}_" + group_config.msg)
+
+        if steel_info.can_get_data and CONFIG.useSegModel:
+            steel_info = SegResult(steel_info, self.seg_model.predict(calibrate.sub_images) )
+            show_cv2(steel_info.draw_image, title=fr"j_seg_{group_config.key}_" + group_config.msg)
+            calibrate.mask_image = steel_info.mask
+        return steel_info
 
 def test_one_image(mask_model,text_image):
     res = mask_model.predict(text_image)

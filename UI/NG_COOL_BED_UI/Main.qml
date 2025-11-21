@@ -3,7 +3,9 @@ import "qml/api"
 import "qml/core"
 import "qml/dialogs"
 import "qml/menus"
+import QtQuick.Controls.Material
 MainLayout {
+    Material.theme: Material.Dark
     property Core app_core: Core{}  // core
 
     property Api app_api: Api{}     // api

@@ -5,6 +5,10 @@ from pathlib import Path
 from threading import Thread
 from multiprocessing import Process
 
+import logging
+
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+
 # CONFIG
 CONFIG_FOLDER = Path(__file__).parent.parent/"config"
 if not CONFIG_FOLDER.is_dir():
@@ -13,7 +17,6 @@ if not CONFIG_FOLDER.is_dir():
 
 assert CONFIG_FOLDER.exists(), f"CONFIG_FOLDER 不存在： {CONFIG_FOLDER}"
 
-print(CONFIG_FOLDER)
 SOFT_FOLDER = ""
 for folder in [CONFIG_FOLDER / "soft", CONFIG_FOLDER.parent / "soft", Path(__file__).parent.parent/"soft"]:
     if folder.exists():
@@ -47,7 +50,7 @@ DATA_FOLDER = CONFIG_FOLDER / "data"
 DATA_FOLDER.mkdir(exist_ok=True, parents=True)
 DEBUG_MODEL = False
 print(f"hostname: {socket.gethostname()}")
-if socket.gethostname() in ["MS-LGKRSZGOVODD", "DESKTOP-94ADH1G","HGL8081-1"]:
+if socket.gethostname() in ["DESKTOP-3VCH6DO", "MS-LGKRSZGOVODD", "DESKTOP-94ADH1G","HGL8081-1"]:
     DEBUG_MODEL = True
 
 show_camera = False
@@ -63,12 +66,14 @@ class CapModelEnum(Enum):
 CAP_MODEL = CapModelEnum.SDK
 CAMERA_SAVE_FOLDER = Path(fr"D:\NgDataSave")
 
+TEMP_FOLDER = CAMERA_SAVE_FOLDER/"temp"
+
 if DEBUG_MODEL:
     CAP_MODEL = CapModelEnum.DEBUG
     CAMERA_SAVE_FOLDER = CONFIG_FOLDER / "data"
 
 CAMERA_SAVE_FOLDER.mkdir(exist_ok=True, parents=True)
-
+TEMP_FOLDER.mkdir(exist_ok=True, parents=True)
 
 DATA_FMT="%Y-%m-%d"
 TIME_FMT="%H_%M_%S"
@@ -76,3 +81,22 @@ TIME_FMT="%H_%M_%S"
 DATETIME_FMT = f"{DATA_FMT}-{TIME_FMT}"
 IMAGE_SAVE_TYPE = "jpg"
 APP_RUN = True
+
+
+class DebugControl:
+    def __init__(self):
+        self.debug_test_index=0
+
+    def next(self):
+        print(fr"next:{self.debug_test_index}")
+        self.debug_test_index+=1
+        return self.debug_test_index
+
+    def prev(self):
+        print(fr"prev:{self.debug_test_index}")
+        self.debug_test_index-=1
+        return self.debug_test_index
+
+useSegModel=False
+
+debug_control = DebugControl()

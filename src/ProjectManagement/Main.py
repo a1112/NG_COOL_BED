@@ -6,6 +6,7 @@ from tqdm import tqdm
 import CONFIG
 from Base import RollingQueue
 from Base.Error import CoolBedError
+from Configs.CalibrateConfig import CalibrateConfig
 from Configs.GlobalConfig import GlobalConfig
 from Configs.GroupConfig import GroupConfig
 from Configs.CoolBedGroupConfig import CoolBedGroupConfig
@@ -15,7 +16,7 @@ from Configs.CameraConfig import CameraConfig
 from CameraStreamer.RtspCapTure import RtspCapTure
 from Configs.CameraManageConfig import camera_manage_config
 from Save.CapJoinSave import CapJoinSave
-from alg.YoloModel import SteelDetModel
+from alg.YoloModel import SteelDetModel, SteelPredict
 from Result.DetResult import DetResult
 from tool import show_cv2
 from collections import OrderedDict
@@ -35,31 +36,35 @@ class CoolBedThreadWorker(Thread):
         self.steel_data_queue = RollingQueue(maxsize=1)
         self.FPS = 7
 
-        self.join_image_dict = {}
+        self.join_image_dict = {}  # 全部的 返回參數
 
         if  self.run_worker:
             logger.debug(f"开始 执行 {key} ")
             self.start()
 
-    def get_image(self, key):
+    def get_image(self, key,show_mask):
         if key in self.join_image_dict:
-            return self.join_image_dict[key]
+            id_,calibrate = self.join_image_dict[key]
+            calibrate:CalibrateConfig
+            if show_mask:
+                return id_, calibrate.mask_image
+            return id_, calibrate.image
         return -1, None
 
-    def _up_join_image_(self,key, image):
+    def _up_join_image_(self,key, calibrate:CalibrateConfig):
         if key in self.join_image_dict:
             self.join_image_dict[key][0] = self.join_image_dict[key][0]+1
-            self.join_image_dict[key][1] = image
+            self.join_image_dict[key][1] = calibrate
         else:
-            self.join_image_dict[key] = [0,image]
+            self.join_image_dict[key] = [0, calibrate]
 
     def get_data(self):
         return
 
     def run(self):
         print(f"start  CoolBedThreadWorker {self.key}")
-        model = SteelDetModel()
-
+        # model = SteelDetModel()
+        predictor = SteelPredict()
         self.save_thread = CapJoinSave(self.config)
         #  工作1， 相机初始化
         for key, camera_config in self.config.camera_map.items():
@@ -76,37 +81,42 @@ class CoolBedThreadWorker(Thread):
             cap_dict = {key: cap_ture.get_cap() for key, cap_ture in self.camera_map.items()}
             steel_info_dict = {}
             # 工作3 处理 透视 表
-            for group_config in self.config.groups:  # 注意排序规则
-                group_config: GroupConfig
-                join_image = group_config.calibrate_image(cap_dict)
-                self._up_join_image_(group_config.group_key,join_image)
-                # 调整中的工作-----------------------------------
-                # 工作4 识别
-                self.save_thread.save_buffer(group_config.group_key, join_image)
-                model_data = model.get_steel_rect(join_image)
-                steel_info = DetResult(join_image, model_data, group_config.map_config)
+            try:
+                for group_config in self.config.groups:  # 注意排序规则
+                    group_config: GroupConfig
+                    calibrate = group_config.calibrate_image(cap_dict)
+                    self._up_join_image_(group_config.group_key, calibrate)
+                    # 调整中的工作-----------------------------------
+                    # 工作4 识别
+                    self.save_thread.save_buffer(group_config.group_key, calibrate)
 
-                show_cv2(steel_info.show_image,title=fr"j_{self.key}_"+group_config.msg)
-                steel_info_dict[group_config.group_key] = steel_info
-                # if steel_info.can_get_data: # 如果有符合（无冷床遮挡）则返回数据
-                #     continue
+                    # steel_info = DetResult(calibrate, model_data, group_config.map_config)
 
-            # 工作5 识别结果 的逻辑处理
-            self.steel_data_queue.put(steel_info_dict)
-            # if steel_info is not None:
-            #     self.steel_data_queue.put(steel_info)
-            # else:
-            #     self.steel_data_queue.put(CoolBedError("无法获取有效数据：过多相机失联，或无有效数据"))
-            end_time=time.time()
-            use_time =end_time-start_time
-            print(f"FPS： {self.FPS} use time： {use_time}  ")
-            if use_time < 1 / self.FPS:
-                time.sleep(1 / self.FPS - use_time)
-            else:
-                logger.warning(f"单帧处理时间 {use_time}")
-            if CONFIG.DEBUG_MODEL:
-                time.sleep(5)
+                    steel_info = predictor.predict(calibrate, group_config)
 
+                    # if self.key == "L2":
+                    #     print(fr" steel_info: {steel_info} ")
+
+                    steel_info_dict[group_config.group_key] = steel_info
+                    # if steel_info.can_get_data: # 如果有符合（无冷床遮挡）则返回数据
+                    #     continue
+                # 工作5 识别结果 的逻辑处理
+                self.steel_data_queue.put(steel_info_dict)
+                # if steel_info is not None:
+                #     self.steel_data_queue.put(steel_info)
+                # else:
+                #     self.steel_data_queue.put(CoolBedError("无法获取有效数据：过多相机失联，或无有效数据"))
+                end_time=time.time()
+                use_time =end_time-start_time
+                print(f"FPS： {self.FPS} use time： {use_time}  ")
+                if use_time < 1 / self.FPS:
+                    time.sleep(1 / self.FPS - use_time)
+                else:
+                    logger.warning(f"单帧处理时间 {use_time}")
+                if CONFIG.DEBUG_MODEL:
+                    time.sleep(0.2)
+            except BaseException as e:
+                logger.error(e)
         # join
         # for key, cap_ture in self.camera_map.items():
         #     cap_ture.join()

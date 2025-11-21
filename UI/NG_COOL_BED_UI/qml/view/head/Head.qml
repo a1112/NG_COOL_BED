@@ -6,7 +6,6 @@ import "../../base"
 HeadBase {
     id:root
     Layout.fillWidth: true
-
     height: 30
     RowLayout{
         anchors.fill: parent
@@ -66,6 +65,13 @@ HeadBase {
             text: qsTr("标注")
             checked: cool_bed_core.show_det_view
             onCheckedChanged: cool_bed_core.show_det_view = checked
+        }
+        CheckDelegate{
+            implicitHeight: root.height
+            text: qsTr("MASK")
+            enabled: cool_bed_core.can_show_mask
+            checked: cool_bed_core.show_mask
+            onCheckedChanged: cool_bed_core.show_mask = checked
         }
         Item{
             width: 50

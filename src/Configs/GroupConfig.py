@@ -1,12 +1,15 @@
 import numpy as np
 
+from CONFIG import DEBUG_MODEL
 from CameraStreamer.ConversionImage import ConversionImage
+from .CalibrateConfig import CalibrateConfig, DebugCalibrateConfig
 from .ConfigBase import ConfigBase
 from .MappingConfig import MappingConfig
 
 
 def join_conversion_image_list(image_list):
     return np.hstack(image_list)
+
 
 
 class GroupConfig(ConfigBase):
@@ -23,6 +26,8 @@ class GroupConfig(ConfigBase):
         self.group_key = config["key"]
         size_list = config["size_list"]
         self.map_config = MappingConfig(self.key,self.config["key"])
+        if DEBUG_MODEL:
+            self.debugCalibrateConfig = DebugCalibrateConfig(self.group_key)
 
         self.conversion_list = [ConversionImage(key,size[0],size[1]) for key, size in zip(self.camera_list,size_list)]  # 拿到 对应的 透视 参数
 
@@ -33,7 +38,11 @@ class GroupConfig(ConfigBase):
         image_list = [cap_dict[key] for key in self.camera_list]  # 拿到 对应的 透视 参数
         conversion_image_list = [conv.image_conversion(image.frame) for image,conv in zip(image_list,self.conversion_list)]
         # 透视拼接
-        return join_conversion_image_list(conversion_image_list)
+        if DEBUG_MODEL:
+            self.debugCalibrateConfig.conversion_image_list = conversion_image_list
+            return self.debugCalibrateConfig
+        else:
+            return CalibrateConfig(conversion_image_list) # join_conversion_image_list(conversion_image_list)
 
     @property
     def info(self):

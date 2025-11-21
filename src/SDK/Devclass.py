@@ -303,6 +303,7 @@ class DevClass(Thread):
 
 
 def cap_one(ip_):
+
     import CONFIG
 
     CONFIG.IP = ip_
@@ -312,11 +313,11 @@ def cap_one(ip_):
     dev.GeneralSetting()  # 通用设置，日志，回调函数等
     dev.LoginDev(ip=ip_, username=b"admin", pwd=b"ng123456")  # 登录设备
 
-    dev.startPlay(playTime=10)  # playTime用于linux环境控制预览时长，windows环境无效
+    dev.startPlay()  # playTime用于linux环境控制预览时长，windows环境无效
     print(dev)
     while True:
         time.sleep(1)
-        print(dev.frame_queue.qsize())
+        print(dev.frame_queue.get())
     dev.stopPlay()
     dev.LogoutDev()
     # 释放资源

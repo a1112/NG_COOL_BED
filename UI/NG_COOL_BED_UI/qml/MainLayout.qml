@@ -8,7 +8,7 @@ import "view"
 import "api"
 
 ApplicationWindow {
-    Material.theme: Material.Dark
+
     width: Screen.width*0.7
     height: Screen.height*0.85
     visible: true
@@ -29,10 +29,6 @@ ApplicationWindow {
                 delegate: CoolBedView{
                 }
             }
-
-
-
         }
-
 }
 }

@@ -22,7 +22,6 @@ class MappingConfig:
 
         self.x_map = self.get_x_map()
         self.y_map = self.get_y_map()
-
         self.MAX_LEN = 400 # 距离最 近大允许范围
         print(self.data)
         print(f'x_map  {self.x_map}')
@@ -113,13 +112,19 @@ class MappingConfig:
             x_px, x_mm = x_map_list[index]
             if x_ == x_px:
                 return x_mm
-            if x_<x_px:
+            if x_<=x_px:
                 px_asp = (x_map_list[index][1] - x_map_list[index-1][1])/(x_map_list[index][0] - x_map_list[index-1][0])
                 px_asp = abs(px_asp)
                 return x_map_list[index-1][1] + px_asp * (x_-x_map_list[index-1][0])
         # if CONFIG.DEBUG_MODEL:
         #     return 1
-        raise ValueError(f" X 出现越界 ")
+        len_=len(x_map_list)-1
+        px_asp = abs(x_map_list[len_ ][1] - x_map_list[len_ - 1][1]) / (x_map_list[len_][0] - x_map_list[len_ - 1][0])
+        re_value = x_map_list[len_-1][1] + px_asp * (x_-x_map_list[len_-1][0])
+        print(fr" X 出现越界 X 出现越界 {x_} {x_map_list}  {re_value}")
+
+        return re_value
+        # raise ValueError(fr" X 出现越界 {x_} {x_map_list}")
 
 
     def px_to_y(self,y_):
@@ -153,6 +158,11 @@ class MappingConfig:
     @property
     def roll_center_y(self):
         return self.glob_cool_bed_config.roll_height/2
+
+    @property
+    def to_up_seat_height(self):
+        return self.glob_cool_bed_config.roll_height+ self.glob_cool_bed_config.up_seat_height
+
 
     @property
     def info(self):
