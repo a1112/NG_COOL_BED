@@ -24,9 +24,15 @@ Item {
     }
 
     function for_list(list_,func){
-        return list_.forEach(
-                    func
-                    )
+        if (!list_ || typeof func !== "function") return
+        if (list_.forEach) {
+            return list_.forEach(func)
+        }
+        if (list_.length !== undefined) {
+            for (var i = 0; i < list_.length; ++i) {
+                func(list_[i], i)
+            }
+        }
     }
 
 

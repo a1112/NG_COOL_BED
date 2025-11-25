@@ -33,7 +33,6 @@ Item {
             CameraViw{
 
             }
-
         }
     }
 }

@@ -13,7 +13,7 @@ ColumnLayout {
         title: qsTr("基础")
         Layout.fillWidth: true
         ColumnLayout {
-            spacing: layoutSpacing
+            spacing: 5
             Layout.fillWidth: true
 
             RowLayout {
@@ -55,7 +55,7 @@ ColumnLayout {
         title: qsTr("配置")
         Layout.fillWidth: true
         ColumnLayout {
-            spacing: layoutSpacing
+            spacing: 5
             Layout.fillWidth: true
 
             RowLayout {
@@ -86,7 +86,7 @@ ColumnLayout {
         title: qsTr("模型选择")
         Layout.fillWidth: true
         ColumnLayout {
-            spacing: layoutSpacing
+            spacing: 5
             Layout.fillWidth: true
 
             RowLayout {

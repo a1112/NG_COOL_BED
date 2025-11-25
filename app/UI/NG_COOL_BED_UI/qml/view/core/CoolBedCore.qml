@@ -17,7 +17,7 @@ Item {
 
     property string source_url: app_api.get_image_url(cool_bed_model_type.cool_bed_key, current_key, cap_index,cool_bed_core.show_mask)
     onSource_urlChanged: {
-        console.log("source_url, "+source_url)
+
 
     }
 

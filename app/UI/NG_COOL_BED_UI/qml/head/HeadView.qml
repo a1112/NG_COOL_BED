@@ -43,10 +43,10 @@ HeadBase {
             text: "(1.0.2)"
         }
         Label{
-            text:""// app_core.debug ? "   测试" : "   在线"
+            text:app_core.debug ? "   测试模式" : "   在线模式"
             font.pointSize: 15
             font.bold: true
-            Material.foreground: app_core.debug ? Material.Red : Material.Green
+            Material.foreground: app_core.debug ? Material.Yellow : Material.Green
         }
 
         MainTabView{

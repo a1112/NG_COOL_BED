@@ -15,7 +15,7 @@ ColumnLayout {
         title: qsTr("测试数据")
         Layout.fillWidth: true
         ColumnLayout {
-            spacing: layoutSpacing
+            spacing: 5  // 你再改试试？
             Layout.fillWidth: true
 
             RowLayout {

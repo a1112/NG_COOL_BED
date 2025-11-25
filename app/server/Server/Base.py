@@ -8,6 +8,7 @@ from Configs.CameraManageConfig import camera_manage_config
 from Configs.CoolBedGroupConfig import CoolBedGroupConfig
 from Configs.GroupConfig import GroupConfig
 from Configs.MappingConfig import MappingConfig
+from Configs.CameraListConfig import camera_list_config
 from ProjectManagement.Main import CoolBedThreadWorker
 from Result.DataItem import DataItem
 from ProjectManagement.Business import Business
@@ -66,12 +67,30 @@ async def get_info():
 
 @app.get("/map/{cool_bed_key:str}")
 async def get_map(cool_bed_key):
+    if cool_bed_key not in camera_manage_config.group_dict:
+        raise HTTPException(status_code=404, detail=f"cool_bed_key not found: {cool_bed_key}")
     cbc:CoolBedGroupConfig = camera_manage_config.group_dict[cool_bed_key]
     re_data = {}
     for g_key,g_config in cbc.groups_dict.items():
         g_config:GroupConfig
         map_config :MappingConfig = g_config.map_config
         re_data[g_key] = map_config.info
+    return re_data
+
+
+@app.get("/map")
+async def get_map_all():
+    """
+    返回所有冷床的 map 信息（兼容前端未传 key 的旧调用方式）
+    """
+    re_data = {}
+    for cool_bed_key, cbc in camera_manage_config.group_dict.items():
+        cool_bed_map = {}
+        for g_key, g_config in cbc.groups_dict.items():
+            g_config: GroupConfig
+            map_config: MappingConfig = g_config.map_config
+            cool_bed_map[g_key] = map_config.info
+        re_data[cool_bed_key] = cool_bed_map
     return re_data
 
 
@@ -89,10 +108,13 @@ async def get_image(cool_bed:str, key:str, cap_index:int,show_mask=0):
 
 @app.get("/data/{cool_bed:str}")
 async def get_data(cool_bed:str):
-    cool_bed_data =  {key:item.get_info() for key, item in business_main.data_item_dict[cool_bed].items()}
-    cool_bed_data["current"] = business_main.get_current_data(cool_bed)
+    data_dict = business_main.data_item_dict if hasattr(business_main, "data_item_dict") else {}
+    if cool_bed not in data_dict:
+        raise HTTPException(status_code=404, detail=f"cool_bed not ready: {cool_bed}")
+    cool_bed_data = {key: item.get_info() for key, item in data_dict[cool_bed].items()}
+    if hasattr(business_main, "get_current_data"):
+        cool_bed_data["current"] = business_main.get_current_data(cool_bed)
     return cool_bed_data
-    #  return business_main.data_map.get_info_by_cool_bed(cool_bed)
 
 
 @app.get("/send_data")
@@ -104,6 +126,73 @@ async def send_data():
 def current_info():
 
     return business_main.current_info
+
+
+def _derive_seq(cam_id: str):
+    import re
+    m = re.match(r"L(\d+)_([0-9]+)", cam_id, re.IGNORECASE)
+    if not m:
+        return None
+    line = int(m.group(1))
+    idx = int(m.group(2))
+    return (line - 1) * 6 + idx
+
+
+@app.get("/cameras")
+async def get_cameras():
+    """
+    返回前端相机列表所需信息：
+    camera, bed, ip, rtsp_url(若无则空), seq(推算), position(若无则空)
+    """
+    res = []
+    cfg = getattr(camera_list_config, "config", {}) or {}
+    for bed_key, bed_info in cfg.items():
+        ip_list = (bed_info or {}).get("ipList", {}) or {}
+        for cam_id, cam_info in ip_list.items():
+            cam_info = cam_info or {}
+            res.append({
+                "camera": cam_id,
+                "bed": bed_key,
+                "ip": cam_info.get("ip", ""),
+                "rtsp_url": cam_info.get("rtsp_url", ""),
+                "seq": cam_info.get("seq") or _derive_seq(cam_id),
+                "position": cam_info.get("position", ""),
+                "enable": cam_info.get("enable", True),
+            })
+    return res
+
+
+def _safe_calibrate_path(calibrate: str, name: str) -> Path:
+    base = (CAMERA_CONFIG_FOLDER / "cameras" / calibrate).resolve()
+    path = (base / name).resolve()
+    try:
+        path.relative_to(base)
+    except Exception:
+        raise HTTPException(status_code=400, detail="invalid path")
+    return path
+
+
+@app.get("/calibrate/label/{calibrate}/{cam_id}")
+def get_calibrate_label(calibrate: str, cam_id: str):
+    path = _safe_calibrate_path(calibrate, f"{cam_id}.json")
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail=f"label not found: {cam_id}")
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        raise HTTPException(status_code=500, detail="failed to read label")
+
+
+@app.get("/calibrate/image/{calibrate}/{image_name}")
+def get_calibrate_image(calibrate: str, image_name: str):
+    name = image_name
+    if "." not in name:
+        name += ".jpg"
+    path = _safe_calibrate_path(calibrate, name)
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail=f"image not found: {name}")
+    return FileResponse(path, media_type="image/jpeg")
+
 
 @app.get("/test_pre_image")
 def test_pre_image():
@@ -153,7 +242,13 @@ def _save_json_file(path: Path, data):
 @app.get("/config/calibrate")
 def get_calibrate_config():
     cameras_root = CAMERA_CONFIG_FOLDER / "cameras"
-    available = [p.name for p in cameras_root.iterdir() if p.is_dir()] if cameras_root.exists() else []
+    if cameras_root.exists():
+        available = [
+            p.name for p in cameras_root.iterdir()
+            if p.is_dir() and not p.name.startswith("__") and not p.name.startswith(".")
+        ]
+    else:
+        available = []
     current = CURRENT_CALIBRATE
     return {"current": current, "available": available, "file": str(CALIBRATE_SELECT_FILE)}
 

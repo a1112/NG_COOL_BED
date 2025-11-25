@@ -7,8 +7,8 @@ import "qml/setting"
 import QtQuick.Controls.Material
 MainLayout {    //主界面
     Material.theme: Material.Dark
-    property Core app_core: Core{}  // core
-    property Api app_api: Api{}     // api
+    property var app_core: Core     // core singleton
+    property var app_api: Api       // api singleton
     property Tool app_tool: Tool{}  // 工具
     property Config app_config : Config{}  // config
     // DIALOGES

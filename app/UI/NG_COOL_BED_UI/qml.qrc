@@ -19,8 +19,11 @@
         <file>qml/head/HeadView.qml</file>
         <file>qml/head/SettingButton.qml</file>
         <file>qml/head/TestBtns.qml</file>
+        <file>qml/core/qmldir</file>
+        <file>qml/core/CameraViewCore.qml</file>
         <file>qml/menus/MainMenu.qml</file>
         <file>qml/menus/ToolMenus.qml</file>
+        <file>qml/api/qmldir</file>
         <file>qml/view/MainViewLayout.qml</file>
         <file>qml/types/CoolBedDataType.qml</file>
         <file>qml/types/CoolBedDataTypeItem.qml</file>
@@ -50,5 +53,16 @@
         <file>qml/setting/SettingView.qml</file>
         <file>qml/head/MainTabView.qml</file>
         <file>qml/view/camera_view/CameraViw.qml</file>
+        <file>qml/view/camera_view/left/LeftManageView.qml</file>
+        <file>qml/view/camera_view/left/GropListView.qml</file>
+        <file>qml/view/camera_view/left/GropListViewItem.qml</file>
+        <file>qml/view/camera_view/left/IpTreeView.qml</file>
+        <file>qml/view/camera_view/camera/CameraVideoView.qml</file>
+        <file>qml/view/camera_view/camera/CameraImageView.qml</file>
+        <file>qml/view/camera_view/camera/PerspectiveOverlay.qml</file>
+        <file>qml/view/camera_view/camera/CameraTile.qml</file>
+        <file>qml/view/camera_view/grop/GropView.qml</file>
+        <file>qml/view/camera_view/grop/GropViewLayout.qml</file>
+        <file>qml/view/camera_view/camera/CameraViewLayout.qml</file>
     </qresource>
 </RCC>
