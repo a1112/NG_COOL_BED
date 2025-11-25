@@ -24,7 +24,7 @@ HeadBase {
             width: 32
             height: root.height - 10
             font.bold: true
-            icon.source: "qrc:/qt/qml/NG_COOL_BED_UI/icons/menu.png"
+            icon.source: Qt.resolvedUrl("../../icons/menu.png")
             Material.foreground: Material.BlueGrey
             onClicked: {
                 mainMenu.popup(mainMenuButton, 0, mainMenuButton.height)
@@ -90,7 +90,7 @@ HeadBase {
         SettingButton{
             height: root.height
             width: height
-            iconSource: "qrc:/qt/qml/NG_COOL_BED_UI/icons/setting.png"
+            iconSource: Qt.resolvedUrl("../../icons/setting.png")
             onClicked: {
                 if (root.settingView) {
                     root.settingView.open()

@@ -11,22 +11,30 @@ import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 # CONFIG
-CONFIG_FOLDER = Path(__file__).parent.parent/"config"
-if not CONFIG_FOLDER.is_dir():
-    CONFIG_FOLDER = Path("D:/NG_CONFIG")
+# 项目根目录：app/server/CONFIG.py 向上两级即仓库根
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
+# 支持多种配置位置：优先仓库根 config，其次历史上的 D:/NG_CONFIG
+_CONFIG_CANDIDATES = [
+    PROJECT_ROOT / "config",
+    Path("D:/NG_CONFIG"),
+]
+CONFIG_FOLDER = next((p for p in _CONFIG_CANDIDATES if p.is_dir()), None)
+if CONFIG_FOLDER is None:
+    raise FileNotFoundError(f"CONFIG_FOLDER 不存在，已尝试: {', '.join(str(p) for p in _CONFIG_CANDIDATES)}")
 
-assert CONFIG_FOLDER.exists(), f"CONFIG_FOLDER 不存在： {CONFIG_FOLDER}"
-
-SOFT_FOLDER = ""
-for folder in [CONFIG_FOLDER / "soft", CONFIG_FOLDER.parent / "soft", Path(__file__).parent.parent/"soft"]:
-    if folder.exists():
-        SOFT_FOLDER = folder
-        break
+SOFT_FOLDER = next(
+    (p for p in [
+        CONFIG_FOLDER / "soft",
+        CONFIG_FOLDER.parent / "soft",
+        PROJECT_ROOT / "soft",
+    ] if p.exists()),
+    None,
+)
 
 FIRST_SAVE_FOLDER = CONFIG_FOLDER / "first_save"
 
-SAVE_DATA_FOLDER = Path(__file__).parent.parent / "save_data"
+SAVE_DATA_FOLDER = PROJECT_ROOT / "save_data"
 SAVE_DATA_FOLDER.mkdir(exist_ok=True, parents=True)
 
 ONE_CAP_FOLDER = SAVE_DATA_FOLDER / "one_cap"

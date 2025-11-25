@@ -3,7 +3,7 @@
     L1_g0_2345.jpg、L1_g1_6.jpg、L1_g2_1.jpg、L2_g0_2345.jpg 等。
 
 特点：
-- 使用 src 目录下与线上一致的透视逻辑（ConversionImage）；
+- 使用 server 目录下与线上一致的透视逻辑（ConversionImage）；
 - 每个分组按各标定子目录里的 CameraManage.json 的 camera_list 和 size_list 做透视并横向拼接；
 - 默认对 cameras 下所有标定子目录批量生成，输出到 mapping/{子目录}/{group}.jpg；
 - 可用 --subfolder 仅处理指定的标定子目录；不修改 / 删除其中的 XML 文件。
@@ -27,7 +27,7 @@ import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SRC_DIR = ROOT / "src"
+SRC_DIR = ROOT / "server"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
