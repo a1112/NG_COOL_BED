@@ -28,7 +28,7 @@ Rectangle {
         RowLayout {
             Layout.fillWidth: true
             Label {
-                text: camera ? camera.label : "空槽"
+                text: camera ? (camera.label || camera.id || camera.camera || "未命名相机") : "空槽"
                 color: "#fff"
                 font.bold: true
             }
@@ -75,7 +75,8 @@ Rectangle {
             Rectangle {
                 anchors.fill: parent
                 color: "#66000000"
-                visible: videoView.error !== MediaPlayer.NoError || (!root.offlineMode && (!camera || !camera.rtsp_url))
+                visible: (!root.offlineMode && (!camera || !camera.rtsp_url)) ||
+                         (!videoView.offline && videoView.error !== MediaPlayer.NoError)
                 Label {
                     anchors.centerIn: parent
                     text: (!root.offlineMode && (!camera || !camera.rtsp_url)) ? "无视频 / 未配置" :

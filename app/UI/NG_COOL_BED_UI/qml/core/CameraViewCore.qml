@@ -222,6 +222,21 @@ Item {
         flatTreeRows = rows
     }
 
+    function refreshSnapshots() {
+        if (!cameraInfo || !cameraInfo.length) return
+        const updated = []
+        const bySeq = {}
+        cameraInfo.forEach((entry) => {
+            const camId = entry.id || entry.label || ""
+            const clone = Object.assign({}, entry)
+            clone.snapshot = camId ? snapshotPath(camId) : ""
+            updated.push(clone)
+            if (clone.seq !== undefined && clone.seq !== null) bySeq[clone.seq] = clone
+        })
+        cameraInfo = updated
+        cameraBySeq = bySeq
+    }
+
     function reloadFromServer() {
         calibrateKey = loadCurrentCalibrate()
         labelmeCache = ({})
@@ -232,6 +247,7 @@ Item {
             if (data) cameraManageData = data
         }
         rebuildOverlayMap()
+        refreshSnapshots()
         statusMessage = "已从后端加载配置"
     }
 

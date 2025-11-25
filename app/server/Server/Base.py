@@ -172,15 +172,19 @@ def _safe_calibrate_path(calibrate: str, name: str) -> Path:
     return path
 
 
-@app.get("/calibrate/label/{calibrate}/{cam_id}")
-def get_calibrate_label(calibrate: str, cam_id: str):
-    path = _safe_calibrate_path(calibrate, f"{cam_id}.json")
+def _load_calibrate_file(calibrate: str, filename: str):
+    path = _safe_calibrate_path(calibrate, filename)
     if not path.is_file():
-        raise HTTPException(status_code=404, detail=f"label not found: {cam_id}")
+        raise HTTPException(status_code=404, detail=f"{filename} not found for calibrate: {calibrate}")
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        raise HTTPException(status_code=500, detail="failed to read label")
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"failed to read {filename}") from exc
+
+
+@app.get("/calibrate/label/{calibrate}/{cam_id}")
+def get_calibrate_label(calibrate: str, cam_id: str):
+    return _load_calibrate_file(calibrate, f"{cam_id}.json")
 
 
 @app.get("/calibrate/image/{calibrate}/{image_name}")
@@ -192,6 +196,16 @@ def get_calibrate_image(calibrate: str, image_name: str):
     if not path.is_file():
         raise HTTPException(status_code=404, detail=f"image not found: {name}")
     return FileResponse(path, media_type="image/jpeg")
+
+
+@app.get("/calibrate/camera_manage/{calibrate}")
+def get_calibrate_camera_manage(calibrate: str):
+    return _load_calibrate_file(calibrate, "CameraManage.json")
+
+
+@app.get("/calibrate/camera_manage")
+def get_current_calibrate_camera_manage():
+    return _load_calibrate_file(CURRENT_CALIBRATE, "CameraManage.json")
 
 
 @app.get("/test_pre_image")

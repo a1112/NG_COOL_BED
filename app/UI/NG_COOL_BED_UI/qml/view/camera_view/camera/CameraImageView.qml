@@ -5,6 +5,6 @@ Image {
     property alias sourcePath: root.source
     asynchronous: true
     fillMode: Image.PreserveAspectFit
-    cache: true
+    cache: false
     source: ""
 }

@@ -14,6 +14,10 @@ Item {
     property int selectedSlot: Core.CameraViewCore.selectedSlotNumber
     property var visibilityMap: Core.CameraViewCore.overlayVisibility
     property var shapesProvider: function(camId){ return Core.CameraViewCore.shapesForCamera(camId) }
+    property var selectedCamera: (Core.CameraViewCore && Core.CameraViewCore.cameraForSlot)
+                                 ? Core.CameraViewCore.cameraForSlot(selectedSlot)
+                                 : null
+    property string selectedSnapshot: (selectedCamera && selectedCamera.snapshot) ? selectedCamera.snapshot : ""
 
     ColumnLayout {
         anchors.fill: parent
@@ -26,6 +30,17 @@ Item {
                 text: (layoutConfig && layoutConfig.name) ? layoutConfig.name : "组合视图"
                 color: "#fff"
                 font.bold: true
+            }
+            Text {
+                visible: root.offlineMode && selectedSnapshot !== ""
+                textFormat: Text.RichText
+                wrapMode: Text.NoWrap
+                clip: true
+                color: "#64b5f6"
+                Layout.preferredWidth: 360
+                Layout.maximumWidth: 480
+                text: visible ? ("<a href=\"" + selectedSnapshot + "\">" + selectedSnapshot + "</a>") : ""
+                onLinkActivated: function(link) { Qt.openUrlExternally(link) }
             }
             Label {
                 text: offlineMode ? "调试/离线模式" : ""

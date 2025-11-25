@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import "."
-import "../../core" as Core
+import "../../../core" as Core
 
 Item {
     id: root
@@ -15,6 +15,7 @@ Item {
 
     readonly property var currentCamera: (selectedSlot !== -1 && Core.CameraViewCore && Core.CameraViewCore.cameraForSlot)
         ? Core.CameraViewCore.cameraForSlot(selectedSlot) : null
+    property string snapshotLink: (currentCamera && currentCamera.snapshot) ? currentCamera.snapshot : ""
 
     ColumnLayout {
         anchors.fill: parent
@@ -29,6 +30,17 @@ Item {
                 font.bold: true
                 elide: Text.ElideRight
                 Layout.fillWidth: true
+            }
+            Text {
+                visible: root.offlineMode && snapshotLink !== ""
+                textFormat: Text.RichText
+                wrapMode: Text.NoWrap
+                clip: true
+                color: "#64b5f6"
+                Layout.preferredWidth: 360
+                Layout.maximumWidth: 480
+                text: visible ? ("<a href=\"" + snapshotLink + "\">" + snapshotLink + "</a>") : ""
+                onLinkActivated: function(link) { Qt.openUrlExternally(link) }
             }
             Label {
                 text: offlineMode ? "调试/离线模式" : ""
