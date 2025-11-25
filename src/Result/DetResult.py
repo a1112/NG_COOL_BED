@@ -255,7 +255,7 @@ class DetResult(ResultBase):
         return self.image
 
     def save_cap(self, key,save_folder):
-        image_save_url = save_folder/fr"{key}_{datetime.now().strftime("%Y%m%d%H%M%S")}.jpg"
+        image_save_url = save_folder/fr"{key}_{datetime.now().strftime('%Y%m%d%H%M%S')}.jpg"
         xml_save_url = Path(image_save_url).with_suffix(".xml")
         Image.fromarray(self.calibrate_image).save(image_save_url)
         self.save_xml(xml_save_url)

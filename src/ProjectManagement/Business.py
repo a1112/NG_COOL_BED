@@ -1,7 +1,10 @@
 import json
 from datetime import datetime
 from typing import Optional, Dict
-from CONFIG import CAMERA_SAVE_FOLDER
+
+import cv2
+
+from CONFIG import CAMERA_SAVE_FOLDER, ONE_CAP_FOLDER
 from Result.DataItem import DataItem
 from Result.DataMap import DataMap
 from Result.DetResult import DetResult
@@ -118,6 +121,41 @@ class Business:
         }
         print(json_data)
         json.dump(json_data, open(CAMERA_SAVE_FOLDER/"cap"/"cap.json","w"))
+
+
+    def save_one_cap(self):
+        """
+        保存当前相机画面至 save_data/one_cap
+        """
+        from Globals import cool_bed_thread_worker_map
+
+        timestamp = datetime.now()
+        date_folder = timestamp.strftime("%Y%m%d")
+        time_folder = timestamp.strftime("%H%M%S")
+        save_folder = ONE_CAP_FOLDER / date_folder / time_folder
+        save_folder.mkdir(parents=True, exist_ok=True)
+
+        saved = 0
+        for cool_bed_key, worker in cool_bed_thread_worker_map.items():
+            frames = worker.snapshot_camera_frames()
+            if not frames:
+                continue
+            bed_folder = save_folder / cool_bed_key
+            bed_folder.mkdir(parents=True, exist_ok=True)
+            for camera_key, frame in frames.items():
+                if frame is None:
+                    continue
+                save_path = bed_folder / f"{camera_key}.jpg"
+                cv2.imwrite(str(save_path), frame)
+                saved += 1
+
+        result = {
+            "folder": str(save_folder),
+            "count": saved,
+            "timestamp": timestamp.isoformat()
+        }
+        print(f"save_one_cap -> {result}")
+        return result
 
 
     @property

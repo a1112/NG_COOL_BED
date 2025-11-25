@@ -51,6 +51,14 @@ class CoolBedThreadWorker(Thread):
             return id_, calibrate.image
         return -1, None
 
+    def snapshot_camera_frames(self):
+        frames = {}
+        for key, capture in self.camera_map.items():
+            frame = capture.get_latest_frame()
+            if frame is not None:
+                frames[key] = frame
+        return frames
+
     def _up_join_image_(self,key, calibrate:CalibrateConfig):
         if key in self.join_image_dict:
             self.join_image_dict[key][0] = self.join_image_dict[key][0]+1

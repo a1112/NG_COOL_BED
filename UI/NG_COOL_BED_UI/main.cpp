@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
         &app,
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
-    engine.loadFromModule("NG_COOL_BED_UI", "Main");
+    engine.load(QUrl(u"qrc:/qt/qml/NG_COOL_BED_UI/Main.qml"_qs));
 
     return app.exec();
 }

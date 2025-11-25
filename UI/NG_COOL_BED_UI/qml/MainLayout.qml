@@ -6,8 +6,10 @@ import "head"
 import "core"
 import "view"
 import "api"
+import "dialogs"
 
 ApplicationWindow {
+    id: rootWindow
 
     width: Screen.width*0.7
     height: Screen.height*0.85
@@ -18,17 +20,19 @@ ApplicationWindow {
     title: app_core.title_text
     ColumnLayout{
         anchors.fill: parent
-        HeadView{
+        HeadView{   // 主菜单
+            windowItem: rootWindow
+            settingView: settingView
         }
-        ColumnLayout{
+        MainViewLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
-
-            Repeater{
-                model: app_core.coolBedListModel
-                delegate: CoolBedView{
-                }
-            }
+            id:mainStackLayout
+            coolBedListModel: app_core.coolBedListModel
+        }
+        // 设定弹窗
+        SettingView {
+            id: settingView
         }
 }
 }

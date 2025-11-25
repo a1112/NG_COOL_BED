@@ -12,12 +12,12 @@ class MappingConfig:
         self.cool_bed_key = cool_bed_key
         self.key = key
 
-        image_url = CONFIG.MappingPath/fr"{key}.jpg"
+        image_url = CONFIG.MappingCurrent / fr"{key}.jpg"
         self.map_image = Image.open(image_url)
         self.size = self.map_image.size
         self.width,self.height = self.map_image.size
         self.glob_cool_bed_config:GlobalCoolBedConfigBase = get_config(cool_bed_key,self.width,self.height)
-        self.data = tool.load_xml(CONFIG.MappingPath/fr"{key}.xml") # 读取物理坐标标定
+        self.data = tool.load_xml(CONFIG.MappingCurrent / fr"{key}.xml") # 读取物理坐标标定
         # {'up': [8, 1024, 380, 431], 'down': [5, 1020, 738, 768], 'r_0_2': [14, 66, 437, 733], 'coolbed': [3, 1024, 1, 378]}
 
         self.x_map = self.get_x_map()

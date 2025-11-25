@@ -1,0 +1,34 @@
+{
+  "version": "4.5.6",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "Area",
+      "points": [
+        [
+          1627.6875,
+          1165.625
+        ],
+        [
+          0.0,
+          1278.0
+        ],
+        [
+          272.1311475409836,
+          773.7704918032787
+        ],
+        [
+          1901.0,
+          0.0
+        ]
+      ],
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
+    }
+  ],
+  "imagePath": "L1_6.jpg",
+  "imageData": null,
+  "imageHeight": 1440,
+  "imageWidth": 2560
+}

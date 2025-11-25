@@ -2,7 +2,7 @@ import QtQuick
 
 Item {
     property string title_text: qsTr("冷床下料定位系统")
-
+    property int  app_index: 0
     property var global_info: {return {}}
     property bool debug: global_info ["debug"]
     property var app_dict: {return {}}

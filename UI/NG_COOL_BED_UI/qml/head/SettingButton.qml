@@ -2,13 +2,14 @@ import QtQuick
 import QtQuick.Controls.Material
 
 ItemDelegate {
+    property alias iconSource: img.source
+
     Image {
-        id: name
-        source: "../../icons/setting.png"
-        width: parent.width
-        height: parent.height
+        id: img
+        anchors.fill: parent
+        anchors.margins: 1
+        source: ""
         fillMode: Image.PreserveAspectFit
     }
-
-
+    background: Rectangle { color: "transparent" }
 }

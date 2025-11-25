@@ -44,3 +44,4 @@ HslCommunication
 python-snap7
 av
 lxml
+huggingface_hub

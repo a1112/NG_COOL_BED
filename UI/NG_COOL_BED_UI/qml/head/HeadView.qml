@@ -4,9 +4,12 @@ import QtQuick.Window
 import QtQuick.Controls.Material
 
 import "../base"
+import "../menus" as Menus
 
 HeadBase {
     id:root
+    property var windowItem: null
+    property var settingView: null
     Layout.fillWidth: true
     height: 45
     RowLayout{
@@ -15,6 +18,17 @@ HeadBase {
         Item{
             width: 20
             height: 1
+        }
+        ItemDelegate{
+            id: mainMenuButton
+            width: 32
+            height: root.height - 10
+            font.bold: true
+            icon.source: "qrc:/qt/qml/NG_COOL_BED_UI/icons/menu.png"
+            Material.foreground: Material.BlueGrey
+            onClicked: {
+                mainMenu.popup(mainMenuButton, 0, mainMenuButton.height)
+            }
         }
         Label {
                 Material.foreground: Material.BlueGrey
@@ -26,13 +40,16 @@ HeadBase {
             Material.foreground: Material.Pink
             font.pointSize: 13
             font.bold: true
-            text: "(1.0.1)"
+            text: "(1.0.2)"
         }
         Label{
             text:""// app_core.debug ? "   测试" : "   在线"
             font.pointSize: 15
             font.bold: true
-            Material.foreground:app_core.debug ? Material.Red : Material.Green
+            Material.foreground: app_core.debug ? Material.Red : Material.Green
+        }
+
+        MainTabView{
         }
         Item{
             Layout.fillWidth: true
@@ -71,17 +88,26 @@ HeadBase {
             height: 1
         }
         SettingButton{
-            height: parent.height
-            width: parent.width
+            height: root.height
+            width: height
+            iconSource: "qrc:/qt/qml/NG_COOL_BED_UI/icons/setting.png"
             onClicked: {
-                tool_menu.popup()
+                if (root.settingView) {
+                    root.settingView.open()
+                }
             }
         }
-
 
         Item{
             width: 5
             height: 1
         }
+    }
+
+    Menus.MainMenu{
+        id: mainMenu
+        windowItem: root.windowItem
+        sendDialog: send_dialog
+        mapDialog: map_dialog
     }
 }

@@ -1,6 +1,7 @@
 from tqdm import tqdm
 import time
 # from queue import Queue
+from threading import Lock
 
 from Base import RollingQueue
 from CameraStreamer.ConversionImage import ConversionImage
@@ -30,6 +31,8 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         self.camera_buffer = RollingQueue(maxsize=1)
 
         self.camera_image_save = None
+        self._latest_lock = Lock()
+        self._latest_frame = None
         self.start()
 
 
@@ -65,7 +68,11 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
                 self.cap.release()
                 time.sleep(2)
                 self.cap = self.get_video_capture()
+                with self._latest_lock:
+                    self._latest_frame = None
                 continue
+            with self._latest_lock:
+                self._latest_frame = frame.copy()
             self.camera_image_save.save_first_buffer(buffer)    # 保存第一帧图像
 
             self.camera_buffer.put(buffer)
@@ -83,3 +90,9 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
 
     def get_cap(self):
         return self.camera_buffer.get()
+
+    def get_latest_frame(self):
+        with self._latest_lock:
+            if self._latest_frame is None:
+                return None
+            return self._latest_frame.copy()

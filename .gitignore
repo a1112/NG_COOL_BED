@@ -7,3 +7,5 @@
 /train/train/data/
 /.venv/
 /UI/NG_COOL_BED_UI/build/
+soft/aTrust_*.exe
+/config/calibrate/mapping/*/camera/

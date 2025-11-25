@@ -1,5 +1,7 @@
 import cv2
-from fastapi import FastAPI
+import json
+from pathlib import Path
+from fastapi import FastAPI, HTTPException
 
 from Configs.AppConfigs import app_configs
 from Configs.CameraManageConfig import camera_manage_config
@@ -10,7 +12,7 @@ from ProjectManagement.Main import CoolBedThreadWorker
 from Result.DataItem import DataItem
 from ProjectManagement.Business import Business
 from Globals import business_main, cool_bed_thread_worker_map, global_config
-from CONFIG import debug_control
+from CONFIG import debug_control, CALIBRATE_SELECT_FILE, CAMERA_CONFIG_FOLDER, SETTINGS_CONFIG_FILE, CURRENT_CALIBRATE
 from fastapi.responses import StreamingResponse, FileResponse, Response
 
 from Server.tool import noFindImageByte
@@ -114,6 +116,90 @@ def test_next_image():
 @app.get("/save_cap")
 def save_cap():
     business_main.save_cap()
+
+@app.get("/save_one_cap")
+def save_one_cap():
+    return business_main.save_one_cap()
+
+
+# ---------- Config APIs ----------
+SETTINGS_ALLOWED_KEYS = {
+    "serverUrl",
+    "ipAddress",
+    "modelType",
+    "configPath",
+    "currentConfig",
+    "modelCategories",
+    "selectedCategory",
+    "selectedModel",
+    "modelListDet",
+    "modelListSeg",
+    "testDataFolder",
+}
+
+
+def _load_json_file(path: Path, default):
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return default
+
+
+def _save_json_file(path: Path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+@app.get("/config/calibrate")
+def get_calibrate_config():
+    cameras_root = CAMERA_CONFIG_FOLDER / "cameras"
+    available = [p.name for p in cameras_root.iterdir() if p.is_dir()] if cameras_root.exists() else []
+    current = CURRENT_CALIBRATE
+    return {"current": current, "available": available, "file": str(CALIBRATE_SELECT_FILE)}
+
+
+@app.post("/config/calibrate")
+def set_calibrate_config(payload: dict):
+    target = payload.get("current")
+    if not target or not isinstance(target, str):
+        raise HTTPException(status_code=400, detail="current must be a non-empty string")
+    cameras_root = CAMERA_CONFIG_FOLDER / "cameras"
+    candidate = cameras_root / target
+    if not candidate.is_dir():
+        raise HTTPException(status_code=400, detail=f"calibrate folder not found: {candidate}")
+    data = {"current": target}
+    _save_json_file(CALIBRATE_SELECT_FILE, data)
+    return {"ok": True, "current": target}
+
+
+@app.get("/config/settings")
+def get_settings():
+    default = {
+        "serverUrl": "",
+        "ipAddress": "",
+        "modelType": "",
+        "configPath": "",
+        "currentConfig": "",
+        "modelCategories": ["目标检测", "分割"],
+        "selectedCategory": "目标检测",
+        "selectedModel": "",
+        "modelListDet": [],
+        "modelListSeg": [],
+        "testDataFolder": "",
+    }
+    return _load_json_file(SETTINGS_CONFIG_FILE, default)
+
+
+@app.post("/config/settings")
+def set_settings(payload: dict):
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="payload must be an object")
+    settings = _load_json_file(SETTINGS_CONFIG_FILE, {})
+    for k, v in payload.items():
+        if k in SETTINGS_ALLOWED_KEYS:
+            settings[k] = v
+    _save_json_file(SETTINGS_CONFIG_FILE, settings)
+    return {"ok": True, "settings": settings}
 
 
 if __name__=="__main__":

@@ -1,6 +1,7 @@
 import socket
 from enum import Enum
 from pathlib import Path
+import json
 
 from threading import Thread
 from multiprocessing import Process
@@ -25,18 +26,50 @@ for folder in [CONFIG_FOLDER / "soft", CONFIG_FOLDER.parent / "soft", Path(__fil
 
 FIRST_SAVE_FOLDER = CONFIG_FOLDER / "first_save"
 
+SAVE_DATA_FOLDER = Path(__file__).parent.parent / "save_data"
+SAVE_DATA_FOLDER.mkdir(exist_ok=True, parents=True)
 
-CAMERA_CONFIG_FOLDER = CONFIG_FOLDER / "camera"
+ONE_CAP_FOLDER = SAVE_DATA_FOLDER / "one_cap"
+ONE_CAP_FOLDER.mkdir(exist_ok=True, parents=True)
+
+# 配置根目录已由 camera 重命名为 calibrate
+CAMERA_CONFIG_FOLDER = CONFIG_FOLDER / "calibrate"
 
 
-IP_LIST_CAMERA_CONFIG = CONFIG_FOLDER / "camera"/"IpList.json"
-CAMERA_MANAGE_CONFIG = CONFIG_FOLDER / "camera"/"CameraManage.json"
+IP_LIST_CAMERA_CONFIG = CAMERA_CONFIG_FOLDER / "IpList.json"
+# calibrate.json 现在位于 config/calibrate/calibrate.json，用于指定 current
+CALIBRATE_SELECT_FILE = CAMERA_CONFIG_FOLDER / "calibrate.json"
+# UI / API 自定义设置文件（不覆盖基础配置）
+SETTINGS_CONFIG_FILE = CAMERA_CONFIG_FOLDER / "settings.json"
 
-CalibratePath = CAMERA_CONFIG_FOLDER/"calibrate"/"calibrate"
-MappingPath = CAMERA_CONFIG_FOLDER/"mapping"
+
+def _load_current_calibrate() -> str:
+    """
+    读取 calibrate/calibrate.json 中的 current 字段，决定使用哪个标定子目录。
+    若文件缺失或解析失败，回退到 'calibrate'。
+    """
+    try:
+        data = json.loads(CALIBRATE_SELECT_FILE.read_text(encoding="utf-8"))
+        current = data.get("current")
+        if isinstance(current, str) and current.strip():
+            return current.strip()
+    except Exception:
+        pass
+    return "calibrate"
 
 
-SAVE_CONFIG = CONFIG_FOLDER / "camera"/"Save.json"
+CURRENT_CALIBRATE = _load_current_calibrate()
+
+# 当前使用的标定透视数据目录与 CameraManage.json 均从 current 指定的子目录读取
+CALIBRATE_ROOT = CAMERA_CONFIG_FOLDER / "cameras" / CURRENT_CALIBRATE
+CAMERA_MANAGE_CONFIG = CALIBRATE_ROOT / "CameraManage.json"
+CalibratePath = CALIBRATE_ROOT
+MappingPath = CAMERA_CONFIG_FOLDER / "mapping"
+# 当前标定对应的映射目录（用于运行时读取/写入分组图）
+MappingCurrent = MappingPath / CURRENT_CALIBRATE
+
+
+SAVE_CONFIG = CAMERA_CONFIG_FOLDER / "Save.json"
 
 MODEL_FOLDER = CONFIG_FOLDER / "model"
 
@@ -45,12 +78,13 @@ lOG_DIR.mkdir(exist_ok=True, parents=True)
 encoding = "utf-8"
 
 MappingPath.mkdir(exist_ok=True, parents=True)
+MappingCurrent.mkdir(exist_ok=True, parents=True)
 FIRST_SAVE_FOLDER.mkdir(exist_ok=True, parents=True)
 DATA_FOLDER = CONFIG_FOLDER / "data"
 DATA_FOLDER.mkdir(exist_ok=True, parents=True)
 DEBUG_MODEL = False
 print(f"hostname: {socket.gethostname()}")
-if socket.gethostname() in ["DESKTOP-3VCH6DO", "MS-LGKRSZGOVODD", "DESKTOP-94ADH1G","HGL8081-1"]:
+if socket.gethostname() in ["DESKTOP-3VCH6DO", "MS-LGKRSZGOVODD", "DESKTOP-94ADH1G","HGL8081-1","lcx_ace"]:
     DEBUG_MODEL = True
 
 show_camera = False

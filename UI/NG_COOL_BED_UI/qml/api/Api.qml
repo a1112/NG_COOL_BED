@@ -39,4 +39,8 @@ Item {
     function save_cap(success, failure){
         return ajax.get(server_url.url(server_url.serverUrl, "save_cap"), success, failure)
     }
+
+    function save_one_cap(success, failure){
+        return ajax.get(server_url.url(server_url.serverUrl, "save_one_cap"), success, failure)
+    }
 }
