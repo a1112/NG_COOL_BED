@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "camera_view"
-import "calibration_view"
 
 
 Item {
@@ -30,13 +29,10 @@ Item {
                 }
             }
 
-            // 相机视图
-            CameraViw {
-            }
-
-            // 标定视图
-            CalibrationView {
+            // 相机视图：占位，后续可按参考项目填充实际逻辑
+            CameraViw{
             }
         }
     }
 }
+

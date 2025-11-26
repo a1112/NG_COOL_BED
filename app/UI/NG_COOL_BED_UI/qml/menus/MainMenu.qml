@@ -8,6 +8,7 @@ Menu {
     property var windowItem: null
     property var sendDialog: null
     property var mapDialog: null
+    property var algTestDialog: null
 
     readonly property string _docsUrl: app_api && app_api.server_url
                                       ? (app_api.server_url.serverUrl + "/docs")
@@ -62,6 +63,13 @@ Menu {
             onTriggered: {
                 if (mapDialog && mapDialog.open_)
                     mapDialog.open_()
+            }
+        }
+        MenuItem {
+            text: qsTr("算法测试...")
+            onTriggered: {
+                if (algTestDialog && algTestDialog.openDialog)
+                    algTestDialog.openDialog()
             }
         }
         MenuItem {

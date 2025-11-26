@@ -59,6 +59,16 @@ HeadBase {
             visible: app_core.debug
         }
 
+        Button{
+            text: qsTr("算法测试")
+            implicitHeight: root.height - 10
+            onClicked: {
+                if (alg_test_dialog && alg_test_dialog.openDialog) {
+                    alg_test_dialog.openDialog()
+                }
+            }
+        }
+
         ItemDelegate{
             height: root.height-5
             implicitHeight: height
@@ -109,5 +119,6 @@ HeadBase {
         windowItem: root.windowItem
         sendDialog: send_dialog
         mapDialog: map_dialog
+        algTestDialog: alg_test_dialog
     }
 }

@@ -14,6 +14,7 @@ MainLayout {    //主界面
     // DIALOGES
     property SendDialog send_dialog: SendDialog{}
     property MapDialog map_dialog: MapDialog{}
+    property AlgTestDialog alg_test_dialog: AlgTestDialog{}
     property ToolMenus tool_menu: ToolMenus{}
     property SettingView settingView: SettingView{}
 }
