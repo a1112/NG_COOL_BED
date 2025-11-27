@@ -2,16 +2,16 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Dialogs
+
 import QtWebSockets
 
-Dialog {
+ApplicationWindow {
     id: root
-    modal: true
-    focus: true
+
     width: 860
     height: 620
     title: qsTr("算法测试")
-    standardButtons: Dialog.Close
+
 
     property var modelList: []
     property string selectedModel: ""
@@ -35,7 +35,7 @@ Dialog {
 
     function openDialog() {
         if (!visible)
-            open()
+            visible=true
         if (!modelList.length)
             refreshModels()
     }
@@ -217,18 +217,24 @@ Dialog {
 
     ListModel { id: logModel }
 
-    FolderDialog {
+    FileDialog {
         id: targetFolderDialog
         title: qsTr("选择目标文件夹")
-        selectFolder: true
-        onAccepted: targetFolder = cleanUrl(selectedFolder)
+        fileMode: FileDialog.OpenDirectory
+        onAccepted: {
+            if (selectedFiles && selectedFiles.length > 0)
+                targetFolder = cleanUrl(selectedFiles[0])
+        }
     }
 
-    FolderDialog {
+    FileDialog {
         id: outputFolderDialog
         title: qsTr("选择输出文件夹")
-        selectFolder: true
-        onAccepted: outputFolder = cleanUrl(selectedFolder)
+        fileMode: FileDialog.OpenDirectory
+        onAccepted: {
+            if (selectedFiles && selectedFiles.length > 0)
+                outputFolder = cleanUrl(selectedFiles[0])
+        }
     }
 
     WebSocket {

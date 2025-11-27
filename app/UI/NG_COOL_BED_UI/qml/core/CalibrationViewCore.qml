@@ -1,14 +1,9 @@
 pragma Singleton
 import QtQuick
-import Qt.labs.folderlistmodel 2.1
 import "../api" as ApiMod
 
 Item {
     id: core
-
-    readonly property url calibrateConfigPath: Qt.resolvedUrl("../../../../../config/calibrate/calibrate.json")
-    readonly property url calibrateCamerasDir: Qt.resolvedUrl("../../../../../config/calibrate/cameras")
-    readonly property url calibrateMappingDir: Qt.resolvedUrl("../../../../../config/calibrate/mapping")
 
     property var folderList: []
     property string currentFolder: ""
@@ -33,33 +28,12 @@ Item {
     property bool busy: false
     property bool offlineMode: false
 
-    FolderListModel {
-        id: folderScanner
-        showDirs: true
-        showFiles: false
-        sortReversed: false
-        folder: core.calibrateCamerasDir
-        nameFilters: ["*"]
-
-        onStatusChanged: {
-            if (status === FolderListModel.Ready) core.rebuildFolderList()
-        }
-        onCountChanged: core.rebuildFolderList()
-    }
-
     function rebuildFolderList() {
-        const names = []
-        const count = folderScanner.count || 0
-        for (let i = 0; i < count; ++i) {
-            const item = folderScanner.get(i)
-            if (!item) continue
-            if (item.isDir && item.fileName && item.fileName !== "." && item.fileName !== "..") {
-                names.push(item.fileName)
-            }
-        }
+        const cfg = fetchCalibrateConfig()
+        const names = (cfg && cfg.available) ? cfg.available.slice() : []
         names.sort()
         folderList = names
-        const fromConfig = loadCurrentFromConfig()
+        const fromConfig = cfg && cfg.current ? cfg.current : ""
         if ((!currentFolder || names.indexOf(currentFolder) === -1) && names.length) {
             currentFolder = names.indexOf(fromConfig) !== -1 ? fromConfig : names[0]
         } else if (!currentFolder && fromConfig) {
@@ -68,7 +42,7 @@ Item {
     }
 
     function loadCurrentFromConfig() {
-        const cfg = loadJson(calibrateConfigPath)
+        const cfg = fetchCalibrateConfig()
         return cfg && cfg.current ? cfg.current : ""
     }
 
@@ -87,13 +61,7 @@ Item {
     onSelectedCameraIdChanged: refreshCameraImage()
 
     function refreshFolders() {
-        if (folderScanner && folderScanner.refresh) {
-            folderScanner.refresh()
-        } else {
-            const f = folderScanner.folder
-            folderScanner.folder = ""
-            folderScanner.folder = f
-        }
+        rebuildFolderList()
     }
 
     function loadJson(path) {
@@ -126,19 +94,20 @@ Item {
         return ""
     }
 
+    function fetchCalibrateConfig() {
+        if (!(ApiMod.Api && ApiMod.Api.server_url)) return {}
+        const url = ApiMod.Api.server_url.url(ApiMod.Api.server_url.serverUrl, "config", "calibrate")
+        return loadJson(url) || {}
+    }
+
     function cameraManagePath(folder) {
-        if (!folder) return ""
-        return calibrateCamerasDir + "/" + folder + "/CameraManage.json"
+        if (!folder || !(ApiMod.Api && ApiMod.Api.server_url)) return ""
+        return ApiMod.Api.server_url.url(ApiMod.Api.server_url.serverUrl, "calibrate", "camera_manage", folder)
     }
 
     function mappingFilePath(folder, name, ext) {
-        if (!folder || !name) return ""
-        return calibrateMappingDir + "/" + folder + "/" + name + "." + ext
-    }
-
-    function mappingImageLocalPath(folder, fileName) {
-        if (!folder || !fileName) return ""
-        return calibrateMappingDir + "/" + folder + "/" + fileName
+        if (!folder || !name || !(ApiMod.Api && ApiMod.Api.server_url)) return ""
+        return ApiMod.Api.server_url.url(ApiMod.Api.server_url.serverUrl, "calibrate", "mapping", folder, name + "." + ext)
     }
 
     function httpUrl(parts) {
@@ -154,12 +123,8 @@ Item {
 
     function cameraRemoteUrl(folder, cameraId, ext) {
         if (!folder || !cameraId) return ""
-        const url = httpUrl([ApiMod.Api.server_url.serverUrl, "calibrate", "camera", folder, cameraId + "." + ext])
+        const url = httpUrl([ApiMod.Api.server_url.serverUrl, "calibrate", "image", folder, cameraId + "." + ext])
         return url && url.length ? url : ""
-    }
-
-    function preferRemote(pathRemote, pathLocal) {
-        return pathRemote && pathRemote.length ? pathRemote : pathLocal
     }
 
     function refreshCameraManage() {
@@ -277,9 +242,7 @@ Item {
         mappingImageWidth = parsed.meta.width || 1
         mappingImageHeight = parsed.meta.height || 1
         const imgName = parsed.meta.filename && parsed.meta.filename.length ? parsed.meta.filename : (selectedGroupKey + ".jpg")
-        perspectiveImageSource = preferRemote(
-                    mappingRemoteUrl(currentFolder, imgName),
-                    mappingImageLocalPath(currentFolder, imgName))
+        perspectiveImageSource = mappingRemoteUrl(currentFolder, imgName)
     }
 
     function parseTag(block, tag) {
@@ -327,9 +290,7 @@ Item {
             cameraImageSource = ""
             return
         }
-        const localPath = calibrateCamerasDir + "/" + currentFolder + "/" + selectedCameraId + ".jpg"
-        const remote = cameraRemoteUrl(currentFolder, selectedCameraId, "jpg")
-        cameraImageSource = preferRemote(remote, localPath)
+        cameraImageSource = cameraRemoteUrl(currentFolder, selectedCameraId, "jpg")
     }
 
     function updateMappingObject(index, rect) {

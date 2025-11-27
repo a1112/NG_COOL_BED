@@ -16,11 +16,13 @@
         <file>qml/dialogs/SettingCore.qml</file>
         <file>qml/dialogs/GeneralSettingsPage.qml</file>
         <file>qml/dialogs/TestingSettingsPage.qml</file>
+        <file>qml/dialogs/AlgTestDialog.qml</file>
         <file>qml/head/HeadView.qml</file>
         <file>qml/head/SettingButton.qml</file>
         <file>qml/head/TestBtns.qml</file>
         <file>qml/core/qmldir</file>
         <file>qml/core/CameraViewCore.qml</file>
+        <file>qml/core/CalibrationViewCore.qml</file>
         <file>qml/menus/MainMenu.qml</file>
         <file>qml/menus/ToolMenus.qml</file>
         <file>qml/api/qmldir</file>
@@ -64,5 +66,18 @@
         <file>qml/view/camera_view/grop/GropView.qml</file>
         <file>qml/view/camera_view/grop/GropViewLayout.qml</file>
         <file>qml/view/camera_view/camera/CameraViewLayout.qml</file>
+        <file>qml/view/calibration_view/CalibrationView.qml</file>
+        <file>qml/view/calibration_view/components/EditableRect.qml</file>
+        <file>qml/view/calibration_view/dialogs/CreateFolderDialog.qml</file>
+        <file>qml/view/calibration_view/left/FolderToolbar.qml</file>
+        <file>qml/view/calibration_view/left/GroupListPanel.qml</file>
+        <file>qml/view/calibration_view/left/LeftPanel.qml</file>
+        <file>qml/view/calibration_view/right/RightPanel.qml</file>
+        <file>qml/view/calibration_view/right/PerspectivePreview.qml</file>
+        <file>qml/view/calibration_view/right/MappingObjectPanel.qml</file>
+        <file>qml/view/calibration_view/right/CameraToolbar.qml</file>
+        <file>qml/view/calibration_view/right/CameraImagePanel.qml</file>
+        <file>qml/view/calibration_view/right/ObjectManagerPanel.qml</file>
+        <file>qml/view/calibration_view/right/CameraPanel.qml</file>
     </qresource>
 </RCC>

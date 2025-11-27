@@ -22,10 +22,10 @@ RowLayout {
             return idx >= 0 ? idx : -1
         }
         displayText: currentText
-        property string currentText: {
-            const current = Core.CalibrationViewCore.currentFolder
-            return current && current.length ? current : qsTr("未选择")
-        }
+        // currentText: {
+        //     const current = Core.CalibrationViewCore.currentFolder
+        //     return current && current.length ? current : qsTr("未选择")
+        // }
         onActivated: function(index) {
             const list = Core.CalibrationViewCore.folderList || []
             const name = list[index] || ""

@@ -1,7 +1,8 @@
 import cv2
 import json
 from pathlib import Path
-from fastapi import FastAPI, HTTPException
+from typing import Optional
+from fastapi import FastAPI, HTTPException, WebSocket
 
 from Configs.AppConfigs import app_configs
 from Configs.CameraManageConfig import camera_manage_config
@@ -13,10 +14,11 @@ from ProjectManagement.Main import CoolBedThreadWorker
 from Result.DataItem import DataItem
 from ProjectManagement.Business import Business
 from Globals import business_main, cool_bed_thread_worker_map, global_config
-from CONFIG import debug_control, CALIBRATE_SELECT_FILE, CAMERA_CONFIG_FOLDER, SETTINGS_CONFIG_FILE, CURRENT_CALIBRATE
+from CONFIG import debug_control, CALIBRATE_SELECT_FILE, CAMERA_CONFIG_FOLDER, SETTINGS_CONFIG_FILE, CURRENT_CALIBRATE, MappingPath
 from fastapi.responses import StreamingResponse, FileResponse, Response
 
 from Server.tool import noFindImageByte
+from Server.alg_test_manager import alg_test_manager
 
 business_main: Business
 
@@ -182,6 +184,16 @@ def _load_calibrate_file(calibrate: str, filename: str):
         raise HTTPException(status_code=500, detail=f"failed to read {filename}") from exc
 
 
+def _safe_mapping_path(calibrate: str, filename: str) -> Path:
+    base = (MappingPath / calibrate).resolve()
+    path = (base / filename).resolve()
+    try:
+        path.relative_to(base)
+    except Exception:
+        raise HTTPException(status_code=400, detail="invalid mapping path")
+    return path
+
+
 @app.get("/calibrate/label/{calibrate}/{cam_id}")
 def get_calibrate_label(calibrate: str, cam_id: str):
     return _load_calibrate_file(calibrate, f"{cam_id}.json")
@@ -196,6 +208,18 @@ def get_calibrate_image(calibrate: str, image_name: str):
     if not path.is_file():
         raise HTTPException(status_code=404, detail=f"image not found: {name}")
     return FileResponse(path, media_type="image/jpeg")
+
+
+@app.get("/calibrate/mapping/{calibrate}/{file_path:path}")
+def get_calibrate_mapping_file(calibrate: str, file_path: str):
+    path = _safe_mapping_path(calibrate, file_path)
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail=f"mapping file not found: {file_path}")
+    suffix = path.suffix.lower()
+    if suffix in {".jpg", ".jpeg", ".png", ".bmp"}:
+        return FileResponse(path, media_type="image/jpeg")
+    media = "application/xml" if suffix == ".xml" else "text/plain"
+    return Response(content=path.read_bytes(), media_type=media)
 
 
 @app.get("/calibrate/camera_manage/{calibrate}")
@@ -309,6 +333,30 @@ def set_settings(payload: dict):
             settings[k] = v
     _save_json_file(SETTINGS_CONFIG_FILE, settings)
     return {"ok": True, "settings": settings}
+
+
+# ---------- Algorithm test APIs ----------
+@app.get("/alg/models")
+def list_alg_models():
+    return {"models": alg_test_manager.list_models()}
+
+
+@app.post("/alg/test/start")
+def start_alg_test(payload: dict):
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="payload must be object")
+    return alg_test_manager.start_job(payload)
+
+
+@app.post("/alg/test/stop")
+def stop_alg_test(payload: Optional[dict] = None):
+    task_id = payload.get("task_id") if isinstance(payload, dict) else None
+    return alg_test_manager.stop_job(task_id)
+
+
+@app.websocket("/alg/test/progress")
+async def alg_progress(websocket: WebSocket):
+    await alg_test_manager.handle_websocket(websocket)
 
 
 if __name__=="__main__":
