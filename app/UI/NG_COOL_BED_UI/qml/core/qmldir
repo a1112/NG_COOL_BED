@@ -1,0 +1,3 @@
+﻿singleton Core 1.0 Core.qml
+singleton CameraViewCore 1.0 CameraViewCore.qml
+singleton CalibrationViewCore 1.0 CalibrationViewCore.qml

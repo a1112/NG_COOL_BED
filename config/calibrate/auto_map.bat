@@ -1,0 +1,2 @@
+python auto_perspective_mapping.py
+python auto_group_perspective.py
