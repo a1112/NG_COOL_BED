@@ -7,6 +7,35 @@ import "../../../../base"
 RowLayout {
     id: root
     spacing: 8
+    function isLocalHost() {
+        return app_api && app_api.server_url &&
+                (app_api.server_url.hostname === "127.0.0.1" || app_api.server_url.hostname === "localhost")
+    }
+    function labelFileUrl() {
+        if (!Core.CalibrationViewCore.currentFolder || !Core.CalibrationViewCore.selectedCameraId)
+            return ""
+        return Qt.resolvedUrl("../../../../../config/calibrate/cameras/" +
+                              Core.CalibrationViewCore.currentFolder + "/" +
+                              Core.CalibrationViewCore.selectedCameraId + ".json")
+    }
+    function openLabelFolder() {
+        if (!isLocalHost())
+            return
+        var fileUrl = labelFileUrl()
+        if (!fileUrl || !fileUrl.length)
+            return
+        var normalized = fileUrl
+        if (normalized.startsWith("qrc:")) {
+            // 无法从 qrc 打开本地目录
+            return
+        }
+        if (!normalized.startsWith("file:"))
+            normalized = "file:///" + normalized
+        var slash = normalized.lastIndexOf("/")
+        if (slash > 0)
+            normalized = normalized.substring(0, slash)
+        Qt.openUrlExternally(normalized)
+    }
     Label {
         text: qsTr("相机图像")
         font.bold: true
@@ -69,5 +98,10 @@ RowLayout {
     ActionButton {
         text: qsTr("保存全部标注")
         onClicked: Core.CalibrationViewCore.saveLabelForCamera()
+    }
+    ActionButton {
+        text: qsTr("位置")
+        visible: isLocalHost()
+        onClicked: openLabelFolder()
     }
 }

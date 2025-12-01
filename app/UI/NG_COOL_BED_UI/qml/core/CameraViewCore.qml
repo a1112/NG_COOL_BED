@@ -6,7 +6,7 @@ Item {
     id: core
 
     // 透视层相关 & 视图状态
-    property bool offlineMode: true//(typeof app_core !== "undefined" && app_core) ? app_core.debug : false
+    property bool offlineMode: (typeof app_core !== "undefined" && app_core) ? app_core.debug : false
     property bool showOverlay: true
     property var overlayVisibility: ({})
     property var overlayLabels: []
