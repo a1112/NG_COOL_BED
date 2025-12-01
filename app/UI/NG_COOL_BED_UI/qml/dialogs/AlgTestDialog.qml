@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import QtQuick.Dialogs
 
 import QtWebSockets
+import "../base"
 
 ApplicationWindow {
     id: root
@@ -15,6 +16,7 @@ ApplicationWindow {
 
     property var modelList: []
     property string selectedModel: ""
+    property string modelFolder: ""
     property string targetFolder: ""
     property string outputFolder: ""
     property real threshold: 0.40
@@ -58,15 +60,21 @@ ApplicationWindow {
                     function(text) {
                         loadingModels = false
                         var parsed = []
+                        var folderPath = ""
                         try {
                             var js = JSON.parse(text)
                             if (js && js.models)
                                 parsed = js.models
                             else if (Array.isArray(js))
                                 parsed = js
+                            if (js && js.folder)
+                                folderPath = js.folder
+                            else if (js && js.model_folder)
+                                folderPath = js.model_folder
                         } catch(e) {
                             console.warn("get_alg_models parse error", e)
                         }
+                        modelFolder = folderPath || ""
                         if (!parsed || !parsed.length)
                             parsed = []
                         modelList = parsed
@@ -81,6 +89,7 @@ ApplicationWindow {
                     },
                     function(err) {
                         loadingModels = false
+                        modelFolder = ""
                         statusMessage = qsTr("模型列表获取失败")
                         console.warn("get_alg_models error", err)
                     })
@@ -190,6 +199,23 @@ ApplicationWindow {
         progressSocket.active = false
         progressSocket.url = url
         progressSocket.active = true
+    }
+
+    function openModelFolder() {
+        if (!modelFolder) {
+            statusMessage = qsTr("模型目录未知")
+            return
+        }
+        var normalized = modelFolder.replace(/\\/g, "/")
+        var url = normalized
+        if (!normalized.startsWith("file:/")) {
+            var encoded = encodeURI(normalized)
+            if (normalized.startsWith("//"))
+                url = "file:" + encoded
+            else
+                url = "file:///" + encoded
+        }
+        Qt.openUrlExternally(url)
     }
 
     function appendLog(msg) {
@@ -310,7 +336,7 @@ ApplicationWindow {
                 }
             }
             RowLayout {
-                Button {
+                ActionButton {
                     text: qsTr("刷新")
                     onClicked: refreshModels()
                 }
@@ -329,7 +355,7 @@ ApplicationWindow {
                 placeholderText: qsTr("请选择需要测试的图像根目录")
                 onEditingFinished: targetFolder = text.trim()
             }
-            Button {
+            ActionButton {
                 text: qsTr("选择")
                 onClicked: targetFolderDialog.open()
             }
@@ -341,7 +367,7 @@ ApplicationWindow {
                 placeholderText: qsTr("保存结果的目录")
                 onEditingFinished: outputFolder = text.trim()
             }
-            Button {
+            ActionButton {
                 text: qsTr("选择")
                 onClicked: outputFolderDialog.open()
             }
@@ -427,12 +453,12 @@ ApplicationWindow {
         RowLayout {
             Layout.fillWidth: true
             spacing: 10
-            Button {
+            ActionButton {
                 text: running ? qsTr("执行中...") : qsTr("开始测试")
                 enabled: !running
                 onClicked: startTest()
             }
-            Button {
+            ActionButton {
                 text: qsTr("停止")
                 enabled: running
                 onClicked: stopTest()
@@ -443,6 +469,12 @@ ApplicationWindow {
                 color: "#90caf9"
                 elide: Text.ElideRight
                 Layout.preferredWidth: 380
+            }
+            ActionButton {
+                text: qsTr("打开模型位置")
+                visible: !!modelFolder
+                enabled: visible
+                onClicked: openModelFolder()
             }
         }
 

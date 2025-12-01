@@ -7,6 +7,7 @@
         <file>qml/api/Config.qml</file>
         <file>qml/api/ServerUrl.qml</file>
         <file>qml/api/Tool.qml</file>
+        <file>qml/base/ActionButton.qml</file>
         <file>qml/base/HeadBase.qml</file>
         <file>qml/core/Core.qml</file>
         <file>qml/dialogs/MapDialog.qml</file>
@@ -31,12 +32,6 @@
         <file>qml/types/CoolBedDataTypeItem.qml</file>
         <file>qml/types/CoolBedModelType.qml</file>
         <file>qml/view/CoolBedView.qml</file>
-        <file>qml/view/core/ControlConfig.qml</file>
-        <file>qml/view/core/CoolBedCore.qml</file>
-        <file>qml/view/core/MapConfig.qml</file>
-        <file>qml/view/core/MapConfigItem.qml</file>
-        <file>qml/view/core/ObjectType.qml</file>
-        <file>qml/view/core/TimeCore.qml</file>
         <file>qml/view/data/DataLabelEx.qml</file>
         <file>qml/view/data/DataLabelItem.qml</file>
         <file>qml/view/data/DataView.qml</file>
@@ -75,9 +70,23 @@
         <file>qml/view/calibration_view/right/RightPanel.qml</file>
         <file>qml/view/calibration_view/right/PerspectivePreview.qml</file>
         <file>qml/view/calibration_view/right/MappingObjectPanel.qml</file>
+        <file>qml/view/calibration_view/right/MappingObjectEditDialog.qml</file>
         <file>qml/view/calibration_view/right/CameraToolbar.qml</file>
         <file>qml/view/calibration_view/right/CameraImagePanel.qml</file>
         <file>qml/view/calibration_view/right/ObjectManagerPanel.qml</file>
+        <file>qml/view/calibration_view/right/ObjectSettingItem.qml</file>
         <file>qml/view/calibration_view/right/CameraPanel.qml</file>
+        <file>qml/view/calibration_view/dialogs/DeleteDialog.qml</file>
+        <file>qml/view/view_core/ControlConfig.qml</file>
+        <file>qml/view/view_core/CoolBedCore.qml</file>
+        <file>qml/view/view_core/MapConfig.qml</file>
+        <file>qml/view/view_core/MapConfigItem.qml</file>
+        <file>qml/view/view_core/ObjectType.qml</file>
+        <file>qml/view/view_core/TimeCore.qml</file>
+        <file>qml/view/calibration_view/left/LineGroupItem.qml</file>
+        <file>qml/view/calibration_view/left/GroupListItem.qml</file>
+        <file>qml/view/calibration_view/right/layers/PolygonOverlay.qml</file>
+        <file>qml/view/calibration_view/right/layers/MvPoint.qml</file>
+        <file>qml/view/calibration_view/right/layers/MvPonts.qml</file>
     </qresource>
 </RCC>

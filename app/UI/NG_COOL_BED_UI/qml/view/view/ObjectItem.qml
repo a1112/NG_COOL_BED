@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls.Material
-import "../core"
+import "../view_core"
 Rectangle {
 
     // property rect rect_box: value

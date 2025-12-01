@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../base"
 
 ColumnLayout {
     id: page
@@ -8,6 +9,31 @@ ColumnLayout {
     property QtObject coreRef: core
     spacing: 8
     anchors.fill: parent
+
+    function toFileUrl(path) {
+        if (!path || !path.length)
+            return ""
+        if (path.startsWith("file:/"))
+            return path
+        var normalized = path.replace(/\\/g, "/")
+        if (/^[a-zA-Z]:[\\/]/.test(path))
+            return "file:///" + normalized
+        if (normalized.startsWith("//"))
+            return "file:" + normalized
+        return Qt.resolvedUrl("../../../../../" + normalized)
+    }
+
+    function openConfigLocation() {
+        if (!coreRef || !coreRef.configPath)
+            return
+        var folder = coreRef.configPath.replace(/\\/g, "/")
+        var slash = folder.lastIndexOf("/")
+        if (slash > 0)
+            folder = folder.substring(0, slash)
+        var url = toFileUrl(folder)
+        if (url)
+            Qt.openUrlExternally(url)
+    }
 
     GroupBox {
         title: qsTr("基础")
@@ -66,6 +92,11 @@ ColumnLayout {
                     Layout.fillWidth: true
                     text: coreRef ? coreRef.configPath : ""
                     onEditingFinished: if (coreRef) coreRef.configPath = text
+                }
+                ActionButton {
+                    text: qsTr("位置")
+                    enabled: coreRef && coreRef.configPath.length > 0
+                    onClicked: openConfigLocation()
                 }
             }
 

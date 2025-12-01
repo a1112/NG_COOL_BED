@@ -14,7 +14,15 @@ from ProjectManagement.Main import CoolBedThreadWorker
 from Result.DataItem import DataItem
 from ProjectManagement.Business import Business
 from Globals import business_main, cool_bed_thread_worker_map, global_config
-from CONFIG import debug_control, CALIBRATE_SELECT_FILE, CAMERA_CONFIG_FOLDER, SETTINGS_CONFIG_FILE, CURRENT_CALIBRATE, MappingPath
+from CONFIG import (
+    debug_control,
+    CALIBRATE_SELECT_FILE,
+    CAMERA_CONFIG_FOLDER,
+    SETTINGS_CONFIG_FILE,
+    CURRENT_CALIBRATE,
+    MappingPath,
+    MODEL_FOLDER,
+)
 from fastapi.responses import StreamingResponse, FileResponse, Response
 
 from Server.tool import noFindImageByte
@@ -199,6 +207,24 @@ def get_calibrate_label(calibrate: str, cam_id: str):
     return _load_calibrate_file(calibrate, f"{cam_id}.json")
 
 
+@app.post("/calibrate/label/save")
+def save_calibrate_label(payload: dict):
+    calibrate = payload.get("calibrate") or CURRENT_CALIBRATE
+    cam_id = payload.get("camera")
+    if not cam_id:
+        raise HTTPException(status_code=400, detail="camera required")
+    data = payload.get("data")
+    if data is None:
+        raise HTTPException(status_code=400, detail="data required")
+    path = _safe_calibrate_path(calibrate, f"{cam_id}.json")
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="failed to save label") from exc
+    return {"ok": True, "path": str(path)}
+
+
 @app.get("/calibrate/image/{calibrate}/{image_name}")
 def get_calibrate_image(calibrate: str, image_name: str):
     name = image_name
@@ -338,7 +364,10 @@ def set_settings(payload: dict):
 # ---------- Algorithm test APIs ----------
 @app.get("/alg/models")
 def list_alg_models():
-    return {"models": alg_test_manager.list_models()}
+    return {
+        "models": alg_test_manager.list_models(),
+        "folder": str(MODEL_FOLDER.resolve()),
+    }
 
 
 @app.post("/alg/test/start")

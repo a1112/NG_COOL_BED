@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import "../core"
+import "../view_core"
 Item {
     Layout.fillWidth: true
     Layout.fillHeight: true

@@ -1,17 +1,33 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../core" as Core
+import "../../../core" as Core
+import "../../../base"
+
 
 ColumnLayout {
     id: root
     spacing: 6
-    property var directionOptions: ["默认", "上", "下", "左", "右", "前", "后"]
+    property var directionOptions: ["默认", "左上", "右上", "右下", "左下"]
 
     Label {
         text: qsTr("对象管理（Area）")
         font.bold: true
         color: "#ffffff"
+    }
+
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: 12
+        Label {
+            text: qsTr("透视方向: %1").arg(Core.CalibrationViewCore.cameraOrderForCurrent().join(" -> "))
+            color: "#bbbbbb"
+        }
+        Label {
+            property var size: Core.CalibrationViewCore.cameraSizeForCurrent()
+            text: qsTr("透视像素: %1 x %2").arg(size.width).arg(size.height)
+            color: "#bbbbbb"
+        }
     }
 
     ScrollView {
@@ -22,53 +38,27 @@ ColumnLayout {
             width: parent.width
             spacing: 8
             Repeater {
-                model: Core.CalibrationViewCore.objectSettings
-                delegate: Frame {
+                model: Core.CalibrationViewCore.labelShapes
+                delegate: ItemDelegate {
                     required property var modelData
-                    property int itemIndex: index
-                    Layout.fillWidth: true
-                    background: Rectangle { color: "#191919"; radius: 4 }
-                    ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 8
+                    required property int index
+                    width: parent.width
+                    text: (modelData.label || qsTr("形状%1").arg(index + 1)) +
+                          qsTr("  点数: %1").arg((modelData.points || []).length)
+                    contentItem: ColumnLayout {
                         spacing: 4
                         Label {
-                            text: modelData.camera
-                            color: "#80cbc4"
-                            font.bold: true
+                            text: parent.text
+                            color: "#e0e0e0"
                         }
-                        RowLayout {
-                            spacing: 6
-                            Label { text: qsTr("方向"); color: "#b0bec5" }
-                            ComboBox {
-                                Layout.fillWidth: true
-                                model: root.directionOptions
-                                currentIndex: {
-                                    const options = root.directionOptions
-                                    if (!options.indexOf) return -1
-                                    const idx = options.indexOf(modelData.direction)
-                                    return idx >= 0 ? idx : 0
-                                }
-                                onActivated: function(idx) {
-                                    Core.CalibrationViewCore.updateObjectSetting(itemIndex, "direction", root.directionOptions[idx])
-                                }
-                            }
-                        }
-                        RowLayout {
-                            spacing: 6
-                            Label { text: "W"; color: "#b0bec5" }
-                            SpinBox {
-                                from: 0
-                                to: 10000
-                                value: modelData.width
-                                onValueModified: Core.CalibrationViewCore.updateObjectSetting(itemIndex, "width", value)
-                            }
-                            Label { text: "H"; color: "#b0bec5" }
-                            SpinBox {
-                                from: 0
-                                to: 10000
-                                value: modelData.height
-                                onValueModified: Core.CalibrationViewCore.updateObjectSetting(itemIndex, "height", value)
+                        Repeater {
+                            model: modelData.points || []
+                            delegate: Label {
+                                required property var modelData
+                                text: qsTr("点%1: (%2, %3)").arg(index + 1)
+                                                           .arg(modelData[0].toFixed(1))
+                                                           .arg(modelData[1].toFixed(1))
+                                color: "#b0bec5"
                             }
                         }
                     }
@@ -77,10 +67,10 @@ ColumnLayout {
         }
     }
 
-    Button {
+    ActionButton {
         Layout.fillWidth: true
-        text: qsTr("保存对象配置")
-        enabled: Core.CalibrationViewCore.objectSettings.length > 0
-        onClicked: Core.CalibrationViewCore.saveObjectSettings()
+        text: qsTr("保存标注")
+        enabled: (Core.CalibrationViewCore.labelShapes || []).length > 0
+        onClicked: Core.CalibrationViewCore.saveLabelForCamera()
     }
 }

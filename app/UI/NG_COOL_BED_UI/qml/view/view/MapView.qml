@@ -1,5 +1,5 @@
 import QtQuick
-import "../core"
+import "../view_core"
 Item {
     id:root
     visible: cool_bed_core.show_map_view

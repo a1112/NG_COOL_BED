@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "."  // dialogs
+import "../base"
 
 Dialog {
     id: settingDialog
@@ -39,7 +40,7 @@ Dialog {
                 color: "white"
             }
             Item { Layout.fillWidth: true }
-            Button {
+            ActionButton {
                 text: qsTr("关闭")
                 onClicked: settingDialog.close()
             }
@@ -68,4 +69,3 @@ Dialog {
         }
     }
 }
-
