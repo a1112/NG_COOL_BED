@@ -21,7 +21,7 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         self.camera_config = camera_config
         self.cool_bed_key = camera_config.cool_bed_key
         self.camera_key = camera_config.camera_key
-        print(camera_config.camera_key)
+        # print(camera_config.camera_key)
         self.config = camera_config.config
         self.global_config = global_config
 

@@ -1,9 +1,9 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../../core" as Core
-import "../../../base"
-import "../components"
+import "../../../../core" as Core
+import "../../../../base"
+import "../../components"
 
 ColumnLayout {
     id: root
@@ -12,40 +12,13 @@ ColumnLayout {
     property real zoomFactor: 1.0
     property real minZoom: 0.5
     property real maxZoom: 3.0
-
-    Label {
-        text: qsTr("透视图像")
-        font.bold: true
-        color: "#ffffff"
+    function adjustZoom(delta) {
+        zoomFactor = Math.max(minZoom, Math.min(maxZoom, zoomFactor + delta))
     }
 
-    RowLayout {
-        spacing: 8
-        Layout.fillWidth: true
-        Label {
-            text: qsTr("缩放")
-            color: "#b0bec5"
-        }
-        Slider {
-            id: zoomSlider
-            Layout.fillWidth: true
-            from: minZoom
-            to: maxZoom
-            value: zoomFactor
-            onValueChanged: zoomFactor = value
-        }
-        Label {
-            text: Math.round(zoomFactor * 100) + "%"
-            color: "#9e9e9e"
-            width: 50
-            horizontalAlignment: Text.AlignHCenter
-        }
-        ActionButton {
-            text: qsTr("重置")
-            onClicked: zoomFactor = 1.0
-        }
+    MappingToolBar{
+        id: toolbar
     }
-
     Flickable {
         id: scroller
         Layout.fillWidth: true
@@ -66,11 +39,11 @@ ColumnLayout {
             transformOrigin: Item.TopLeft
 
             WheelHandler {
-                target: null
+                target: canvas
+                                acceptedModifiers: Qt.ControlModifier
                 onWheel: function(event) {
                     var delta = event.angleDelta.y / 1200
-                    zoomFactor = Math.max(minZoom, Math.min(maxZoom, zoomFactor + delta))
-                    zoomSlider.value = zoomFactor
+                    adjustZoom(delta)
                     event.accepted = true
                 }
             }

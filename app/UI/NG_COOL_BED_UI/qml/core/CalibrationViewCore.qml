@@ -361,22 +361,23 @@ Item {
     }
 
     function updateLabelPoint(shapeIndex, pointIndex, newX, newY) {
+        //这样不对视图刷新
         if (shapeIndex < 0 || shapeIndex >= labelShapes.length) return
         const shapes = labelShapes
         const shape = Object.assign({}, shapes[shapeIndex])
-        const pts = shape.points || []
+        const pts = (shape.points || [])
         if (pointIndex < 0 || pointIndex >= pts.length) return
         pts[pointIndex] = [newX, newY]
-        // shape.points = pts
-        // shapes[shapeIndex] = shape
+
         labelShapes = shapes
     }
 
     function updateLabelPointEnd(shapeIndex, pointIndex, newX, newY) {
+        //对视图刷新
         if (shapeIndex < 0 || shapeIndex >= labelShapes.length) return
-        const shapes = labelShapes
+        const shapes = labelShapes.slice()
         const shape = Object.assign({}, shapes[shapeIndex])
-        const pts = shape.points || []
+        const pts = (shape.points || []).slice()
         if (pointIndex < 0 || pointIndex >= pts.length) return
         pts[pointIndex] = [newX, newY]
         shape.points = pts

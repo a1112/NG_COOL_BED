@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../../core" as Core
-import "../../../base"
+import "../../../../core" as Core
+import "../../../../base"
 
 
 

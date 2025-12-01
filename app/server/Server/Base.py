@@ -1,8 +1,9 @@
 import cv2
 import json
+import asyncio
 from pathlib import Path
 from typing import Optional
-from fastapi import FastAPI, HTTPException, WebSocket
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 
 from Configs.AppConfigs import app_configs
 from Configs.CameraManageConfig import camera_manage_config
@@ -118,13 +119,7 @@ async def get_image(cool_bed:str, key:str, cap_index:int,show_mask=0):
 
 @app.get("/data/{cool_bed:str}")
 async def get_data(cool_bed:str):
-    data_dict = business_main.data_item_dict if hasattr(business_main, "data_item_dict") else {}
-    if cool_bed not in data_dict:
-        raise HTTPException(status_code=404, detail=f"cool_bed not ready: {cool_bed}")
-    cool_bed_data = {key: item.get_info() for key, item in data_dict[cool_bed].items()}
-    if hasattr(business_main, "get_current_data"):
-        cool_bed_data["current"] = business_main.get_current_data(cool_bed)
-    return cool_bed_data
+    return _get_data_payload(cool_bed)
 
 
 @app.get("/send_data")
@@ -386,6 +381,33 @@ def stop_alg_test(payload: Optional[dict] = None):
 @app.websocket("/alg/test/progress")
 async def alg_progress(websocket: WebSocket):
     await alg_test_manager.handle_websocket(websocket)
+
+
+def _get_data_payload(cool_bed: str) -> dict:
+    data_dict = business_main.data_item_dict if hasattr(business_main, "data_item_dict") else {}
+    if cool_bed not in data_dict:
+        raise HTTPException(status_code=404, detail=f"cool_bed not ready: {cool_bed}")
+    cool_bed_data = {key: item.get_info() for key, item in data_dict[cool_bed].items()}
+    if hasattr(business_main, "get_current_data"):
+        cool_bed_data["current"] = business_main.get_current_data(cool_bed)
+    return cool_bed_data
+
+
+@app.websocket("/ws/data/{cool_bed}")
+async def ws_data(cool_bed: str, websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            try:
+                payload = _get_data_payload(cool_bed)
+                await websocket.send_text(json.dumps(payload, ensure_ascii=False))
+            except HTTPException as exc:
+                await websocket.send_text(json.dumps({"error": exc.detail}, ensure_ascii=False))
+                await asyncio.sleep(1.0)
+                continue
+            await asyncio.sleep(0.2)
+    except WebSocketDisconnect:
+        pass
 
 
 if __name__=="__main__":

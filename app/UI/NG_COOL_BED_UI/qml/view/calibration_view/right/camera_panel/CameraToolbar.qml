@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../../core" as Core
-import "../../../base"
+import "../../../../core" as Core
+import "../../../../base"
 
 RowLayout {
     id: root
@@ -24,6 +24,17 @@ RowLayout {
         value: zoomFactor
         onValueChanged: zoomFactor = value
     }
+    Label {
+        text: Math.round(zoomFactor * 100) + "%"
+        color: "#9e9e9e"
+        width: 50
+        horizontalAlignment: Text.AlignHCenter
+    }
+    ActionButton {
+        text: qsTr("重置")
+        onClicked: zoomFactor = 1.0
+    }
+
         Row {
             id: radioRow
             spacing: 4
@@ -39,22 +50,6 @@ RowLayout {
         }
 
 
-
-        Label {
-            text: Math.round(zoomFactor * 100) + "%"
-            color: "#9e9e9e"
-            width: 50
-            horizontalAlignment: Text.AlignHCenter
-        }
-        ActionButton {
-            text: qsTr("重置")
-            onClicked: zoomFactor = 1.0
-        }
-        ActionButton {
-            text: qsTr("保存标注")
-            onClicked: Core.CalibrationViewCore.saveLabelForCamera()
-        }
-
     ActionButton {
         text: qsTr("从相机采图")
         enabled: !Core.CalibrationViewCore.offlineMode && Core.CalibrationViewCore.selectedCameraId.length > 0
@@ -62,18 +57,17 @@ RowLayout {
     }
 
     ActionButton {
-        text: qsTr("保存采集")
+        visible: !Core.CalibrationViewCore.offlineMode && Core.CalibrationViewCore.selectedCameraId.length > 0
+        text: qsTr("保存图像")
         onClicked: Core.CalibrationViewCore.saveCapturedImages()
     }
+    Item{
+        Layout.fillWidth: true
 
-    ActionButton {
-        text: qsTr("刷新透视")
-        onClicked: Core.CalibrationViewCore.refreshPerspective()
+
     }
-
-    CheckBox {
-        text: qsTr("自动刷新")
-        checked: Core.CalibrationViewCore.autoRefresh
-        onToggled: Core.CalibrationViewCore.setAutoRefresh(checked)
+    ActionButton {
+        text: qsTr("保存全部标注")
+        onClicked: Core.CalibrationViewCore.saveLabelForCamera()
     }
 }

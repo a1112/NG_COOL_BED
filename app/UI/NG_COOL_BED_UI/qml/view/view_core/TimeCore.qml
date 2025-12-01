@@ -1,4 +1,5 @@
 import QtQuick
+import QtWebSockets
 
 Item {
 
@@ -18,19 +19,39 @@ Item {
     }
 
 
-    Timer{
-        interval: 150
-        repeat: true
-        running: true
-        onTriggered: {
-            app_api.get_data(cool_bed_model_type.cool_bed_key,
-                             (text)=>{
-                                coolBedDataType.set_data_str(text)
-                             },
-                             (err)=>{
-                                console.log("get_data error")
-                             }
-                             )
+    property WebSocket dataSocket: WebSocket {
+        id: dataSocket
+        active: false
+        url: ""
+        onStatusChanged: {
+            if (status === WebSocket.Error || status === WebSocket.Closed) {
+                reconnectTimer.start()
+            }
+        }
+        onTextMessageReceived: function(message) {
+            coolBedDataType.set_data_str(message)
         }
     }
+
+    Timer {
+        id: reconnectTimer
+        interval: 2000
+        repeat: false
+        onTriggered: openSocket()
+    }
+
+    function socketUrl() {
+        if (!app_api || !app_api.server_url) return ""
+        return app_api.server_url.wsServerUrl + "/ws/data/" + cool_bed_model_type.cool_bed_key
+    }
+
+    function openSocket() {
+        const url = socketUrl()
+        if (!url) return
+        dataSocket.active = false
+        dataSocket.url = url
+        dataSocket.active = true
+    }
+
+    Component.onCompleted: openSocket()
 }

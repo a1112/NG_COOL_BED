@@ -86,13 +86,14 @@ class ComPlc(threading.Thread):
 
 
     def write_byte(self,bytes__):
-        print(bytes__)
+        # print(bytes__)
         print("send len : ",len(bytes__),"  ",self.siemens.Write("DB6.0", bytearray(bytes__)).Message)
 
 
 class ComDebug:
     def write_byte(self,bytes__):
-        print(bytes__)
+        # print(bytes__)
+        pass
 
 if DEBUG_MODEL:
     com = ComDebug()

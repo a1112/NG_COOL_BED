@@ -7,7 +7,7 @@ PLC_IP = "10.20.28.145"
 siemens = SiemensS7Net(SiemensPLCS.S300, PLC_IP)
 siemens.SetSlotAndRack(0, 2)
 PLC_DATA = siemens.Read(DB_AD, 6).Content
-print(PLC_DATA)
+# print(PLC_DATA)
 
 
 a=1345

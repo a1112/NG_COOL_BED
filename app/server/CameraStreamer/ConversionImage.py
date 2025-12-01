@@ -121,9 +121,10 @@ class ConversionImage:
         self.height = height
         self.trans = np.array(get_trans(json_data,key, self.order_labels), np.float32)
         if key=="L2_7":
-            print(json_data)
-            print(self.order_labels)
-            print(self.trans)
+            pass
+            # print(json_data)
+            # print(self.order_labels)
+            # print(self.trans)
         self.M = cv2.getPerspectiveTransform(self.trans, np.array([(0, 0), (width, 0), (width, height), (0, height)], dtype=np.float32))
 
     def __call__(self, *args, **kwargs):

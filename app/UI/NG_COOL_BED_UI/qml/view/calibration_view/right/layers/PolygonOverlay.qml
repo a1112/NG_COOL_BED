@@ -97,10 +97,8 @@ Item {
                                 newX = Math.max(0, Math.min(overlay.imageWidth, newX))
                                 newY = Math.max(0, Math.min(overlay.imageHeight, newY))
                                 overlay.pointMovedEnd(shapeIndex, index, newX, newY)
-
                                 mv_rec.x = Qt.binding(()=>{return (pt[0] * overlay.scaleFactor) - width / 2})
                                 mv_rec.y = Qt.binding(()=>{return (pt[1] * overlay.scaleFactor) - height / 2})
-
                             }
                         }
                     }

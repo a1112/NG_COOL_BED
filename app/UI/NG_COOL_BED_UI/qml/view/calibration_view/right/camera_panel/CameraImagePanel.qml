@@ -1,16 +1,24 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../../core" as Core
-import "../../../base"
-import "./layers"
+import "../../../../core" as Core
+import "../../../../base"
+import "../layers"
 
-ColumnLayout {
-    id: root
-    spacing: 6
+Item{
+        id: root
+    readonly property real baseWidth: Core.CalibrationViewCore.labelImageWidth || 1
+    readonly property real baseHeight: Core.CalibrationViewCore.labelImageHeight || 1
     function requestRepaint(){
         return overlay.requestRepaint()
     }
+    function adjustZoom(delta) {
+        zoomFactor = Math.max(minZoom, Math.min(maxZoom, zoomFactor + delta))
+        overlay.requestRepaint()
+    }
+ColumnLayout {
+    anchors.fill: parent
+    spacing: 6
     Flickable {
         id: scroller
         Layout.fillWidth: true
@@ -38,6 +46,7 @@ ColumnLayout {
                 source: Core.CalibrationViewCore.cameraImageSource
                 sourceSize.width: baseWidth
                 sourceSize.height: baseHeight
+
             }
 
             PolygonOverlay {
@@ -48,12 +57,10 @@ ColumnLayout {
                 imageWidth: Core.CalibrationViewCore.labelImageWidth
                 imageHeight: Core.CalibrationViewCore.labelImageHeight
                 onPointMoved: function(shapeIndex, pointIndex, x, y) {
-                    console.log("onPointMoved ",shapeIndex," ",pointIndex," ",x," ",y  )
                     Core.CalibrationViewCore.updateLabelPoint(shapeIndex, pointIndex, x, y)
                 }
                 onPointMovedEnd: function(shapeIndex, pointIndex, x, y) {
-                    console.log("onPointMoved END ",shapeIndex," ",pointIndex," ",x," ",y  )
-                    Core.CalibrationViewCore.updateLabelPoint(shapeIndex, pointIndex, x, y)
+                    Core.CalibrationViewCore.updateLabelPointEnd(shapeIndex, pointIndex, x, y)
                 }
             }
 
@@ -63,6 +70,17 @@ ColumnLayout {
                 text: qsTr("无图像")
                 color: "#616161"
             }
+            WheelHandler {
+                acceptedModifiers: Qt.ControlModifier
+                target: cameraImage
+                onWheel: function(event) {
+                    var delta = event.angleDelta.y / 1200
+                    cip.adjustZoom(delta)
+                    event.accepted = true
+                }
+            }
         }
     }
+}
+
 }
