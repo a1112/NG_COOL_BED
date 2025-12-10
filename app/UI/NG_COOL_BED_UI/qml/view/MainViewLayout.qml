@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import "camera_view"
 import "calibration_view"
+import "../core" as Core
 
 
 Item {
@@ -17,6 +18,12 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             currentIndex: app_core.app_index
+            onCurrentIndexChanged: {
+                if (currentIndex === 1) {
+                    Core.CameraViewCore.reloadFromServer()
+                    Core.CameraViewCore.refreshFromApi()
+                }
+            }
 
             // 主视图：沿用原有 CoolBedView 列表
             ColumnLayout {

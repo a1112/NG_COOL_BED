@@ -11,3 +11,4 @@ soft/aTrust_*.exe
 /config/calibrate/mapping/*/camera/
 /app/UI/NG_COOL_BED_UI/.qtcreator/
 /UI/
+/config/first_save/mapping/

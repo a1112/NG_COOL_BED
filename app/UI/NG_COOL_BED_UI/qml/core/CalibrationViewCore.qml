@@ -15,6 +15,7 @@ Item {
     property var mappingObjects: []
     property var mappingMeta: ({})
     property string perspectiveImageSource: ""
+    property int perspectiveImageVersion: 0
     property real mappingImageWidth: 1
     property real mappingImageHeight: 1
     property var labelShapes: []
@@ -132,6 +133,22 @@ Item {
         if (!folder || !fileName) return ""
         const url = httpUrl([ApiMod.Api.server_url.serverUrl, "calibrate", "mapping", folder, fileName])
         return url && url.length ? url : ""
+    }
+
+    function buildImageSource(url) {
+        if (!url || !url.length) return ""
+        perspectiveImageVersion = (perspectiveImageVersion + 1) % 1000000000
+        const token = perspectiveImageVersion + "_" + Date.now()
+        const connector = url.indexOf("?") === -1 ? "?" : "&"
+        return url + connector + "t=" + token
+    }
+
+    function setPerspectiveImage(url) {
+        if (!url || !url.length) {
+            perspectiveImageSource = ""
+            return
+        }
+        perspectiveImageSource = buildImageSource(url)
     }
 
     function cameraRemoteUrl(folder, name, ext) {
@@ -257,7 +274,8 @@ Item {
         mappingImageWidth = parsed.meta.width || 1
         mappingImageHeight = parsed.meta.height || 1
         const imgName = parsed.meta.filename && parsed.meta.filename.length ? parsed.meta.filename : (selectedGroupKey + ".jpg")
-        perspectiveImageSource = mappingRemoteUrl(currentFolder, imgName)
+        const remoteUrl = mappingRemoteUrl(currentFolder, imgName)
+        setPerspectiveImage(remoteUrl)
     }
 
     function parseTag(block, tag) {
@@ -570,18 +588,34 @@ Item {
     }
 
     function refreshPerspective(callback) {
-        loadMappingForGroup()
+        if (!currentFolder || !selectedGroupKey) {
+            statusMessage = qsTr("请先选择标定分组")
+            if (callback) callback(false, "invalid selection")
+            return
+        }
+
+        function reloadAndCallback(ok, payload) {
+            loadMappingForGroup()
+            if (callback) callback(ok, payload)
+        }
+
         if (ApiMod.Api && ApiMod.Api.refresh_calibrate_perspective) {
             ApiMod.Api.refresh_calibrate_perspective({
                                                          folder: currentFolder,
                                                          group: selectedGroupKey
                                                      },
                                                      function(resp){
-                                                         if (callback) callback(true, resp)
+                                                         statusMessage = qsTr("透视已刷新")
+                                                         reloadAndCallback(true, resp)
                                                      },
                                                      function(err){
-                                                         if (callback) callback(false, err)
+                                                         statusMessage = qsTr("透视刷新失败")
+                                                         console.warn("refresh_calibrate_perspective error", err)
+                                                         reloadAndCallback(false, err)
                                                      })
+        } else {
+            console.warn("refresh_calibrate_perspective api missing")
+            reloadAndCallback(true, null)
         }
     }
 

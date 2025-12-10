@@ -27,7 +27,7 @@ git config --global https.proxy https://127.0.0.1:7890
     密码： Nercar401@
        罗丛德
 
-    usn
+    USM
     连接地址 172.25.45.100    443
     密码： Nercar401@4
     administrator

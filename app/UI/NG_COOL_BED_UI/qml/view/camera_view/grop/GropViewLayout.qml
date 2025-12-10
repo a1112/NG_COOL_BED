@@ -23,6 +23,15 @@ Item {
         anchors.fill: parent
         spacing: 6
 
+        Label {
+            Layout.fillWidth: true
+            text: Core.CameraViewCore.calibrateKey && Core.CameraViewCore.calibrateKey.length
+                  ? qsTr("标定分组：%1").arg(Core.CameraViewCore.calibrateKey)
+                  : qsTr("标定分组：未加载")
+            color: "#81c784"
+            font.pixelSize: 16
+        }
+
         RowLayout {
             Layout.fillWidth: true
             spacing: 8

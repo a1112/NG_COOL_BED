@@ -49,7 +49,8 @@ class DebugCalibrateConfig:
     def __init__(self,key):
         self.key = key
         self.testFolder = Path(DebugFolderConfig.FOLDER_MAP[key])
-        self.image_list= list(self.testFolder.glob('*.jpg'))
+        self.image_list= list(list(self.testFolder.glob('*.jpg'))+ list(self.testFolder.glob('*/*.jpg')))
+        print(fr"test folder: {self.testFolder} test image list len: {len(self.image_list)}")
         self.conversion_image_list = None
         self.image_ = None
         self.mask_image_ = None
