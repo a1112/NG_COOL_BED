@@ -1,9 +1,10 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../core" as Core
+import "../../../core" as Core
+import "../../../base"
 
-RowLayout {
+ColumnLayout {
     id: root
     property alias folderCombo: folderCombo
     signal addRequested()
@@ -11,8 +12,9 @@ RowLayout {
     signal useRequested(string folder)
 
     ComboBox {
-        id: folderCombo
         Layout.fillWidth: true
+        id: folderCombo
+        implicitHeight: 35
         model: Core.CalibrationViewCore.folderList
         textRole: ""
         currentIndex: {
@@ -45,21 +47,29 @@ RowLayout {
             onClicked: folderCombo.currentIndex = index
         }
     }
-
-    Button {
+    RowLayout{
+    Layout.fillWidth: true
+    ActionButton {
         text: qsTr("添加")
         onClicked: root.addRequested()
     }
 
-    Button {
+    ActionButton {
         text: qsTr("删除")
         enabled: Core.CalibrationViewCore.currentFolder.length > 0
         onClicked: root.deleteRequested(Core.CalibrationViewCore.currentFolder)
     }
 
-    Button {
-        text: qsTr("使用")
+    ActionButton {
+        text: qsTr("设置")
         enabled: Core.CalibrationViewCore.currentFolder.length > 0
         onClicked: root.useRequested(Core.CalibrationViewCore.currentFolder)
+    }
+    ActionButton {
+        text: qsTr("位置")
+
+    }
+
+
     }
 }

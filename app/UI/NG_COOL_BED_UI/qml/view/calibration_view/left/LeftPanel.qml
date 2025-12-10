@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../core" as Core
+import "../../../core" as Core
 import "."
 
 ColumnLayout {

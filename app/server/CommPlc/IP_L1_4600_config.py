@@ -90,7 +90,7 @@ class L1_4600(threading.Thread):
              }
         )
         self.last_data_dict.update(otherInfo)
-        print(self.last_data_dict)
+        # print(self.last_data_dict)
 
 
 if __name__=="__main__":

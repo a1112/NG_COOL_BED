@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import "../../core" as CoreModule
+import "../../../core" as CoreModule
 
 Item {
     id: root

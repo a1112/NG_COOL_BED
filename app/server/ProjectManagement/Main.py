@@ -82,7 +82,7 @@ class CoolBedThreadWorker(Thread):
         cap_index=0
         tq = tqdm()
         while True:
-            tq.update(1)
+            # tq.update(1)
             cap_index += 1
             start_time = time.time()
             # 工作2 采集 1 CAPTURE
@@ -116,11 +116,12 @@ class CoolBedThreadWorker(Thread):
                 #     self.steel_data_queue.put(CoolBedError("无法获取有效数据：过多相机失联，或无有效数据"))
                 end_time=time.time()
                 use_time =end_time-start_time
-                print(f"FPS： {self.FPS} use time： {use_time}  ")
+                # print(f"FPS： {self.FPS} use time： {use_time}  ")
                 if use_time < 1 / self.FPS:
                     time.sleep(1 / self.FPS - use_time)
                 else:
-                    logger.warning(f"单帧处理时间 {use_time}")
+                    if not CONFIG.DEBUG_MODEL:
+                        logger.warning(f"单帧处理时间 {use_time}")
                 if CONFIG.DEBUG_MODEL:
                     time.sleep(0.2)
             except BaseException as e:

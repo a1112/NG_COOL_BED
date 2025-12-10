@@ -88,6 +88,10 @@ Item {
         return ajax.post(calibrateUrl("group", "save"), payload, success, failure)
     }
 
+    function save_calibrate_label(payload, success, failure) {
+        return ajax.post(calibrateUrl("label", "save"), payload, success, failure)
+    }
+
     function capture_calibrate_camera(payload, success, failure) {
         return ajax.post(calibrateUrl("capture"), payload, success, failure)
     }

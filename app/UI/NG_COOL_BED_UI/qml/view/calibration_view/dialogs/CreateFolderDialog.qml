@@ -1,7 +1,8 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../core" as Core
+import "../../../core" as Core
+import "../../../base"
 
 Dialog {
     id: dialog
@@ -87,7 +88,7 @@ Dialog {
             Layout.fillWidth: true
             spacing: 12
             Item { Layout.fillWidth: true }
-            Button {
+            ActionButton {
                 text: qsTr("确认")
                 enabled: dialog.folderName.length > 0
                 onClicked: dialog.apply()

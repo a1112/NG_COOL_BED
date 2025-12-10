@@ -1,7 +1,7 @@
 pragma Singleton
 import QtQuick
 import "../api" as ApiMod
-
+import "../core"
 Item {
     id: core
 
@@ -17,6 +17,11 @@ Item {
     property string perspectiveImageSource: ""
     property real mappingImageWidth: 1
     property real mappingImageHeight: 1
+    property var labelShapes: []
+    property real labelImageWidth: 1
+    property real labelImageHeight: 1
+    property string labelImagePath: ""
+    property var labelMeta: ({})
 
     property var cameraRadioList: []
     property string selectedCameraId: ""
@@ -26,7 +31,7 @@ Item {
     property bool autoRefresh: false
     property string statusMessage: ""
     property bool busy: false
-    property bool offlineMode: false
+    property bool offlineMode: Core.debug
 
     function rebuildFolderList() {
         const cfg = fetchCalibrateConfig()
@@ -58,7 +63,10 @@ Item {
 
     onSelectedGroupKeyChanged: applySelectedGroup()
 
-    onSelectedCameraIdChanged: refreshCameraImage()
+    onSelectedCameraIdChanged: {
+        refreshCameraImage()
+        loadLabelForCamera(selectedCameraId)
+    }
 
     function refreshFolders() {
         rebuildFolderList()
@@ -110,6 +118,11 @@ Item {
         return ApiMod.Api.server_url.url(ApiMod.Api.server_url.serverUrl, "calibrate", "mapping", folder, name + "." + ext)
     }
 
+    function labelFilePath(folder, camId) {
+        if (!folder || !camId || !(ApiMod.Api && ApiMod.Api.server_url)) return ""
+        return ApiMod.Api.server_url.url(ApiMod.Api.server_url.serverUrl, "calibrate", "label", folder, camId)
+    }
+
     function httpUrl(parts) {
         if (!(ApiMod.Api && ApiMod.Api.server_url)) return ""
         return ApiMod.Api.server_url.url.apply(ApiMod.Api.server_url, parts)
@@ -121,9 +134,11 @@ Item {
         return url && url.length ? url : ""
     }
 
-    function cameraRemoteUrl(folder, cameraId, ext) {
-        if (!folder || !cameraId) return ""
-        const url = httpUrl([ApiMod.Api.server_url.serverUrl, "calibrate", "image", folder, cameraId + "." + ext])
+    function cameraRemoteUrl(folder, name, ext) {
+        if (!folder || !name) return ""
+        const hasExt = name.indexOf(".") !== -1
+        const fileName = hasExt ? name : (name + "." + (ext || "jpg"))
+        const url = httpUrl([ApiMod.Api.server_url.serverUrl, "calibrate", "image", folder, fileName])
         return url && url.length ? url : ""
     }
 
@@ -288,9 +303,54 @@ Item {
     function refreshCameraImage() {
         if (!selectedCameraId || !currentFolder) {
             cameraImageSource = ""
+            labelImagePath = ""
             return
         }
-        cameraImageSource = cameraRemoteUrl(currentFolder, selectedCameraId, "jpg")
+        const imgName = labelImagePath && labelImagePath.length ? labelImagePath : selectedCameraId
+        cameraImageSource = cameraRemoteUrl(currentFolder, imgName, "jpg")
+    }
+
+    function loadLabelForCamera(camId) {
+        if (!camId || !currentFolder) {
+            labelShapes = []
+            labelMeta = ({})
+            labelImageWidth = 1
+            labelImageHeight = 1
+            labelImagePath = ""
+            return
+        }
+        const url = labelFilePath(currentFolder, camId)
+        const data = loadJson(url) || {}
+        labelMeta = data
+        labelShapes = data.shapes || []
+        labelImageWidth = data.imageWidth || 1
+        labelImageHeight = data.imageHeight || 1
+        labelImagePath = data.imagePath || ""
+        refreshCameraImage()
+    }
+
+    function cameraOrderForCurrent() {
+        if (!selectedCameraId) return []
+        const parts = selectedCameraId.split("_")
+        const lineKey = parts.length ? parts[0] : ""
+        const lineBlock = (cameraManageData && cameraManageData.group && cameraManageData.group[lineKey]) ? cameraManageData.group[lineKey] : {}
+        const orderMap = lineBlock.camera_order || {}
+        const order = orderMap[selectedCameraId] || []
+        if (order && order.length) return order
+        return ["tl", "tr", "br", "bl"]
+    }
+
+    function cameraSizeForCurrent() {
+        const fallback = { width: labelImageWidth, height: labelImageHeight }
+        if (!selectedGroup || !selectedCameraId) return fallback
+        const list = selectedGroup.camera_list || []
+        const idx = list.indexOf ? list.indexOf(selectedCameraId) : -1
+        const sizeList = selectedGroup.size_list || []
+        const size = (idx >= 0 && idx < sizeList.length) ? sizeList[idx] : null
+        if (size && size.length >= 2) {
+            return { width: size[0], height: size[1] }
+        }
+        return fallback
     }
 
     function updateMappingObject(index, rect) {
@@ -298,6 +358,31 @@ Item {
         const updated = mappingObjects.slice()
         updated[index] = Object.assign({}, updated[index], rect)
         mappingObjects = updated
+    }
+
+    function updateLabelPoint(shapeIndex, pointIndex, newX, newY) {
+        //这样不对视图刷新
+        if (shapeIndex < 0 || shapeIndex >= labelShapes.length) return
+        const shapes = labelShapes
+        const shape = Object.assign({}, shapes[shapeIndex])
+        const pts = (shape.points || [])
+        if (pointIndex < 0 || pointIndex >= pts.length) return
+        pts[pointIndex] = [newX, newY]
+
+        labelShapes = shapes
+    }
+
+    function updateLabelPointEnd(shapeIndex, pointIndex, newX, newY) {
+        //对视图刷新
+        if (shapeIndex < 0 || shapeIndex >= labelShapes.length) return
+        const shapes = labelShapes.slice()
+        const shape = Object.assign({}, shapes[shapeIndex])
+        const pts = (shape.points || []).slice()
+        if (pointIndex < 0 || pointIndex >= pts.length) return
+        pts[pointIndex] = [newX, newY]
+        shape.points = pts
+        shapes[shapeIndex] = shape
+        labelShapes = shapes
     }
 
     function updateObjectSetting(index, key, value) {
@@ -339,6 +424,41 @@ Item {
         })
         lines.push("</annotation>")
         return lines.join("\n")
+    }
+
+    function saveLabelForCamera(callback) {
+        if (!selectedCameraId || !currentFolder) {
+            statusMessage = qsTr("请选择相机")
+            return
+        }
+        const payload = {
+            calibrate: currentFolder,
+            camera: selectedCameraId,
+            data: Object.assign({}, labelMeta, {
+                                     shapes: labelShapes,
+                                     imageWidth: labelImageWidth,
+                                     imageHeight: labelImageHeight,
+                                 })
+        }
+        if (ApiMod.Api && ApiMod.Api.save_calibrate_label) {
+            busy = true
+            ApiMod.Api.save_calibrate_label(payload,
+                                            function(resp){
+                                                busy = false
+                                                statusMessage = qsTr("标注已保存")
+                                                if (callback) callback(true, resp)
+                                            },
+                                            function(err){
+                                                busy = false
+                                                statusMessage = qsTr("标注保存失败")
+                                                console.warn("save_calibrate_label error", err)
+                                                if (callback) callback(false, err)
+                                            })
+        } else {
+            console.warn("save_calibrate_label api missing", payload)
+            statusMessage = qsTr("缺少标注保存接口")
+            if (callback) callback(false, "api missing")
+        }
     }
 
     function saveCurrentMapping(callback) {

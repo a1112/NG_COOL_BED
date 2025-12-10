@@ -3,7 +3,7 @@ import QtQuick.Layouts
 import "head"
 import "view"
 import "../types"
-import "core"
+import "view_core"
 import "data"
 // 单个冷床视图
 

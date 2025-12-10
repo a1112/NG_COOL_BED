@@ -59,7 +59,7 @@ HeadBase {
             visible: app_core.debug
         }
 
-        Button{
+        ActionButton{
             text: qsTr("算法测试")
             implicitHeight: root.height - 10
             onClicked: {

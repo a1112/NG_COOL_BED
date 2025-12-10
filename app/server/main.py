@@ -2,12 +2,9 @@
 入口
 
 """
-import logging
-
-# 禁用日志记录
-logging.disable(logging.WARNING)
 
 from multiprocessing import freeze_support
+import logging
 
 from Configs.CameraManageConfig import camera_manage_config
 from Configs.CoolBedGroupConfig import CoolBedGroupConfig
@@ -32,6 +29,10 @@ def main():
 
 
 if __name__ == "__main__":
+    # 仅屏蔽 YOLO/ultralytics 的日志，保留其他 FastAPI/uvicorn 等日志
+    logging.getLogger("ultralytics").setLevel(logging.ERROR)
+    logging.getLogger("yolo").setLevel(logging.ERROR)
+
     freeze_support()
     # 启动 HTTP 服务
     ApiServer.start()

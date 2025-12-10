@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../core" as Core
+import "../../core" as Cores
 import "left"
 import "right"
 import "dialogs"
@@ -10,47 +10,23 @@ Item {
     id: root
     Layout.fillWidth: true
     Layout.fillHeight: true
-
     CreateFolderDialog {
         id: createFolderDialog
     }
-
-    Dialog {
-        id: deleteDialog
-        modal: true
-        title: qsTr("删除标注文件夹")
-        standardButtons: Dialog.Cancel | Dialog.Ok
-        property string folder: ""
-        contentItem: Label {
-            text: qsTr("确定删除 %1 ?").arg(deleteDialog.folder)
-            color: "#ffffff"
-        }
-        onAccepted: Core.CalibrationViewCore.deleteFolder(folder)
+    DeleteDialog{
+            id: deleteDialog
     }
+
 
     Timer {
         interval: 6000
         repeat: true
-        running: Core.CalibrationViewCore.autoRefresh
+        running: Cores.CalibrationViewCore.autoRefresh
         onTriggered: {
-            Core.CalibrationViewCore.refreshPerspective()
-            Core.CalibrationViewCore.refreshCameraImage()
+            Cores.CalibrationViewCore.refreshPerspective()
+            Cores.CalibrationViewCore.refreshCameraImage()
         }
     }
-
-    Component.onCompleted: {
-        if (typeof app_core !== "undefined") {
-            Core.CalibrationViewCore.offlineMode = !!app_core.debug
-        }
-    }
-
-    Connections {
-        target: typeof app_core !== "undefined" ? app_core : null
-        function onDebugChanged() {
-            Core.CalibrationViewCore.offlineMode = !!app_core.debug
-        }
-    }
-
     SplitView {
         anchors.fill: parent
         spacing: 10
@@ -68,7 +44,7 @@ Item {
                     deleteDialog.folder = folder
                     deleteDialog.open()
                 }
-                onUseRequested: Core.CalibrationViewCore.useFolder(folder)
+                onUseRequested: Cores.CalibrationViewCore.useFolder(folder)
             }
         }
 
@@ -87,7 +63,7 @@ Item {
     BusyIndicator {
         anchors.top: parent.top
         anchors.right: parent.right
-        running: Core.CalibrationViewCore.busy
+        running: Cores.CalibrationViewCore.busy
         visible: running
     }
 }

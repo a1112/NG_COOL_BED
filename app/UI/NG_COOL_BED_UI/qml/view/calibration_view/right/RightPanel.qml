@@ -1,46 +1,30 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../core" as Core
+import "../../../core" as Core
 import "."
-
-ColumnLayout {
+import "camera_panel"
+import "mapping_panel"
+SplitView {
     id: root
     spacing: 8
+    orientation: Qt.Vertical
 
-    RowLayout {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-        spacing: 8
-
-        Frame {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            padding: 8
-            background: Rectangle { color: "#111"; radius: 4 }
-            PerspectivePreview {
-                anchors.fill: parent
-            }
-        }
-
-        Frame {
-            Layout.preferredWidth: 340
-            Layout.fillHeight: true
-            padding: 8
-            background: Rectangle { color: "#131313"; radius: 4 }
-            MappingObjectPanel {
-                anchors.fill: parent
-            }
-        }
-    }
 
     Frame {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 360
+        id: cameraFrame
+        SplitView.fillWidth: true
+        SplitView.fillHeight: true
+
         padding: 8
         background: Rectangle { color: "#101010"; radius: 4 }
         CameraPanel {
+            id: cameraPanelRoot
             anchors.fill: parent
         }
     }
+    MappingPanel{
+        id: mappingPanelRoot
+    }
+
 }
