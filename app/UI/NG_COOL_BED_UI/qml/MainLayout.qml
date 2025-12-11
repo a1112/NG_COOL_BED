@@ -5,6 +5,7 @@ import QtQuick.Controls.Material
 import "head"
 import "core"
 import "view"
+import "view/view_core" as ViewCore
 import "api"
 import "dialogs"
 
@@ -34,5 +35,23 @@ ApplicationWindow {
         SettingView {
             id: settingView
         }
-}
+        SendDialog {
+            id: send_dialog
+            send_data: sendDataCore && sendDataCore.lastPayload && sendDataCore.lastPayload.data
+                        ? sendDataCore.lastPayload.data : ({})
+            send_byte: sendDataCore && sendDataCore.lastPayload ? (sendDataCore.lastPayload.bytes || "") : ""
+        }
+        MapDialog {
+            id: map_dialog
+            send_data: sendDataCore && sendDataCore.lastPayload && sendDataCore.lastPayload.data
+                        ? sendDataCore.lastPayload.data : ({})
+            send_byte: sendDataCore && sendDataCore.lastPayload ? (sendDataCore.lastPayload.bytes || "") : ""
+        }
+        AlgTestDialog {
+            id: alg_test_dialog
+        }
+        ViewCore.SendDataCore {
+            id: sendDataCore
+        }
+    }
 }

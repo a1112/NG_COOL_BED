@@ -58,24 +58,4 @@ Menu {
     function open_(){
         root.popup()
     }
-
-    Timer{
-        repeat: true
-        running: true
-        interval: 500
-        onTriggered: {
-            app_api.get_send_data(
-                        (text)=>{
-                            let js_data = JSON.parse(text)
-                           send_data =  js_data["data"]
-                            send_byte = js_data["bytes"]
-                        },
-                        (err)=>{
-                            console.log("get_send_data error")
-                        }
-                        )
-
-        }
-    }
-
 }

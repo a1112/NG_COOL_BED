@@ -91,5 +91,6 @@
         <file>qml/view/calibration_view/right/mapping_panel/PerspectivePreview.qml</file>
         <file>qml/view/calibration_view/right/mapping_panel/MappingPanel.qml</file>
         <file>qml/view/calibration_view/right/mapping_panel/MappingToolBar.qml</file>
+        <file>qml/view/view_core/SendDataCore.qml</file>
     </qresource>
 </RCC>

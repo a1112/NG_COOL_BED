@@ -63,7 +63,7 @@ Item {
         id: videoOutput
         anchors.fill: parent
         fillMode: VideoOutput.PreserveAspectFit
-        pixelFormat: VideoOutput.RGB888
+
     }
 
     MapView{

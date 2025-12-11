@@ -183,6 +183,18 @@ async def send_data():
     return business_main.send_data
 
 
+@app.websocket("/ws/send_data")
+async def ws_send_data(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            payload = business_main.send_data
+            await websocket.send_text(json.dumps(payload, ensure_ascii=False))
+            await asyncio.sleep(0.2)
+    except WebSocketDisconnect:
+        pass
+
+
 @app.get("/current_info")
 def current_info():
 
