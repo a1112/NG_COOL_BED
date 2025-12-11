@@ -1,8 +1,10 @@
 import cv2
 import json
 import asyncio
+import time
 from pathlib import Path
 from typing import Optional
+import numpy as np
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 
 import CONFIG
@@ -118,6 +120,57 @@ async def get_image(cool_bed:str, key:str, cap_index:int,show_mask=0):
     _, encoded_image = cv2.imencode(".jpg", cv_image)
     # 返回图像响应
     return Response(content=encoded_image.tobytes(), media_type="image/jpeg")
+
+
+def _video_stream(worker: CoolBedThreadWorker, group_key: str, show_mask: int):
+    boundary = b"--frame"
+    show_mask = int(show_mask)
+    while True:
+        try:
+            _, cv_image = worker.get_image(group_key, show_mask)
+        except Exception:
+            cv_image = None
+        if cv_image is None:
+            time.sleep(0.05)
+            continue
+        frame_to_encode = _ensure_limited_range(cv_image)
+        ok, encoded_image = cv2.imencode(".jpg", frame_to_encode)
+        if not ok:
+            continue
+        frame = encoded_image.tobytes()
+        yield (
+            boundary + b"\r\n"
+            b"Content-Type: image/jpeg\r\n\r\n"
+            + frame + b"\r\n"
+        )
+        time.sleep(0.03)
+
+
+def _ensure_limited_range(frame):
+    if frame is None or frame.dtype != np.uint8:
+        return frame
+    if frame.ndim != 3 or frame.shape[2] != 3:
+        return frame
+    yuv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
+    y_channel = np.clip(yuv[:, :, 0], 16, 235)
+    u_channel = np.clip(yuv[:, :, 1], 16, 240)
+    v_channel = np.clip(yuv[:, :, 2], 16, 240)
+    yuv = np.stack((y_channel, u_channel, v_channel), axis=2).astype(np.uint8, copy=False)
+    return cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR)
+
+
+@app.get("/video/{cool_bed:str}/{key:str}/{show_mask:int}")
+async def get_video_stream(cool_bed: str, key: str, show_mask: int = 0):
+    if cool_bed not in cool_bed_thread_worker_map:
+        raise HTTPException(status_code=404, detail=f"cool_bed not found: {cool_bed}")
+    worker = cool_bed_thread_worker_map[cool_bed]
+    worker: CoolBedThreadWorker
+    if key not in worker.config.groups_dict:
+        raise HTTPException(status_code=404, detail=f"group not found: {key}")
+    return StreamingResponse(
+        _video_stream(worker, key, show_mask),
+        media_type="multipart/x-mixed-replace; boundary=frame",
+    )
 
 
 @app.get("/data/{cool_bed:str}")

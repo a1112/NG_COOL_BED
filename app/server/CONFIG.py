@@ -14,10 +14,10 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 # 项目根目录：app/server/CONFIG.py 向上两级即仓库根
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-# 支持多种配置位置：优先仓库根 config，其次历史上的 D:/NG_CONFIG
+# 支持多种配置位置：优先使用 D:/NG_CONFIG，其次仓库内的 config
 _CONFIG_CANDIDATES = [
-    PROJECT_ROOT / "config",
     Path("D:/NG_CONFIG"),
+    PROJECT_ROOT / "config",
 ]
 CONFIG_FOLDER = next((p for p in _CONFIG_CANDIDATES if p.is_dir()), None)
 if CONFIG_FOLDER is None:

@@ -14,12 +14,8 @@ Item {
     readonly property string current_key: cool_bed_model_type.get_key(current_index)
 
     property int cap_index : 0
-
-    property string source_url: app_api.get_image_url(cool_bed_model_type.cool_bed_key, current_key, cap_index,cool_bed_core.show_mask)
-    onSource_urlChanged: {
-
-
-    }
+    property int video_reload_token: 0
+    property string video_url: ""
 
     property ControlConfig controlConfig: ControlConfig{
     }
@@ -28,7 +24,7 @@ Item {
 
 
     function flush_source(){
-        cap_index += 1
+        refresh_video_source()
     }
 
 
@@ -57,4 +53,21 @@ Item {
     property bool can_show_mask: true// This is available in all editors.
     property bool show_mask: false
 
+    function refresh_video_source(){
+        cap_index += 1
+        video_reload_token += 1
+        video_url = app_api.get_video_url(
+                    cool_bed_model_type.cool_bed_key,
+                    current_key,
+                    cool_bed_core.show_mask,
+                    video_reload_token)
+    }
+
+    onShow_maskChanged: refresh_video_source()
+    onCurrent_indexChanged: refresh_video_source()
+    onCurrent_keyChanged: refresh_video_source()
+    onCool_bed_keyChanged: refresh_video_source()
+    onVideo_reload_tokenChanged: {}
+
+    Component.onCompleted: refresh_video_source()
 }

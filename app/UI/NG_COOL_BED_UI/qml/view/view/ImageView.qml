@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtMultimedia
 import "../view_core"
 Item {
     Layout.fillWidth: true
@@ -11,61 +12,78 @@ Item {
 
     }
 
+    property real displayWidth: videoOutput.contentRect.width > 0 ? videoOutput.contentRect.width : videoOutput.width
+    property real displayHeight: videoOutput.contentRect.height > 0 ? videoOutput.contentRect.height : videoOutput.height
 
-    Image{
-        id:old_image
-        width: parent.width
-        height: parent.height
-        fillMode: Image.PreserveAspectFit
-        cache: false
-    }
+    MediaPlayer {
+        id: videoPlayer
+        videoOutput: videoOutput
+        autoPlay: true
+        loops: MediaPlayer.Infinite
 
-    Image{
-        id:show_image
-        cache: false
-        width: parent.width
-        height: parent.height
-        source: cool_bed_core.source_url
-        fillMode: Image.PreserveAspectFit
-        onStatusChanged: {
-            if (status==Image.Ready){
-                old_image.source=source
-                t.start()
+        source: cool_bed_core.video_url
+        onErrorOccurred: {
+            console.warn("video error:", errorString)
+            streamReconnectTimer.restart()
+        }
+        onPlaybackStateChanged: {
+            if (playbackState === MediaPlayer.StoppedState && source) {
+                streamReconnectTimer.restart()
             }
         }
     }
 
-    Timer{
-        id: t
-        interval: 300
-        running: false
-        repeat: false
-        onTriggered: {
-       // cool_bed_core.flush_source()
-            cool_bed_core.flush_source()
+    Connections {
+        target: cool_bed_core
+        function onVideo_urlChanged() {
+            restartStream()
         }
+    }
+
+    function restartStream() {
+        streamReconnectTimer.stop()
+        if (!cool_bed_core.video_url || cool_bed_core.video_url.length === 0) {
+            videoPlayer.stop()
+            return
+        }
+        videoPlayer.stop()
+        videoPlayer.source = ""
+        videoPlayer.source = cool_bed_core.video_url
+        videoPlayer.play()
+    }
+
+    Timer {
+        id: streamReconnectTimer
+        interval: 2000
+        repeat: false
+        onTriggered: restartStream()
+    }
+
+    VideoOutput {
+        id: videoOutput
+        anchors.fill: parent
+        fillMode: VideoOutput.PreserveAspectFit
+        pixelFormat: VideoOutput.RGB888
     }
 
     MapView{
         id:map_view
         anchors.centerIn: parent
-        width: show_image.paintedWidth
-        height: show_image.paintedHeight
+        width: displayWidth
+        height: displayHeight
     }
-
-    //cool_bed_core.controlConfig.left_move_to_up_hov
 
     ObjView{
         visible: cool_bed_core.show_det_view
         anchors.centerIn: parent
-        width: show_image.paintedWidth
-        height: show_image.paintedHeight
+        width: displayWidth
+        height: displayHeight
     }
     MoveView{
         id:move_view
         anchors.centerIn: parent
-        width: show_image.paintedWidth
-        height: show_image.paintedHeight
+        width: displayWidth
+        height: displayHeight
 
     }
 }

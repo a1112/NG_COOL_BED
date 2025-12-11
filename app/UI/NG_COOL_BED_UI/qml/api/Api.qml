@@ -34,6 +34,15 @@ Item {
         return server_url.url(server_url.serverUrl, "image",cool_bed_key, key, index,parseInt(show_mask+0))
     }
 
+    function get_video_url(cool_bed_key, key, show_mask, token){
+        var base = server_url.url(server_url.serverUrl, "video", cool_bed_key, key, parseInt(show_mask+0))
+        if (token === undefined || token === null) {
+            return base
+        }
+        var sep = base.indexOf("?") === -1 ? "?" : "&"
+        return base + sep + "t=" + token
+    }
+
     function get_data(cool_bed_key, success, failure){
         return ajax.get(server_url.url(server_url.serverUrl,"data",cool_bed_key),success, failure)
     }
