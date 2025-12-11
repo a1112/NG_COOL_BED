@@ -9,6 +9,8 @@ Menu {
     property var sendDialog: null
     property var mapDialog: null
     property var algTestDialog: null
+    property bool opencvDisplayEnabled: true
+    property bool opencvDisplayBusy: false
 
     readonly property string _docsUrl: app_api && app_api.server_url
                                       ? (app_api.server_url.serverUrl + "/docs")
@@ -31,6 +33,43 @@ Menu {
             windowItem.showMaximized()
         else
             windowItem.showFullScreen()
+    }
+
+    function refreshOpenCvDisplay() {
+        if (!app_api || !app_api.get_opencv_display)
+            return
+        opencvDisplayBusy = true
+        app_api.get_opencv_display(
+                    function(resp) {
+                        opencvDisplayEnabled = !!(resp && resp.enable)
+                        opencvDisplayBusy = false
+                    },
+                    function(err, status) {
+                        console.warn("get_opencv_display failed", status, err)
+                        opencvDisplayBusy = false
+                    })
+    }
+
+    function setOpenCvDisplay(enable) {
+        if (!app_api || !app_api.set_opencv_display)
+            return
+        opencvDisplayBusy = true
+        app_api.set_opencv_display(
+                    enable,
+                    function(resp) {
+                        opencvDisplayEnabled = !!(resp && resp.enable)
+                        opencvDisplayBusy = false
+                    },
+                    function(err, status) {
+                        console.warn("set_opencv_display failed", status, err)
+                        opencvDisplayBusy = false
+                    })
+    }
+
+    function toggleOpenCvDisplay() {
+        if (opencvDisplayBusy)
+            return
+        setOpenCvDisplay(!opencvDisplayEnabled)
     }
 
     Menu {
@@ -97,6 +136,13 @@ Menu {
                             })
             }
         }
+        MenuItem {
+            text: opencvDisplayEnabled
+                  ? qsTr("关闭后端 OpenCV 显示")
+                  : qsTr("开启后端 OpenCV 显示")
+            enabled: !opencvDisplayBusy && app_api && app_api.set_opencv_display
+            onTriggered: toggleOpenCvDisplay()
+        }
         Menu {
             title: qsTr("打开应用")
             MenuItem {
@@ -128,4 +174,6 @@ Menu {
         text: qsTr("退出")
         onTriggered: Qt.quit()
     }
+
+    Component.onCompleted: refreshOpenCvDisplay()
 }

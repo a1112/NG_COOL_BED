@@ -12,3 +12,5 @@ soft/aTrust_*.exe
 /app/UI/NG_COOL_BED_UI/.qtcreator/
 /UI/
 /config/first_save/mapping/
+/config/
+/app/UI/NG_COOL_BED_UI/CMakeLists.txt.user

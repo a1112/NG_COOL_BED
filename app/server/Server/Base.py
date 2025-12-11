@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Optional
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 
+import CONFIG
 from Configs.AppConfigs import app_configs
 from Configs.CameraManageConfig import camera_manage_config
 from Configs.CoolBedGroupConfig import CoolBedGroupConfig
@@ -26,6 +27,7 @@ from CONFIG import (
 )
 from fastapi.responses import StreamingResponse, FileResponse, Response
 
+import tool as common_tool
 from Server.tool import noFindImageByte
 from Server.alg_test_manager import alg_test_manager
 
@@ -268,6 +270,22 @@ def save_cap():
 @app.get("/save_one_cap")
 def save_one_cap():
     return business_main.save_one_cap()
+
+
+@app.get("/debug/opencv_display")
+def get_opencv_display_state():
+    return {"enable": CONFIG.SHOW_OPENCV}
+
+
+@app.post("/debug/opencv_display")
+def set_opencv_display_state(payload: Optional[dict] = None):
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="payload must be object")
+    enable = payload.get("enable")
+    if not isinstance(enable, bool):
+        raise HTTPException(status_code=400, detail="enable must be boolean")
+    common_tool.set_show_cv2_enabled(enable)
+    return {"ok": True, "enable": CONFIG.SHOW_OPENCV}
 
 
 # ---------- Config APIs ----------

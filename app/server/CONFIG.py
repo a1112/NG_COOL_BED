@@ -95,7 +95,7 @@ print(f"hostname: {socket.gethostname()}")
 if socket.gethostname() in ["DESKTOP-3VCH6DO", "MS-LGKRSZGOVODD", "DESKTOP-94ADH1G","HGL8081-1","lcx_ace"]:
     DEBUG_MODEL = True
 print(fr" DEBUG_MODEL ： {DEBUG_MODEL}")
-show_camera = False
+SHOW_OPENCV = True
 
 CapTureBaseClass = Thread
 

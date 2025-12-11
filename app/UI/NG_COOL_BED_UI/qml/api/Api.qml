@@ -64,6 +64,18 @@ Item {
         return ajax.get(server_url.url(server_url.serverUrl, "save_one_cap"), success, failure)
     }
 
+    function get_opencv_display(success, failure) {
+        return ajax.get(server_url.url(server_url.serverUrl, "debug", "opencv_display"), success, failure)
+    }
+
+    function set_opencv_display(enable, success, failure) {
+        return ajax.post(
+                    server_url.url(server_url.serverUrl, "debug", "opencv_display"),
+                    { "enable": !!enable },
+                    success,
+                    failure)
+    }
+
     function get_calibrate_folders(success, failure) {
         return ajax.get(calibrateUrl("folders"), success, failure)
     }

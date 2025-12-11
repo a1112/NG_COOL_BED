@@ -78,7 +78,27 @@ def save_temp(filename,img):
 
 def show_cv2(img,title="image"):
     """避免多线程显示失败"""
+    if not getattr(CONFIG, "SHOW_OPENCV", True):
+        return
     return show_thread.add(title,img)
+
+
+def set_show_cv2_enabled(enable: bool):
+    """
+    Toggle OpenCV display and destroy existing windows when disabling.
+    """
+    enable = bool(enable)
+    CONFIG.SHOW_OPENCV = enable
+    if not enable:
+        try:
+            cv2.destroyAllWindows()
+        except Exception:
+            pass
+    return CONFIG.SHOW_OPENCV
+
+
+def is_show_cv2_enabled():
+    return getattr(CONFIG, "SHOW_OPENCV", True)
 
 
 

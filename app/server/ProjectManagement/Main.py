@@ -73,7 +73,8 @@ class CoolBedThreadWorker(Thread):
         print(f"start  CoolBedThreadWorker {self.key}")
         # model = SteelDetModel()
         predictor = SteelPredict()
-        self.save_thread = CapJoinSave(self.config)
+        if not CONFIG.DEBUG_MODEL:
+            self.save_thread = CapJoinSave(self.config)
         #  工作1， 相机初始化
         for key, camera_config in self.config.camera_map.items():
             camera_config:CameraConfig
@@ -96,7 +97,8 @@ class CoolBedThreadWorker(Thread):
                     self._up_join_image_(group_config.group_key, calibrate)
                     # 调整中的工作-----------------------------------
                     # 工作4 识别
-                    self.save_thread.save_buffer(group_config.group_key, calibrate)
+                    if self.save_thread:
+                        self.save_thread.save_buffer(group_config.group_key, calibrate)
 
                     # steel_info = DetResult(calibrate, model_data, group_config.map_config)
 
@@ -137,4 +139,3 @@ class CoolBedThreadWorker(Thread):
     # for key, cool_bed_thread_worker in cool_bed_thread_worker_map.items():  # 等待
     #     if cool_bed_thread_worker.run_worker:
     #         cool_bed_thread_worker.join()
-
