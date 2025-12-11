@@ -104,6 +104,8 @@ class CapModelEnum(Enum):
     AV=2
     SDK=3
     DEBUG=4
+show_camera = False
+
 
 CAP_MODEL = CapModelEnum.SDK
 CAMERA_SAVE_FOLDER = Path(fr"D:\NgDataSave")
@@ -140,5 +142,4 @@ class DebugControl:
         return self.debug_test_index
 
 useSegModel=False
-
 debug_control = DebugControl()

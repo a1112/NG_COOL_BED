@@ -20,6 +20,13 @@ class CoolBedGroupConfig(ConfigBase):
         self.groups = [GroupConfig(key, g) for g in config["group"]]
         self.groups_dict = {config.group_key:config  for config in self.groups}
 
+    def set_group_shield(self, group_key: str, shield: bool):
+        if group_key not in self.groups_dict:
+            return
+        group_config = self.groups_dict[group_key]
+        group_config.shield = bool(shield)
+        group_config.config["shield"] = bool(shield)
+
 
     @property
     def info(self):

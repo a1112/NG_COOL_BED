@@ -1,8 +1,6 @@
 import time
 from typing import Optional
 
-from tqdm import tqdm
-
 import CONFIG
 from Base import RollingQueue
 from Base.Error import CoolBedError
@@ -20,6 +18,7 @@ from alg.YoloModel import SteelDetModel, SteelPredict
 from Result.DetResult import DetResult
 from tool import show_cv2
 from collections import OrderedDict
+from ProjectManagement.PriorityManager import priority_registry
 
 class CoolBedThreadWorker(Thread):
     """
@@ -37,6 +36,8 @@ class CoolBedThreadWorker(Thread):
         self.FPS = 7
 
         self.join_image_dict = {}  # 全部的 返回參數
+        self.priority_controller = priority_registry.create_controller(key, self.config.groups)
+        self.group_results = {group.group_key: None for group in self.config.groups}
 
         if  self.run_worker:
             logger.debug(f"开始 执行 {key} ")
@@ -71,54 +72,60 @@ class CoolBedThreadWorker(Thread):
 
     def run(self):
         print(f"start  CoolBedThreadWorker {self.key}")
-        # model = SteelDetModel()
         predictor = SteelPredict()
         if not CONFIG.DEBUG_MODEL:
             self.save_thread = CapJoinSave(self.config)
-        #  工作1， 相机初始化
         for key, camera_config in self.config.camera_map.items():
             camera_config:CameraConfig
             camera_config.set_start(self.global_config.start_datetime_str)  # 设置统一时间
             self.camera_map[key] = RtspCapTure(camera_config, self.global_config)  # 执行采集   <<<-------------------
-        cap_index=0
-        tq = tqdm()
+        cap_index = 0
         while True:
-            # tq.update(1)
             cap_index += 1
             start_time = time.time()
-            # 工作2 采集 1 CAPTURE
-            cap_dict = {key: cap_ture.get_cap() for key, cap_ture in self.camera_map.items()}
-            steel_info_dict = {}
-            # 工作3 处理 透视 表
+            plan_groups = self.priority_controller.next_iteration_groups()
+            if not plan_groups:
+                if all(getattr(group_config, "shield", False) for group_config in self.config.groups):
+                    steel_info_dict = {group.group_key: None for group in self.config.groups}
+                    self.steel_data_queue.put(steel_info_dict)
+                    time.sleep(0.2)
+                else:
+                    time.sleep(0.1)
+                continue
+            need_cameras = set()
+            for group_key in plan_groups:
+                group_config = self.config.groups_dict.get(group_key)
+                if group_config:
+                    need_cameras.update(group_config.camera_list)
+            if not need_cameras:
+                time.sleep(0.05)
+                continue
+            cap_dict = {key: self.camera_map[key].get_cap() for key in need_cameras if key in self.camera_map}
             try:
-                for group_config in self.config.groups:  # 注意排序规则
-                    group_config: GroupConfig
+                for group_key in plan_groups:
+                    group_config = self.config.groups_dict.get(group_key)
+                    if group_config is None:
+                        continue
                     calibrate = group_config.calibrate_image(cap_dict)
                     self._up_join_image_(group_config.group_key, calibrate)
-                    # 调整中的工作-----------------------------------
-                    # 工作4 识别
                     if self.save_thread:
                         self.save_thread.save_buffer(group_config.group_key, calibrate)
-
-                    # steel_info = DetResult(calibrate, model_data, group_config.map_config)
-
                     steel_info = predictor.predict(calibrate, group_config)
-
-                    # if self.key == "L2":
-                    #     print(fr" steel_info: {steel_info} ")
-
-                    steel_info_dict[group_config.group_key] = steel_info
-                    # if steel_info.can_get_data: # 如果有符合（无冷床遮挡）则返回数据
-                    #     continue
-                # 工作5 识别结果 的逻辑处理
+                    self.group_results[group_key] = steel_info
+                    priority_registry.record_detection(self.key, group_key, steel_info)
+                steel_info_dict = {}
+                missing_data = False
+                for group_config in self.config.groups:
+                    result = self.group_results.get(group_config.group_key)
+                    if result is None and not getattr(group_config, "shield", False):
+                        missing_data = True
+                    steel_info_dict[group_config.group_key] = result
+                if missing_data:
+                    time.sleep(0.01)
+                    continue
                 self.steel_data_queue.put(steel_info_dict)
-                # if steel_info is not None:
-                #     self.steel_data_queue.put(steel_info)
-                # else:
-                #     self.steel_data_queue.put(CoolBedError("无法获取有效数据：过多相机失联，或无有效数据"))
-                end_time=time.time()
-                use_time =end_time-start_time
-                # print(f"FPS： {self.FPS} use time： {use_time}  ")
+                end_time = time.time()
+                use_time = end_time - start_time
                 if use_time < 1 / self.FPS:
                     time.sleep(1 / self.FPS - use_time)
                 else:
@@ -128,9 +135,8 @@ class CoolBedThreadWorker(Thread):
                     time.sleep(0.2)
             except BaseException as e:
                 logger.error(e)
-        # join
-        # for key, cap_ture in self.camera_map.items():
-        #     cap_ture.join()
+                for group_key in plan_groups:
+                    priority_registry.record_detection(self.key, group_key, None)
 
     def get_steel_info(self):
         return self.steel_data_queue.get()

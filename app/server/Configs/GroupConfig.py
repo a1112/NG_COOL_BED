@@ -22,6 +22,8 @@ class GroupConfig(ConfigBase):
         self.key = key
         self.camera_list = config["camera_list"]
         self.config = config
+        self.config.setdefault("shield", False)
+        self.shield = bool(self.config.get("shield", False))
         self.msg = config["msg"]
         self.group_key = config["key"]
         size_list = config["size_list"]

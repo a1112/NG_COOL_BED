@@ -15,6 +15,7 @@ from Configs.CameraListConfig import camera_list_config
 from ProjectManagement.Main import CoolBedThreadWorker
 from Result.DataItem import DataItem
 from ProjectManagement.Business import Business
+from ProjectManagement.PriorityManager import priority_registry
 from Globals import business_main, cool_bed_thread_worker_map, global_config
 from CONFIG import (
     debug_control,
@@ -133,6 +134,39 @@ async def send_data():
 def current_info():
 
     return business_main.current_info
+
+
+@app.get("/priority/status")
+def get_priority_status():
+    return priority_registry.dump()
+
+
+@app.post("/priority/shield")
+def set_priority_shield(payload: Optional[dict] = None):
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="payload must be object")
+    cool_bed = payload.get("cool_bed")
+    group_key = payload.get("group")
+    shield = payload.get("shield")
+    if not isinstance(cool_bed, str) or not cool_bed:
+        raise HTTPException(status_code=400, detail="cool_bed required")
+    if not isinstance(group_key, str) or not group_key:
+        raise HTTPException(status_code=400, detail="group required")
+    if not isinstance(shield, bool):
+        raise HTTPException(status_code=400, detail="shield must be boolean")
+    if cool_bed not in camera_manage_config.group_dict:
+        raise HTTPException(status_code=404, detail=f"cool_bed not found: {cool_bed}")
+    try:
+        camera_manage_config.set_group_shield(cool_bed, group_key, shield)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    priority_registry.update_shield(cool_bed, group_key, shield)
+    return {
+        "ok": True,
+        "cool_bed": cool_bed,
+        "group": group_key,
+        "shield": shield,
+    }
 
 
 def _derive_seq(cam_id: str):
@@ -408,6 +442,16 @@ def _get_data_payload(cool_bed: str) -> dict:
     cool_bed_data = {key: item.get_info() for key, item in data_dict[cool_bed].items()}
     if hasattr(business_main, "get_current_data"):
         cool_bed_data["current"] = business_main.get_current_data(cool_bed)
+    controller = priority_registry.get_controller(cool_bed)
+    for key, info in cool_bed_data.items():
+        if key == "current" or not isinstance(info, dict):
+            continue
+        state = controller.state_for(key) if controller else None
+        if not state:
+            continue
+        info["priority_level"] = state.level
+        info["priority_reason"] = state.reason
+        info["shielded"] = state.shielded
     return cool_bed_data
 
 

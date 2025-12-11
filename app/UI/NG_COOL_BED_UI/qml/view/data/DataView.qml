@@ -25,6 +25,18 @@ Item {
                 key:"使用组合"
                 value:cool_bed_core.coolBedDataType.current_item.use_group_key
             }
+            DataLabelItem{
+                width: 150
+                msg:"当前优先级"
+                key:"优先级"
+                value: (cool_bed_core.coolBedDataType.current_item.priority_level || 3) + " 级"
+            }
+            DataLabelItem{
+                width: 150
+                msg:"优先级状态"
+                key:"状态"
+                value: cool_bed_core.coolBedDataType.current_item.priority_reason
+            }
             DataLabelEx{
                 width: 150
                 msg: "是否存在错误？"

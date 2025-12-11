@@ -127,4 +127,12 @@ Item {
     function stop_alg_test(payload, success, failure) {
         return ajax.post(server_url.url(server_url.serverUrl, "alg", "test", "stop"), payload, success, failure)
     }
+
+    function get_priority_status(success, failure) {
+        return ajax.get(server_url.url(server_url.serverUrl, "priority", "status"), success, failure)
+    }
+
+    function set_group_shield(payload, success, failure) {
+        return ajax.post(server_url.url(server_url.serverUrl, "priority", "shield"), payload, success, failure)
+    }
 }

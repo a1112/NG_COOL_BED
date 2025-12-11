@@ -12,6 +12,7 @@
           "key": "L1_g0_2345",
           "msg": " group L1  2,3,4,5 camera",
           "priority": 0,
+          "shield": false,
           "size_list": [[1024, 1024],[1117, 1024],[1117, 1024],[1024, 1024]]
         },
         {
@@ -20,6 +21,7 @@
           "key": "L1_g1_6",
           "msg": " group right camera only",
           "priority": 3,
+          "shield": false,
           "size_list": [[3072, 768]]
         },{
           "camera_list": ["L1_1"],
@@ -27,6 +29,7 @@
           "key": "L1_g2_1",
           "msg": " group left camera only",
           "priority": 1,
+          "shield": false,
           "size_list": [[3072, 768]]
         }
       ]
@@ -44,6 +47,7 @@
           "key": "L2_g0_2345",
           "msg": " group L2  2,3,4,5 camera",
           "priority": 0,
+          "shield": false,
           "size_list": [[1303, 1024],[1117, 1024],[1210, 1024],[1117, 1024]]
         },
         {
@@ -52,6 +56,7 @@
           "key": "L2_g2_7",
           "msg": " L2 und camera only",
           "priority": 1,
+          "shield": false,
           "size_list": [[2048, 768]]
         },
 
@@ -61,6 +66,7 @@
           "key": "L2_g1_6",
           "msg": " L2 right camera only",
           "priority": 1,
+          "shield": false,
           "size_list": [[2048, 768]]
         },{
           "camera_list": ["L2_1"],
@@ -68,6 +74,7 @@
           "key": "L2_g2_1",
           "msg": " L2 left camera only",
           "priority": 1,
+          "shield": false,
           "size_list": [[2048, 768]]
         }
       ]

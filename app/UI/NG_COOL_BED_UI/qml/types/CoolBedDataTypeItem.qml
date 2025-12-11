@@ -24,6 +24,9 @@ Item {
 
     property var objcet_list: []
     property ListModel objcetList: ListModel {}
+    property int priority_level: 3
+    property string priority_reason: ""
+    property bool shielded: false
 
     function updateFromData() {
         const d = data || {}
@@ -35,6 +38,10 @@ Item {
 
         use_group_key = d["group_key"] || ""
         has_error = !!d["has_error"]
+
+        priority_level = Number.isFinite(d["priority_level"]) ? d["priority_level"] : 3
+        priority_reason = d["priority_reason"] || ""
+        shielded = !!d["shielded"]
 
         left_under_steel_to_center = d["left_under_steel_to_center"]
         right_under_steel_to_center = d["right_under_steel_to_center"]

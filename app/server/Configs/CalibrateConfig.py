@@ -34,8 +34,6 @@ class CalibrateConfig:
     def image(self):
         return self.image_
 
-
-
     @property
     def sub_images(self):
         image_list = self.image_list

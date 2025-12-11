@@ -1,3 +1,4 @@
+import json
 import logging
 
 from CONFIG import CAMERA_MANAGE_CONFIG, CAMERA_CONFIG_FOLDER, IP_LIST_CAMERA_CONFIG, CalibratePath
@@ -36,6 +37,28 @@ class CameraManageConfig(ConfigBase):
 
     def get_group_config(self, key):
         return self.group_dict[key]
+
+    def save(self):
+        CAMERA_MANAGE_CONFIG.write_text(
+            json.dumps(self.config, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+
+    def set_group_shield(self, cool_bed_key: str, group_key: str, shield: bool):
+        group_info = self.config.get("group", {}).get(cool_bed_key)
+        if not group_info:
+            raise KeyError(f"cool_bed_key not found: {cool_bed_key}")
+        target_group = None
+        for group in group_info.get("group", []):
+            if group.get("key") == group_key:
+                target_group = group
+                break
+        if target_group is None:
+            raise KeyError(f"group_key not found: {group_key}")
+        target_group["shield"] = bool(shield)
+        if cool_bed_key in self.group_dict:
+            self.group_dict[cool_bed_key].set_group_shield(group_key, bool(shield))
+        self.save()
 
     @property
     def info(self):
