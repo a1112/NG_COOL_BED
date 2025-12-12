@@ -3,6 +3,9 @@ import QtQuick.Controls.Material
 
 
 Menu {
+    property var sendDialog: null
+    property var mapDialog: null
+
     function has_app(name){
         let app_url =app_core.app_dict[name]
         if (app_url)
@@ -33,12 +36,18 @@ Menu {
 
     MenuItem{
         text: qsTr("发送数据")
-        onClicked: send_dialog.open_()
+        onClicked: {
+            if (sendDialog)
+                sendDialog.open_()
+        }
     }
 
     MenuItem{
         text: qsTr("定位数据")
-        onClicked: map_dialog.open_()
+        onClicked: {
+            if (mapDialog)
+                mapDialog.open_()
+        }
     }
     Menu{
         title: qsTr("打开")

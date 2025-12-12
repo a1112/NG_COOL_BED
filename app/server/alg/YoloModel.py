@@ -58,11 +58,13 @@ class SteelPredict:
         model_data = self.det_model.get_steel_rect(calibrate.image)
         steel_info = DetResult(calibrate, model_data, group_config.map_config)
 
-        show_cv2(steel_info.show_image, title=fr"j_{group_config.key}_" + group_config.msg)
+        if CONFIG.SHOW_STEEL_PREDICT:
+            show_cv2(steel_info.show_image, title=fr"j_{group_config.key}_" + group_config.msg)
 
         if steel_info.can_get_data and CONFIG.useSegModel:
             steel_info = SegResult(steel_info, self.seg_model.predict(calibrate.sub_images) )
-            show_cv2(steel_info.draw_image, title=fr"j_seg_{group_config.key}_" + group_config.msg)
+            if CONFIG.SHOW_STEEL_PREDICT:
+                show_cv2(steel_info.draw_image, title=fr"j_seg_{group_config.key}_" + group_config.msg)
             calibrate.mask_image = steel_info.mask
         return steel_info
 

@@ -24,6 +24,9 @@ ApplicationWindow {
         HeadView{   // 主菜单
             windowItem: rootWindow
             settingView: settingView
+            sendDialog: send_dialog
+            mapDialog: map_dialog
+            algTestDialog: alg_test_dialog
         }
         MainViewLayout {
             Layout.fillWidth: true

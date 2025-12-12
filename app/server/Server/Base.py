@@ -387,6 +387,22 @@ def set_opencv_display_state(payload: Optional[dict] = None):
     return {"ok": True, "enable": CONFIG.SHOW_OPENCV}
 
 
+@app.get("/debug/predict_display")
+def get_predict_display_state():
+    return {"enable": getattr(CONFIG, "SHOW_STEEL_PREDICT", True)}
+
+
+@app.post("/debug/predict_display")
+def set_predict_display_state(payload: Optional[dict] = None):
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="payload must be object")
+    enable = payload.get("enable")
+    if not isinstance(enable, bool):
+        raise HTTPException(status_code=400, detail="enable must be boolean")
+    CONFIG.SHOW_STEEL_PREDICT = enable
+    return {"ok": True, "enable": CONFIG.SHOW_STEEL_PREDICT}
+
+
 # ---------- Config APIs ----------
 SETTINGS_ALLOWED_KEYS = {
     "serverUrl",

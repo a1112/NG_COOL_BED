@@ -10,6 +10,9 @@ HeadBase {
     id:root
     property var windowItem: null
     property var settingView: null
+    property var sendDialog: null
+    property var mapDialog: null
+    property var algTestDialog: null
     Layout.fillWidth: true
     height: 45
     RowLayout{
@@ -63,8 +66,8 @@ HeadBase {
             text: qsTr("算法测试")
             implicitHeight: root.height - 10
             onClicked: {
-                if (alg_test_dialog && alg_test_dialog.openDialog) {
-                    alg_test_dialog.openDialog()
+                if (algTestDialog && algTestDialog.openDialog) {
+                    algTestDialog.openDialog()
                 }
             }
         }
@@ -72,14 +75,20 @@ HeadBase {
         ItemDelegate{
             height: root.height-5
             implicitHeight: height
-            text: "SEND  - " + send_dialog.send_data["I_NAI_W0_ALV_CNT"]
+            text: "SEND  - " + (
+                    sendDialog && sendDialog.send_data
+                    && sendDialog.send_data["I_NAI_W0_ALV_CNT"] !== undefined
+                    ? sendDialog.send_data["I_NAI_W0_ALV_CNT"]
+                    : "--")
             background: Rectangle{
                 border.color: "blue"
                 border.width: 1
                 color: "#00000000"
             }
             onClicked: {
-                send_dialog.open_()
+                if (sendDialog) {
+                    sendDialog.open_()
+                }
             }
         }
 
@@ -117,8 +126,8 @@ HeadBase {
     Menus.MainMenu{
         id: mainMenu
         windowItem: root.windowItem
-        sendDialog: send_dialog
-        mapDialog: map_dialog
-        algTestDialog: alg_test_dialog
+        sendDialog: root.sendDialog
+        mapDialog: root.mapDialog
+        algTestDialog: root.algTestDialog
     }
 }

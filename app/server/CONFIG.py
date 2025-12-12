@@ -96,6 +96,7 @@ if socket.gethostname() in ["DESKTOP-3VCH6DO", "MS-LGKRSZGOVODD", "DESKTOP-94ADH
     DEBUG_MODEL = True
 print(fr" DEBUG_MODEL ： {DEBUG_MODEL}")
 SHOW_OPENCV = True
+SHOW_STEEL_PREDICT = True
 
 CapTureBaseClass = Thread
 

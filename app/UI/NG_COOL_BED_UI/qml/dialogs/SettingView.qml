@@ -7,6 +7,8 @@ import "../base"
 Dialog {
     id: settingDialog
     property SettingCore core: settingCore
+    property bool predictDisplayEnabled: true
+    property bool predictDisplayBusy: false
 
     modal: true
     focus: true
@@ -24,6 +26,37 @@ Dialog {
 
     SettingCore {
         id: settingCore
+    }
+
+    function refreshPredictDisplay() {
+        if (!app_api || !app_api.get_predict_display)
+            return
+        predictDisplayBusy = true
+        app_api.get_predict_display(
+                    function(resp) {
+                        predictDisplayEnabled = !!(resp && resp.enable)
+                        predictDisplayBusy = false
+                    },
+                    function(err) {
+                        console.warn("get_predict_display error", err)
+                        predictDisplayBusy = false
+                    })
+    }
+
+    function setPredictDisplay(enable) {
+        if (!app_api || !app_api.set_predict_display)
+            return
+        predictDisplayBusy = true
+        app_api.set_predict_display(
+                    enable,
+                    function(resp) {
+                        predictDisplayEnabled = !!(resp && resp.enable)
+                        predictDisplayBusy = false
+                    },
+                    function(err) {
+                        console.warn("set_predict_display error", err)
+                        predictDisplayBusy = false
+                    })
     }
 
     ColumnLayout {
@@ -67,5 +100,29 @@ Dialog {
                 core: settingCore
             }
         }
+
+        GroupBox {
+            title: qsTr("显示")
+            Layout.fillWidth: true
+            RowLayout {
+                Layout.fillWidth: true
+                CheckDelegate {
+                    Layout.preferredWidth: 200
+                    text: qsTr("显示算法调试窗口")
+                    checked: predictDisplayEnabled
+                    enabled: !predictDisplayBusy
+                    onClicked: settingDialog.setPredictDisplay(checked)
+                }
+                Item { Layout.fillWidth: true }
+                BusyIndicator {
+                    running: predictDisplayBusy
+                    visible: predictDisplayBusy
+                    width: 24
+                    height: 24
+                }
+            }
+        }
     }
+
+    Component.onCompleted: refreshPredictDisplay()
 }

@@ -85,6 +85,18 @@ Item {
                     failure)
     }
 
+    function get_predict_display(success, failure) {
+        return ajax.get(server_url.url(server_url.serverUrl, "debug", "predict_display"), success, failure)
+    }
+
+    function set_predict_display(enable, success, failure) {
+        return ajax.post(
+                    server_url.url(server_url.serverUrl, "debug", "predict_display"),
+                    { "enable": !!enable },
+                    success,
+                    failure)
+    }
+
     function get_calibrate_folders(success, failure) {
         return ajax.get(calibrateUrl("folders"), success, failure)
     }
