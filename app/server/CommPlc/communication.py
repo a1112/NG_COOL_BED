@@ -1,105 +1,86 @@
+import datetime
 import threading
 import time
-import datetime
-from HslCommunication import SiemensS7Net, SiemensPLCS
-from threading import Thread
-from snap7.util import get_int, get_real, get_dword, get_string, get_bool, get_char, set_real
+
+from HslCommunication import SiemensPLCS, SiemensS7Net
+from snap7.util import get_real
+
 import PLC_config
-from Loger import logger
 from CONFIG import DEBUG_MODEL
+from Loger import logger
 
 
-# DB = 0x84  # DB  区域c
+class Db6RecognitionSender(threading.Thread):
+    """DB6：识别 -> TMEIC，负责写入 PLC。"""
 
-
-class ComPlc(threading.Thread):
-    def __init__(self):
-        super().__init__()
-        self.has_run = True
-        self.PLC_DATA = b""
-        self.DB_AD = "DB6.0"
-        self.DB_LEN = 64
+    def __init__(self, poll_interval: float = 0.01) -> None:
+        super().__init__(daemon=True)
+        self._poll_interval = poll_interval
+        self._running = True
+        self._db_address = "DB6.0"
+        self._db_length = 64
+        self._client = SiemensS7Net(SiemensPLCS.S400, PLC_config.IP_L1)
+        self._client.SetSlotAndRack(PLC_config.ROCK, PLC_config.SLOT)
         self.last_data_dict = {}
-        self.old_temp_in = 0.0
         self.max_temp = 0.0
-        self.PLC_IP = PLC_config.IP_L1  # 热矫
-        self.siemens = SiemensS7Net(SiemensPLCS.S400, self.PLC_IP)
-        self.siemens.SetSlotAndRack(PLC_config.ROCK, PLC_config.SLOT)
-        self.set_speed_value = 0
+        self.old_temp_in = 0.0
         self.start()
 
-    def close(self):
-        self.has_run = False
+    def close(self) -> None:
+        self._running = False
 
     def run(self) -> None:
-        while self.has_run:
+        while self._running:
+            time.sleep(self._poll_interval)
             try:
-                time.sleep(0.01)
                 start_time = time.time()
-                self.PLC_DATA = self.siemens.Read(self.DB_AD, self.DB_LEN).Content
-                now = datetime.datetime.now()
-                end_time = time.time()
-                logger.error(f"PLC DATA ： { self.PLC_DATA}")
-            except BaseException as e:
-                logger.error(f"{self.DB_AD} PLC 读取 出现错误： {e}")
-            else:
-                try:
-                    self.decodePLC_DATA(self.PLC_DATA, {
-                        "getDateTime": now,  # 最新的刷新时间
-                        "getTimeLen": end_time - start_time  # PLC 读取延时
-                    })
-                except BaseException as e:
-                    pass
-                    # logger.error(f"{self.DB_AD} PLC 解析 出现错误： {e}  : {self.PLC_DATA}")
+                response = self._client.Read(self._db_address, self._db_length)
+                payload = response.Content
+                timestamp = datetime.datetime.now()
+                self._decode(payload, {
+                    "getDateTime": timestamp,
+                    "getTimeLen": time.time() - start_time,
+                })
+            except Exception as exc:  # pragma: no cover - 真实 PLC
+                logger.error("DB6 read error: %s", exc)
 
-    def getMaxTemp(self, temp_in):
+    def _decode(self, data: bytes, other: dict) -> None:
+        steel = data[34:54].strip(b"\x00").decode(errors="ignore")
+        temp_in = get_real(data[22:26], 0)
         self.old_temp_in = max(self.old_temp_in, temp_in)
         self.max_temp = self.old_temp_in
-        # if not temp_in == 0.0:
-        #     self.old_temp_in = max(self.old_temp_in, temp_in)
-        #     self.max_temp = self.old_temp_in
-        # else:
-        #     self.old_temp_in = 0
+        self.last_data_dict.update({
+            "steel_no": steel,
+            "temp_in": temp_in,
+            **other,
+        })
 
-    def setInRollerBedSpeed(self, selectList, set_speed_value):
-        self.selectList = selectList
-        self.set_speed_value = set_speed_value
+    def select(self, select_list: list[int] | None = None) -> bool:
+        select_list = select_list or [0] * 8
+        plc_list = ["0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "1.0", "1.1"]
+        for address, flag in zip(plc_list, select_list):
+            self._client.WriteBool(f"DB4600.{address}", bool(flag))
+        return True
 
-    old_steel=''
-    def decodePLC_DATA(self, PLC_DATA, otherInfo):
-        strData = PLC_DATA[34:54].strip(b"\x00")
-        strData_15 = PLC_DATA[126:145].strip(b"\x00")
-        temp_in = get_real(PLC_DATA[22:26], 0)
-        steel=strData.decode("utf-8")
-
-        self.last_data_dict.update(otherInfo)
-
-    def select(self,select_list=None):
-            if not select_list:
-                select_list=[0,0,0,0,0,0,0,0]
-            self.selectList=select_list
-            plcList = ["0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "1.0", "1.1"]
-            for pcl_data, value in zip(plcList, self.selectList):
-                self.siemens.WriteBool(f"DB4600.{pcl_data}", bool(value))
-            return True
+    def write_bytes(self, packet: bytes) -> None:
+        self._client.Write(self._db_address, bytearray(packet))
 
 
+class Db6RecognitionDebug:
+    def write_bytes(self, packet: bytes) -> None:  # pragma: no cover - 仿真
+        logger.debug("DB6 mock write len: %s", len(packet))
 
-    def write_byte(self,bytes__):
-        # print(bytes__)
-        print("send len : ",len(bytes__),"  ",self.siemens.Write("DB6.0", bytearray(bytes__)).Message)
-
-
-class ComDebug:
-    def write_byte(self,bytes__):
-        # print(bytes__)
-        pass
-
-if DEBUG_MODEL:
-    com = ComDebug()
-else:
-    com = ComPlc()
+    def select(self, select_list: list[int] | None = None) -> bool:  # pragma: no cover
+        logger.debug("DB6 mock select %s", select_list)
+        return True
 
 
-if __name__ == "__main__":
+def create_db6_sender() -> Db6RecognitionSender | Db6RecognitionDebug:
+    return Db6RecognitionDebug() if DEBUG_MODEL else Db6RecognitionSender()
+
+
+db6_sender = create_db6_sender()
+
+
+if __name__ == "__main__":  # pragma: no cover
     logger.debug("__main__")

@@ -86,4 +86,23 @@ Item {
         height: displayHeight
 
     }
+
+    Rectangle {
+        id: autoModeBadge
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.margins: 12
+        color: "#66000000"
+        radius: 4
+        border.color: "#ffffff"
+        border.width: 1
+        visible: cool_bed_core.coolBedDataType.current_item.auto_mode.length > 0
+        Text {
+            color: "#ffffff"
+            font.bold: true
+            anchors.centerIn: parent
+            padding: 8
+            text: qsTr("模式: %1").arg(cool_bed_core.coolBedDataType.current_item.auto_mode)
+        }
+    }
 }

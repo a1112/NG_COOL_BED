@@ -34,6 +34,7 @@ from fastapi.responses import StreamingResponse, FileResponse, Response
 import tool as common_tool
 from Server.tool import noFindImageByte
 from Server.alg_test_manager import alg_test_manager
+from CommPlc import db5_reader
 
 business_main: Business
 
@@ -536,6 +537,25 @@ async def alg_progress(websocket: WebSocket):
     await alg_test_manager.handle_websocket(websocket)
 
 
+def _auto_mode_value(snapshot: dict, cool_bed: str):
+    if not isinstance(snapshot, dict):
+        return None
+    key = cool_bed.upper()
+    if key == "L1":
+        return snapshot.get("O_NAI_W1_spare5")
+    if key == "L2":
+        return snapshot.get("O_NAI_W1_spare6")
+    return None
+
+
+def _auto_mode_label(value) -> str:
+    if value is True:
+        return "自动"
+    if value is False:
+        return "手动"
+    return "调整"
+
+
 def _get_data_payload(cool_bed: str) -> dict:
     data_dict = business_main.data_item_dict if hasattr(business_main, "data_item_dict") else {}
     if cool_bed not in data_dict:
@@ -553,6 +573,17 @@ def _get_data_payload(cool_bed: str) -> dict:
         info["priority_level"] = state.level
         info["priority_reason"] = state.reason
         info["shielded"] = state.shielded
+    auto_snapshot = {}
+    try:
+        auto_snapshot = db5_reader.snapshot() if db5_reader else {}
+    except Exception:
+        auto_snapshot = {}
+    auto_value = _auto_mode_value(auto_snapshot, cool_bed)
+    auto_label = _auto_mode_label(auto_value)
+    for info in cool_bed_data.values():
+        if isinstance(info, dict):
+            info["auto_mode"] = auto_label
+            info["auto_mode_value"] = auto_value
     return cool_bed_data
 
 

@@ -37,6 +37,12 @@ Item {
                 key:"状态"
                 value: cool_bed_core.coolBedDataType.current_item.priority_reason
             }
+            DataLabelItem{
+                width: 150
+                msg:"运行模式"
+                key:"模式"
+                value: cool_bed_core.coolBedDataType.current_item.auto_mode
+            }
             DataLabelEx{
                 width: 150
                 msg: "是否存在错误？"

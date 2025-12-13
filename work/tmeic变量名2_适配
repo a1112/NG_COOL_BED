@@ -1,6 +1,7 @@
 
 新的 PLC 变量表 在 doc/tmeic变量名2.xls
-请根据
+请根据 DB5tmeic给识别 的数据 在 app/server/CommPlc 建立新的类，移除 app/server/CommPlc/IP_L1_4600_config.py 重构 PLC 连接的类名称
+    DB5tmeic给识别 是一些用来 读取的变量， DB6识别给tmeic 已经 在 communication.py 实现了，注意添加DEBUG 模式下的 仿真类
 
 
 实现功能 在相机视图中，增加 下拉框（左侧 分组相机 文字 上），用来切换图像的显示来源，来源有三个：标定文件。SDK采集 RtspCapTure ，相机流

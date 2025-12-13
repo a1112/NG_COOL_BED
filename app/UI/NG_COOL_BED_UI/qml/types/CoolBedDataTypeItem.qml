@@ -27,6 +27,8 @@ Item {
     property int priority_level: 3
     property string priority_reason: ""
     property bool shielded: false
+    property string auto_mode: qsTr("调整")
+    property var auto_mode_value: null
 
     function updateFromData() {
         const d = data || {}
@@ -51,6 +53,9 @@ Item {
 
         left_rool_to_center = d["left_rol_to_center"]
         right_rool_to_center = d["right_rol_to_center"]
+
+        auto_mode = d["auto_mode"] || qsTr("调整")
+        auto_mode_value = d.hasOwnProperty("auto_mode_value") ? d["auto_mode_value"] : null
 
         objcet_list = d["objects"] || []
         objcetList.clear()
