@@ -10,9 +10,16 @@ Rectangle {
     property int slotNumber: -1
     property bool selected: false
     property bool offlineMode: false
+    property string imageSourceKey: "camera_stream"
     property bool showOverlay: true
     property var visibilityMap: ({})
     property var shapesProvider: null    // function(cameraId) -> shapes
+    readonly property bool showLiveStream: imageSourceKey === "camera_stream"
+    readonly property string _snapshotPath: camera ? (camera.snapshot || "") : ""
+    readonly property string _sdkCapturePath: camera ? (camera.sdk_capture || "") : ""
+    readonly property string offlineImageSource: (imageSourceKey === "sdk_capture" && _sdkCapturePath.length)
+                                                 ? _sdkCapturePath
+                                                 : _snapshotPath
 
     color: "#0f0f0f"
     radius: 4
@@ -53,14 +60,14 @@ Rectangle {
                 id: videoView
                 anchors.fill: parent
                 rtspUrl: camera ? camera.rtsp_url : ""
-                offline: root.offlineMode || !camera || !camera.rtsp_url
+                offline: root.offlineMode || !root.showLiveStream || !camera || !camera.rtsp_url
             }
 
             CameraImageView {
                 id: offlineImage
                 anchors.fill: parent
                 visible: videoView.offline
-                sourcePath: camera ? camera.snapshot : ""
+                sourcePath: root.offlineImageSource
             }
 
             PerspectiveOverlay {
@@ -95,11 +102,20 @@ Rectangle {
                 font.pixelSize: 12
             }
             Label {
-                text: camera && camera.rtsp_url ? camera.rtsp_url : (camera ? camera.snapshot : "")
+                text: root.footerText()
                 color: "#9e9e9e"
                 elide: Text.ElideRight
                 Layout.fillWidth: true
             }
         }
+    }
+
+    function footerText() {
+        if (!camera) return ""
+        if (imageSourceKey === "camera_stream")
+            return camera.rtsp_url || camera.snapshot || ""
+        if (imageSourceKey === "sdk_capture")
+            return camera.sdk_capture || camera.snapshot || ""
+        return camera.snapshot || ""
     }
 }

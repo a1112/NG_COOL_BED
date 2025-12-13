@@ -27,6 +27,7 @@ from CONFIG import (
     CURRENT_CALIBRATE,
     MappingPath,
     MODEL_FOLDER,
+    FIRST_SAVE_FOLDER,
 )
 from fastapi.responses import StreamingResponse, FileResponse, Response
 
@@ -298,6 +299,17 @@ def _safe_mapping_path(calibrate: str, filename: str) -> Path:
     return path
 
 
+def _sdk_capture_camera_path(camera_id: str) -> Path:
+    base = (FIRST_SAVE_FOLDER / "camera").resolve()
+    name = f"{camera_id}.jpg"
+    path = (base / name).resolve()
+    try:
+        path.relative_to(base)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail="invalid camera id") from exc
+    return path
+
+
 @app.get("/calibrate/label/{calibrate}/{cam_id}")
 def get_calibrate_label(calibrate: str, cam_id: str):
     return _load_calibrate_file(calibrate, f"{cam_id}.json")
@@ -329,6 +341,14 @@ def get_calibrate_image(calibrate: str, image_name: str):
     path = _safe_calibrate_path(calibrate, name)
     if not path.is_file():
         raise HTTPException(status_code=404, detail=f"image not found: {name}")
+    return FileResponse(path, media_type="image/jpeg")
+
+
+@app.get("/capture/rtsp/{camera_id}")
+def get_rtsp_capture_image(camera_id: str):
+    path = _sdk_capture_camera_path(camera_id)
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail=f"capture not found: {camera_id}")
     return FileResponse(path, media_type="image/jpeg")
 
 

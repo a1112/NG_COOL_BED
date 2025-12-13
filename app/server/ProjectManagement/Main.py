@@ -33,7 +33,7 @@ class CoolBedThreadWorker(Thread):
         self.config = config  #  对于组别的参数试图
         self.camera_map = {}
         self.steel_data_queue = RollingQueue(maxsize=1)
-        self.FPS = 7
+        self.DEBUG_FPS = 7
 
         self.join_image_dict = {}  # 全部的 返回參數
         self.priority_controller = priority_registry.create_controller(key, self.config.groups)
@@ -98,7 +98,7 @@ class CoolBedThreadWorker(Thread):
                 if group_config:
                     need_cameras.update(group_config.camera_list)
             if not need_cameras:
-                time.sleep(0.05)
+                time.sleep(0.02)
                 continue
             cap_dict = {key: self.camera_map[key].get_cap() for key in need_cameras if key in self.camera_map}
             try:
@@ -126,12 +126,11 @@ class CoolBedThreadWorker(Thread):
                 self.steel_data_queue.put(steel_info_dict)
                 end_time = time.time()
                 use_time = end_time - start_time
-                if use_time < 1 / self.FPS:
-                    time.sleep(1 / self.FPS - use_time)
-                else:
-                    if not CONFIG.DEBUG_MODEL:
-                        logger.warning(f"单帧处理时间 {use_time}")
                 if CONFIG.DEBUG_MODEL:
+                    if use_time < 1 / self.DEBUG_FPS:
+                        time.sleep(1 / self.DEBUG_FPS - use_time)
+                    else:
+                        logger.warning(f"单帧处理时间 {use_time}")
                     time.sleep(0.2)
             except BaseException as e:
                 logger.error(e)

@@ -15,7 +15,14 @@ Item {
 
     readonly property var currentCamera: (selectedSlot !== -1 && Core.CameraViewCore && Core.CameraViewCore.cameraForSlot)
         ? Core.CameraViewCore.cameraForSlot(selectedSlot) : null
-    property string snapshotLink: (currentCamera && currentCamera.snapshot) ? currentCamera.snapshot : ""
+    property string imageSourceKey: Core.CameraViewCore.selectedImageSourceKey
+    readonly property string imageSourceLink: {
+        if (!currentCamera)
+            return ""
+        if (imageSourceKey === "sdk_capture" && currentCamera.sdk_capture)
+            return currentCamera.sdk_capture
+        return currentCamera.snapshot || ""
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -32,14 +39,14 @@ Item {
                 Layout.fillWidth: true
             }
             Text {
-                visible: root.offlineMode && snapshotLink !== ""
+                visible: root.offlineMode && imageSourceLink !== ""
                 textFormat: Text.RichText
                 wrapMode: Text.NoWrap
                 clip: true
                 color: "#64b5f6"
                 Layout.preferredWidth: 360
                 Layout.maximumWidth: 480
-                text: visible ? ("<a href=\"" + snapshotLink + "\">" + snapshotLink + "</a>") : ""
+                text: visible ? ("<a href=\"" + imageSourceLink + "\">" + imageSourceLink + "</a>") : ""
                 onLinkActivated: function(link) { Qt.openUrlExternally(link) }
             }
             Label {
@@ -55,6 +62,7 @@ Item {
             slotNumber: currentCamera ? currentCamera.seq : -1
             selected: true
             offlineMode: root.offlineMode
+            imageSourceKey: root.imageSourceKey
             showOverlay: root.showOverlay
             visibilityMap: root.visibilityMap
             shapesProvider: root.shapesProvider

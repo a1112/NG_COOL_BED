@@ -17,7 +17,14 @@ Item {
     property var selectedCamera: (Core.CameraViewCore && Core.CameraViewCore.cameraForSlot)
                                  ? Core.CameraViewCore.cameraForSlot(selectedSlot)
                                  : null
-    property string selectedSnapshot: (selectedCamera && selectedCamera.snapshot) ? selectedCamera.snapshot : ""
+    property string selectedImageSourceKey: Core.CameraViewCore.selectedImageSourceKey
+    readonly property string selectedImageUrl: {
+        if (!selectedCamera)
+            return ""
+        if (selectedImageSourceKey === "sdk_capture" && selectedCamera.sdk_capture)
+            return selectedCamera.sdk_capture
+        return selectedCamera.snapshot || ""
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -41,14 +48,14 @@ Item {
                 font.bold: true
             }
             Text {
-                visible: root.offlineMode && selectedSnapshot !== ""
+                visible: root.offlineMode && selectedImageUrl !== ""
                 textFormat: Text.RichText
                 wrapMode: Text.NoWrap
                 clip: true
                 color: "#64b5f6"
                 Layout.preferredWidth: 360
                 Layout.maximumWidth: 480
-                text: visible ? ("<a href=\"" + selectedSnapshot + "\">" + selectedSnapshot + "</a>") : ""
+                text: visible ? ("<a href=\"" + selectedImageUrl + "\">" + selectedImageUrl + "</a>") : ""
                 onLinkActivated: function(link) { Qt.openUrlExternally(link) }
             }
             Label {

@@ -6,7 +6,17 @@ Item {
     id: core
 
     // 透视层相关 & 视图状态
-    property bool offlineMode: (typeof app_core !== "undefined" && app_core) ? app_core.debug : false
+    property var imageSourceOptions: [
+        { "key": "calibrate",     "label": qsTr("标定文件") },
+        { "key": "sdk_capture",   "label": qsTr("SDK采集 RtspCapTure") },
+        { "key": "camera_stream", "label": qsTr("相机流") }
+    ]
+    property string selectedImageSourceKey: (
+        (typeof app_core !== "undefined" && app_core && app_core.debug)
+        ? "calibrate"
+        : "camera_stream"
+    )
+    property bool offlineMode: selectedImageSourceKey !== "camera_stream"
     property bool showOverlay: true
     property var overlayVisibility: ({})
     property var overlayLabels: []
@@ -153,6 +163,15 @@ Item {
         return ""
     }
 
+    function sdkCapturePath(camId) {
+        if (!camId) return ""
+        if (ApiMod.Api && ApiMod.Api.server_url) {
+            return ApiMod.Api.server_url.url(ApiMod.Api.server_url.serverUrl, "capture", "rtsp", camId)
+        }
+        console.warn("server_url missing, sdk capture fallback empty")
+        return ""
+    }
+
     function shapesForCamera(camId) {
         if (!camId || !showOverlay) return []
         const lm = getLabelme(camId)
@@ -199,6 +218,7 @@ Item {
                     rtsp_url: item.rtsp_url || "",
                     position: item.position || "",
                     enabled: item.enable !== false,
+                    sdk_capture: sdkCapturePath(camId),
                     snapshot: snapshotPath(camId)
                 }
                 entries.push(entry)
@@ -230,6 +250,7 @@ Item {
             const camId = entry.id || entry.label || ""
             const clone = Object.assign({}, entry)
             clone.snapshot = camId ? snapshotPath(camId) : ""
+            clone.sdk_capture = camId ? sdkCapturePath(camId) : ""
             updated.push(clone)
             if (clone.seq !== undefined && clone.seq !== null) bySeq[clone.seq] = clone
         })
@@ -285,6 +306,35 @@ Item {
         for (var k in overlayVisibility) vis[k] = overlayVisibility[k]
         vis[label.toLowerCase()] = visible
         overlayVisibility = vis
+    }
+
+    function imageSourceIndex() {
+        const list = imageSourceOptions || []
+        if (!list.length) return -1
+        for (var i = 0; i < list.length; ++i) {
+            if (list[i].key === selectedImageSourceKey)
+                return i
+        }
+        return 0
+    }
+
+    function setImageSourceByIndex(idx) {
+        const list = imageSourceOptions || []
+        if (!list.length) {
+            selectedImageSourceKey = ""
+            return
+        }
+        const clamped = Math.min(Math.max(idx, 0), list.length - 1)
+        selectedImageSourceKey = list[clamped].key
+    }
+
+    function imageSourceLabel(key) {
+        const list = imageSourceOptions || []
+        for (var i = 0; i < list.length; ++i) {
+            if (list[i].key === key)
+                return list[i].label
+        }
+        return ""
     }
 
     Component.onCompleted: {

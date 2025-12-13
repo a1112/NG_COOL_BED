@@ -10,6 +10,8 @@ Popup {
     height: parent ? parent.height * 0.7 : 600
     anchors.centerIn: parent
     property bool busy: false
+    property bool opencvDisplayEnabled: true
+    property bool opencvDisplayBusy: false
 
     function toggleShield(coolBed, groupKey, shield) {
         if (!app_api || !app_api.set_group_shield) {
@@ -32,6 +34,37 @@ Popup {
                                  })
     }
 
+    function refreshOpenCvDisplay() {
+        if (!app_api || !app_api.get_opencv_display)
+            return
+        opencvDisplayBusy = true
+        app_api.get_opencv_display(
+                    function(resp) {
+                        opencvDisplayEnabled = !!(resp && resp.enable)
+                        opencvDisplayBusy = false
+                    },
+                    function(err, status) {
+                        console.warn("get_opencv_display failed", status, err)
+                        opencvDisplayBusy = false
+                    })
+    }
+
+    function setOpenCvDisplay(enable) {
+        if (!app_api || !app_api.set_opencv_display)
+            return
+        opencvDisplayBusy = true
+        app_api.set_opencv_display(
+                    enable,
+                    function(resp) {
+                        opencvDisplayEnabled = !!(resp && resp.enable)
+                        opencvDisplayBusy = false
+                    },
+                    function(err, status) {
+                        console.warn("set_opencv_display failed", status, err)
+                        opencvDisplayBusy = false
+                    })
+    }
+
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 16
@@ -52,13 +85,37 @@ Popup {
             }
         }
 
-        ScrollView {
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 12
+            Label {
+                text: qsTr("拼接大图显示 (OpenCV)")
+                font.pointSize: 14
+            }
+            Switch {
+                Layout.alignment: Qt.AlignLeft
+                enabled: !settingRoot.opencvDisplayBusy && app_api && app_api.set_opencv_display
+                checked: settingRoot.opencvDisplayEnabled
+                onToggled: settingRoot.setOpenCvDisplay(checked)
+            }
+            Label {
+                text: settingRoot.opencvDisplayBusy ? qsTr("同步中...") : ""
+                color: "#9e9e9e"
+            }
+        }
+
+        Flickable {
+            id: bedListFlickable
             Layout.fillWidth: true
             Layout.fillHeight: true
             clip: true
+            contentWidth: width
+            contentHeight: bedListColumn.implicitHeight
+            ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
 
             Column {
-                width: parent.width
+                id: bedListColumn
+                width: bedListFlickable.width
                 spacing: 16
 
                 Repeater {
@@ -119,5 +176,9 @@ Popup {
                 onClicked: settingRoot.close()
             }
         }
+    }
+
+    onOpened: {
+        refreshOpenCvDisplay()
     }
 }

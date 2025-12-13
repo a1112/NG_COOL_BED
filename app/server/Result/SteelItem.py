@@ -124,6 +124,7 @@ class SteelItem(SteelItemBase):
         # 距离中心线的建立
         return (self.y2_mm+ self.h_mm/2) - self.map_config.roll_center_y
 
+
     @property
     def rotated(self):
         return 0
@@ -246,6 +247,14 @@ class SteelItemList(SteelItemBase):
         return int(self.y_mm-self.h_mm - self.map_config.to_up_seat_height)
 
     @property
+    def center_to_under_mm(self):
+        if self.y_mm==0 and self.h_mm==0:
+            return self.map_config.to_up_seat_height
+        return int(self.y_mm-self.h_mm/2 - self.map_config.to_up_seat_height)
+
+
+
+    @property
     def rol_to_center(self):
         if self.y_mm==0 and self.h_mm==0:
             return 0
@@ -311,6 +320,11 @@ class SteelItemNone:
     @property
     def to_under_mm(self):
         return 0
+
+    @property
+    def center_to_under_mm(self):
+        return 0
+
 
     @property
     def rol_to_center(self):

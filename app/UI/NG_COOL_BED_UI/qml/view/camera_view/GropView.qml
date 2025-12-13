@@ -47,6 +47,7 @@ ColumnLayout {
             slotNumber: slotNumber
             selected: selected
             offlineMode: root.offlineMode
+            imageSourceKey: Core.CameraViewCore.selectedImageSourceKey
             showOverlay: root.showOverlay
             visibilityMap: root.visibilityMap
             shapesProvider: root.shapesProvider

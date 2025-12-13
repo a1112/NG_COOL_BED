@@ -16,6 +16,7 @@ qt_standard_project_setup(REQUIRES 6.8)
 
 qt_add_executable(appNG_COOL_BED_UI
     main.cpp
+    ${RCSOURCES}
 )
 
 # Embed all QML via qml.qrc (keeps imports working with the qrc:/ scheme)
