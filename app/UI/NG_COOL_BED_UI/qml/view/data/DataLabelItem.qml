@@ -4,8 +4,9 @@ import QtQuick.Layouts
 
 
 Item {
-    width: 500
-    height: root.height/2
+    id: root
+    width: Layout.preferredWidth > 0 ? Layout.preferredWidth : 500
+    implicitHeight: contentRow.implicitHeight
     property string key: ""
     property string value: ""
     property string msg: ""
@@ -22,20 +23,21 @@ Item {
     }
 
     RowLayout{
+        id: contentRow
         anchors.fill: parent
-    Label{
-        font.bold: true
-        id : key_id
-        text:  key+" : "
-    }
+        Label{
+            font.bold: true
+            id : key_id
+            text:  key+" : "
+        }
 
-    Label{
-        id:value_id
-        Layout.fillWidth: true
-        horizontalAlignment: Text.AlignHCenter
-        font.bold: true
-        text:  value
-        background: Rectangle{color: "#000" }
-    }
+        Label{
+            id:value_id
+            Layout.fillWidth: true
+            horizontalAlignment: Text.AlignHCenter
+            font.bold: true
+            text:  value
+            background: Rectangle{color: "#000" }
+        }
     }
 }

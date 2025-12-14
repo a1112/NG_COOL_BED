@@ -1,5 +1,5 @@
 from .DataItem import DataItem
-from CommPlc.communication import com
+from CommPlc.communication import db6_sender
 
 def byte_join(*args):
     return b''.join(args)
@@ -22,7 +22,7 @@ class DataMap:
     def __init__(self, count, data_dict):
         self.data_dict = data_dict
         self.count = count
-        self.com = com
+        self.db6_sender = db6_sender
         self.l1_data:DataItem = self.data_dict["L1"]
         self.l2_data:DataItem = self.data_dict["L2"]
 
@@ -198,4 +198,4 @@ class DataMap:
 
 
     def send(self,send_data_byte):
-        self.com.write_byte(send_data_byte)
+        self.db6_sender.write_byte(send_data_byte)

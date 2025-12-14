@@ -89,8 +89,7 @@ Item {
 
     Rectangle {
         id: autoModeBadge
-        anchors.left: parent.left
-        anchors.top: parent.top
+        anchors.centerIn: parent
         anchors.margins: 12
         color: "#66000000"
         radius: 4
