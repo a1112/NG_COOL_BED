@@ -97,8 +97,10 @@ class Db5TmeicReader(threading.Thread):
         self._db_address = db_address or PLC_config.TMEIC_DB5_ADDRESS
         self._db_length = db_length or PLC_config.TMEIC_DB5_LENGTH
         self._latest: Dict[str, Any] = {}
-        self._client = SiemensS7Net(SiemensPLCS.S400, PLC_config.TMEIC_DB5_IP)
-        self._client.SetSlotAndRack(PLC_config.TMEIC_DB5_RACK, PLC_config.TMEIC_DB5_SLOT)
+
+
+        self._client = SiemensS7Net(SiemensPLCS.S400, PLC_config.IP_L1)
+        self._client.SetSlotAndRack(PLC_config.ROCK, PLC_config.SLOT)
         self.start()
 
     def close(self) -> None:
@@ -129,11 +131,11 @@ class Db5TmeicReader(threading.Thread):
     @staticmethod
     def _decode(payload: bytes) -> Dict[str, Any]:
         result: Dict[str, Any] = {}
-        result.update(_decode_bool_flags(payload[2:4]))
+        # result.update(_decode_bool_flags(payload[2:4]))
         result["O_NAI_W1_spare5"] = _read_bool(payload, 3, 4)
         result["O_NAI_W1_spare6"] = _read_bool(payload, 3, 5)
-        for field in DB5_FIELD_SPECS:
-            result[field.name] = field.decode(payload)
+        # for field in DB5_FIELD_SPECS:
+        #     result[field.name] = field.decode(payload)
         return result
 
 

@@ -1,93 +1,176 @@
-[2025-11-24 16:40:55.407][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[J:/NG_COOL_BED/src/lib/zlib1.dll], hHandleRet[1559494656]
-[2025-11-24 16:40:55.407][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-11-24 16:40:55.407][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-11-24 16:40:55.407][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-11-24 16:40:55.407][INF] Login dev 50.50.50.12:8000.
-[2025-11-24 16:40:55.407][INF] dwTotalNum[2048]
-[2025-11-24 16:40:55.407][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-11-24 16:40:55.407][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-11-24 16:40:55.407][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-11-24 16:40:55.407][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-11-24 16:40:55.407][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-11-24 16:40:55.407][INF] Login dev 50.50.50.10:8000.
-[2025-11-24 16:40:55.407][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-11-24 16:40:55.407][INF] Login dev 40.40.40.7:8000.
-[2025-11-24 16:40:55.407][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-11-24 16:40:55.407][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-11-24 16:40:55.407][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-11-24 16:40:55.407][INF] Login dev 60.60.60.13:8000.
-[2025-11-24 16:40:55.407][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-11-24 16:40:55.407][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-11-24 16:40:55.407][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-11-24 16:40:55.407][INF] Login dev 30.30.30.5:8000.
-[2025-11-24 16:40:55.408][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-11-24 16:40:55.408][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-11-24 16:40:55.408][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-11-24 16:40:55.408][INF] Login dev 40.40.40.8:8000.
-[2025-11-24 16:40:55.408][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-11-24 16:40:55.408][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-11-24 16:40:55.408][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-11-24 16:40:55.408][INF] Login dev 50.50.50.11:8000.
-[2025-11-24 16:40:55.408][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-11-24 16:40:55.408][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-11-24 16:40:55.408][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-11-24 16:40:55.408][INF] Login dev 20.20.20.3:8000.
-[2025-11-24 16:40:55.408][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-11-24 16:40:55.408][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-11-24 16:40:55.408][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-11-24 16:40:55.408][INF] Login dev 30.30.30.6:8000.
-[2025-11-24 16:40:55.408][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-11-24 16:40:55.408][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-11-24 16:40:55.408][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-11-24 16:40:55.408][INF] Login dev 30.30.30.4:8000.
-[2025-11-24 16:40:55.408][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-11-24 16:40:55.408][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-11-24 16:40:55.408][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-11-24 16:40:55.408][INF] Login dev 40.40.40.9:8000.
-[2025-11-24 16:40:55.408][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-11-24 16:40:55.408][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-11-24 16:40:55.408][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-11-24 16:40:55.408][INF] Login dev 20.20.20.2:8000.
-[2025-11-24 16:40:55.408][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
-[2025-11-24 16:40:55.408][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
-[2025-11-24 16:40:55.408][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
-[2025-11-24 16:40:55.408][INF] Login dev 20.20.20.1:8000.
-[2025-11-24 16:40:58.922][ERR] Private connect 40.40.40.7:8000 sock=3328 this=0x7cd179c cmd=0x10000 sys_err=10060, timeout= 3500 port=0
-[2025-11-24 16:40:58.922][ERR] Private connect 50.50.50.12:8000 sock=2380 this=0x7cd08c4 cmd=0x10000 sys_err=10060, timeout= 3500 port=0
-[2025-11-24 16:40:58.922][ERR] Private connect 20.20.20.2:8000 sock=3504 this=0x7cd5a68 cmd=0x10000 sys_err=10060, timeout= 3500 port=0
-[2025-11-24 16:40:58.922][ERR] [50.50.50.12:8000]LogonDevice Link_CreateLink fail[7].
-[2025-11-24 16:40:58.922][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[0]
-[2025-11-24 16:40:58.922][ERR] Private connect 30.30.30.4:8000 sock=1600 this=0x7cd4b90 cmd=0x10000 sys_err=10060, timeout= 3500 port=0
-[2025-11-24 16:40:58.922][ERR] Private connect 20.20.20.1:8000 sock=3516 this=0x7cd61d4 cmd=0x10000 sys_err=10060, timeout= 3500 port=0
-[2025-11-24 16:40:58.922][ERR] Private connect 20.20.20.3:8000 sock=3460 this=0x7cd3cb8 cmd=0x10000 sys_err=10060, timeout= 3500 port=0
-[2025-11-24 16:40:58.922][ERR] [40.40.40.7:8000]LogonDevice Link_CreateLink fail[7].
-[2025-11-24 16:40:58.922][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[2]
-[2025-11-24 16:40:58.922][ERR] [30.30.30.4:8000]LogonDevice Link_CreateLink fail[7].
-[2025-11-24 16:40:58.922][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[9]
-[2025-11-24 16:40:58.922][ERR] Private connect 50.50.50.11:8000 sock=3448 this=0x7cd354c cmd=0x10000 sys_err=10060, timeout= 3500 port=0
-[2025-11-24 16:40:58.922][ERR] Private connect 30.30.30.5:8000 sock=3428 this=0x7cd2674 cmd=0x10000 sys_err=10060, timeout= 3500 port=0
-[2025-11-24 16:40:58.922][ERR] [50.50.50.11:8000]LogonDevice Link_CreateLink fail[7].
-[2025-11-24 16:40:58.922][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[6]
-[2025-11-24 16:40:58.922][ERR] Private connect 50.50.50.10:8000 sock=3404 this=0x7cd1030 cmd=0x10000 sys_err=10060, timeout= 3500 port=0
-[2025-11-24 16:40:58.922][ERR] [20.20.20.1:8000]LogonDevice Link_CreateLink fail[7].
-[2025-11-24 16:40:58.922][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[12]
-[2025-11-24 16:40:58.922][ERR] [30.30.30.5:8000]LogonDevice Link_CreateLink fail[7].
-[2025-11-24 16:40:58.922][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[4]
-[2025-11-24 16:40:58.922][ERR] [50.50.50.10:8000]LogonDevice Link_CreateLink fail[7].
-[2025-11-24 16:40:58.922][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[1]
-[2025-11-24 16:40:58.922][ERR] Private connect 30.30.30.6:8000 sock=3480 this=0x7cd4424 cmd=0x10000 sys_err=10060, timeout= 3500 port=0
-[2025-11-24 16:40:58.922][ERR] Private connect 40.40.40.9:8000 sock=3492 this=0x7cd52fc cmd=0x10000 sys_err=10060, timeout= 3500 port=0
-[2025-11-24 16:40:58.922][ERR] Private connect 40.40.40.8:8000 sock=3440 this=0x7cd2de0 cmd=0x10000 sys_err=10060, timeout= 3500 port=0
-[2025-11-24 16:40:58.922][ERR] [20.20.20.2:8000]LogonDevice Link_CreateLink fail[7].
-[2025-11-24 16:40:58.922][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[11]
-[2025-11-24 16:40:58.922][ERR] [20.20.20.3:8000]LogonDevice Link_CreateLink fail[7].
-[2025-11-24 16:40:58.922][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[7]
-[2025-11-24 16:40:58.922][ERR] [40.40.40.9:8000]LogonDevice Link_CreateLink fail[7].
-[2025-11-24 16:40:58.922][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[10]
-[2025-11-24 16:40:58.922][ERR] [30.30.30.6:8000]LogonDevice Link_CreateLink fail[7].
-[2025-11-24 16:40:58.922][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[8]
-[2025-11-24 16:40:58.922][ERR] [40.40.40.8:8000]LogonDevice Link_CreateLink fail[7].
-[2025-11-24 16:40:58.922][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[5]
-[2025-11-24 16:40:58.922][ERR] Private connect 60.60.60.13:8000 sock=3416 this=0x7cd1f08 cmd=0x10000 sys_err=10060, timeout= 3500 port=0
-[2025-11-24 16:40:58.922][ERR] [60.60.60.13:8000]LogonDevice Link_CreateLink fail[7].
-[2025-11-24 16:40:58.922][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[3]
+[2025-12-14 15:41:35.387][ERR] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Failed, Path[D:/bin/NG_COOL_BED/app/server/lib/zlib1.dll] syserror[126]
+[2025-12-14 15:41:35.387][ERR] Load zlib failed[syserr: 126]
+[2025-12-14 15:41:35.387][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-12-14 15:41:35.387][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-12-14 15:41:35.387][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-12-14 15:41:35.387][INF] Login dev 50.50.50.10:8000.
+[2025-12-14 15:41:35.387][INF] dwTotalNum[2048]
+[2025-12-14 15:41:35.388][INF] Private connect 50.50.50.10:8000 sock=3228 this=0xb76f3f54 cmd=0x10000 port=55675
+[2025-12-14 15:41:35.388][INF] LogonDev1 in[50.50.50.10:8000]
+[2025-12-14 15:41:35.388][ERR] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Failed, Path[D:/bin/NG_COOL_BED/app/server/lib/zlib1.dll] syserror[126]
+[2025-12-14 15:41:35.388][ERR] Load zlib failed[syserr: 126]
+[2025-12-14 15:41:35.388][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-12-14 15:41:35.388][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[D:/bin/NG_COOL_BED/app/server/lib/libcrypto-1_1-x64.dll], hHandleRet[1978007552]
+[2025-12-14 15:41:35.388][DBG] Load [libcrypto-1_1-x64.dll] SUCC, Real Path[D:\bin\NG_COOL_BED\app\server\lib\libcrypto-1_1-x64.dll]
+[2025-12-14 15:41:35.389][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[D:/bin/NG_COOL_BED/app/server/lib/libssl-1_1-x64.dll], hHandleRet[2007891968]
+[2025-12-14 15:41:35.389][DBG] Load [libssl-1_1-x64.dll] SUCC, Real Path[D:\bin\NG_COOL_BED\app\server\lib\libssl-1_1-x64.dll]
+[2025-12-14 15:41:35.389][INF] SSLTRANSAPI::IsAllAPILoaded, SSL_library_init Unload
+[2025-12-14 15:41:35.389][INF] OpenSSL, Not All Function Loaded!
+[2025-12-14 15:41:35.389][INF] SSLTRANSAPI::PrintVersion, OpenSSL version info [OpenSSL 1.1.1l  24 Aug 2021]
+[2025-12-14 15:41:35.389][INF] CSSLTrans::SSLCtxInit, dwSSLVersion[6], m_fnTLSServerMethod
+[2025-12-14 15:41:35.389][ERR] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Failed, Path[D:/bin/NG_COOL_BED/app/server/lib/zlib1.dll] syserror[126]
+[2025-12-14 15:41:35.389][ERR] Load zlib failed[syserr: 126]
+[2025-12-14 15:41:35.389][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-12-14 15:41:35.390][ERR] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Failed, Path[D:/bin/NG_COOL_BED/app/server/lib/zlib1.dll] syserror[126]
+[2025-12-14 15:41:35.390][ERR] Load zlib failed[syserr: 126]
+[2025-12-14 15:41:35.390][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-12-14 15:41:35.390][ERR] CSSLTrans::SSLTrans_CTX_Load_CA, invalid path[D:/bin/NG_COOL_BED/app/server/lib/cert/\]
+[2025-12-14 15:41:35.390][ERR] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Failed, Path[D:/bin/NG_COOL_BED/app/server/lib/zlib1.dll] syserror[126]
+[2025-12-14 15:41:35.390][ERR] Load zlib failed[syserr: 126]
+[2025-12-14 15:41:35.390][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-12-14 15:41:35.391][ERR] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Failed, Path[D:/bin/NG_COOL_BED/app/server/lib/zlib1.dll] syserror[126]
+[2025-12-14 15:41:35.391][ERR] Load zlib failed[syserr: 126]
+[2025-12-14 15:41:35.391][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-12-14 15:41:35.391][ERR] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Failed, Path[D:/bin/NG_COOL_BED/app/server/lib/zlib1.dll] syserror[126]
+[2025-12-14 15:41:35.391][ERR] Load zlib failed[syserr: 126]
+[2025-12-14 15:41:35.391][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-12-14 15:41:35.392][ERR] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Failed, Path[D:/bin/NG_COOL_BED/app/server/lib/zlib1.dll] syserror[126]
+[2025-12-14 15:41:35.392][ERR] Load zlib failed[syserr: 126]
+[2025-12-14 15:41:35.392][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-12-14 15:41:35.392][ERR] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Failed, Path[D:/bin/NG_COOL_BED/app/server/lib/zlib1.dll] syserror[126]
+[2025-12-14 15:41:35.392][ERR] Load zlib failed[syserr: 126]
+[2025-12-14 15:41:35.392][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-12-14 15:41:35.393][ERR] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Failed, Path[D:/bin/NG_COOL_BED/app/server/lib/zlib1.dll] syserror[126]
+[2025-12-14 15:41:35.393][ERR] Load zlib failed[syserr: 126]
+[2025-12-14 15:41:35.393][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-12-14 15:41:35.393][ERR] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Failed, Path[D:/bin/NG_COOL_BED/app/server/lib/zlib1.dll] syserror[126]
+[2025-12-14 15:41:35.393][ERR] Load zlib failed[syserr: 126]
+[2025-12-14 15:41:35.393][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-12-14 15:41:35.394][ERR] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Failed, Path[D:/bin/NG_COOL_BED/app/server/lib/zlib1.dll] syserror[126]
+[2025-12-14 15:41:35.394][ERR] Load zlib failed[syserr: 126]
+[2025-12-14 15:41:35.394][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-12-14 15:41:35.394][ERR] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Failed, Path[D:/bin/NG_COOL_BED/app/server/lib/zlib1.dll] syserror[126]
+[2025-12-14 15:41:35.394][ERR] Load zlib failed[syserr: 126]
+[2025-12-14 15:41:35.394][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2025-12-14 15:41:35.708][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-12-14 15:41:35.708][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-12-14 15:41:35.708][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-12-14 15:41:35.708][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-12-14 15:41:35.708][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-12-14 15:41:35.708][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-12-14 15:41:35.708][INF] Login dev 40.40.40.7:8000.
+[2025-12-14 15:41:35.708][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-12-14 15:41:35.708][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-12-14 15:41:35.708][INF] Login dev 20.20.20.1:8000.
+[2025-12-14 15:41:35.708][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-12-14 15:41:35.708][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-12-14 15:41:35.708][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-12-14 15:41:35.708][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-12-14 15:41:35.708][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-12-14 15:41:35.708][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-12-14 15:41:35.708][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-12-14 15:41:35.708][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-12-14 15:41:35.708][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-12-14 15:41:35.708][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-12-14 15:41:35.708][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-12-14 15:41:35.708][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-12-14 15:41:35.708][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-12-14 15:41:35.708][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-12-14 15:41:35.708][INF] The COM:Core ver is 6.1.9.48, 2023_04_10. Async:1.
+[2025-12-14 15:41:35.708][INF] This HCNetSDK ver is 6.1.9.48 Ver 2023_04_10.
+[2025-12-14 15:41:35.708][INF] Login dev 30.30.30.6:8000.
+[2025-12-14 15:41:35.708][INF] Login dev 30.30.30.4:8000.
+[2025-12-14 15:41:35.708][INF] Login dev 50.50.50.12:8000.
+[2025-12-14 15:41:35.708][INF] Login dev 20.20.20.2:8000.
+[2025-12-14 15:41:35.708][INF] Login dev 60.60.60.13:8000.
+[2025-12-14 15:41:35.708][INF] Login dev 50.50.50.11:8000.
+[2025-12-14 15:41:35.708][INF] Login dev 30.30.30.5:8000.
+[2025-12-14 15:41:35.708][INF] Login dev 40.40.40.9:8000.
+[2025-12-14 15:41:35.708][INF] Login dev 40.40.40.8:8000.
+[2025-12-14 15:41:35.709][INF] Login dev 20.20.20.3:8000.
+[2025-12-14 15:41:35.709][INF] Private connect 20.20.20.2:8000 sock=3320 this=0xb76f6bdc cmd=0x10000 port=55686
+[2025-12-14 15:41:35.709][INF] LogonDev1 in[20.20.20.2:8000]
+[2025-12-14 15:41:35.709][INF] Private connect 20.20.20.1:8000 sock=3284 this=0xb76f46c0 cmd=0x10000 port=55681
+[2025-12-14 15:41:35.709][INF] LogonDev1 in[20.20.20.1:8000]
+[2025-12-14 15:41:35.709][INF] Private connect 30.30.30.5:8000 sock=3352 this=0xb76f8220 cmd=0x10000 port=55688
+[2025-12-14 15:41:35.709][INF] LogonDev1 in[30.30.30.5:8000]
+[2025-12-14 15:41:35.719][INF] Private connect 60.60.60.13:8000 sock=3324 this=0xb76f7348 cmd=0x10000 port=55687
+[2025-12-14 15:41:35.719][INF] LogonDev1 in[60.60.60.13:8000]
+[2025-12-14 15:41:35.719][INF] Private connect 20.20.20.3:8000 sock=3372 this=0xb76f9864 cmd=0x10000 port=55692
+[2025-12-14 15:41:35.719][INF] Private connect 30.30.30.4:8000 sock=3304 this=0xb76f5d04 cmd=0x10000 port=55684
+[2025-12-14 15:41:35.719][INF] LogonDev1 in[20.20.20.3:8000]
+[2025-12-14 15:41:35.719][INF] LogonDev1 in[30.30.30.4:8000]
+[2025-12-14 15:41:35.720][INF] Private connect 50.50.50.12:8000 sock=3308 this=0xb76f6470 cmd=0x10000 port=55685
+[2025-12-14 15:41:35.720][INF] Private connect 50.50.50.11:8000 sock=3360 this=0xb76f7ab4 cmd=0x10000 port=55690
+[2025-12-14 15:41:35.720][INF] Private connect 30.30.30.6:8000 sock=3300 this=0xb76f5598 cmd=0x10000 port=55683
+[2025-12-14 15:41:35.720][INF] LogonDev1 in[50.50.50.12:8000]
+[2025-12-14 15:41:35.720][INF] LogonDev1 in[50.50.50.11:8000]
+[2025-12-14 15:41:35.720][INF] LogonDev1 in[30.30.30.6:8000]
+[2025-12-14 15:41:36.317][DBG] CComBase::Load, Load szDllPath[D:/bin/NG_COOL_BED/app/server/lib/HCNetSDKCom/HCPreview.dll] SUCC
+[2025-12-14 15:41:36.317][INF] AbilityAnalyze---Init-- start
+[2025-12-14 15:41:36.317][ERR] AbilityAnalyze---open zip package error, package path D:/bin/NG_COOL_BED/app/server/SDK/lib/LocalXml.zip
+[2025-12-14 15:41:36.317][INF] The COM:Preview ver is 6.1.9.48, 2023_04_10.
+[2025-12-14 15:41:36.318][INF] Private connect 30.30.30.5:8000 sock=3984 this=0xb76f5598 cmd=0x30000 port=55708
+[2025-12-14 15:41:36.318][INF] Private connect 50.50.50.12:8000 sock=4168 this=0xb76f8220 cmd=0x30000 port=55715
+[2025-12-14 15:41:36.318][INF] Private connect 30.30.30.6:8000 sock=4032 this=0xb76f46c0 cmd=0x30000 port=55710
+[2025-12-14 15:41:36.318][INF] Private connect 20.20.20.3:8000 sock=4176 this=0xb76f7ab4 cmd=0x30000 port=55716
+[2025-12-14 15:41:36.318][INF] Private connect 20.20.20.2:8000 sock=4164 this=0xb76f6bdc cmd=0x30000 port=55713
+[2025-12-14 15:41:36.318][INF] Private connect 20.20.20.1:8000 sock=3640 this=0xb76f6470 cmd=0x30000 port=55712
+[2025-12-14 15:41:36.318][INF] Private connect 50.50.50.11:8000 sock=4172 this=0xb76f7348 cmd=0x30000 port=55714
+[2025-12-14 15:41:36.329][INF] Private connect 30.30.30.4:8000 sock=4152 this=0xb76f9864 cmd=0x30000 port=55717
+[2025-12-14 15:41:36.329][INF] Private connect 60.60.60.13:8000 sock=3908 this=0xb76f3f54 cmd=0x30000 port=55711
+[2025-12-14 15:41:36.329][INF] Private connect 50.50.50.10:8000 sock=3612 this=0xb76f5d04 cmd=0x30000 port=55709
+[2025-12-14 15:41:36.364][INF] ID-IP-CHAN[7-50.50.50.11-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-12-14 15:41:36.364][INF] ID-IP-CHAN[7-50.50.50.11-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-12-14 15:41:36.364][INF] CCoreGlobalCtrl::LoadDSo, enumDllType[2], cTempPath[D:/bin/NG_COOL_BED/app/server/lib/HCNetSDKCom/]
+[2025-12-14 15:41:36.365][INF] ID-IP-CHAN[5-30.30.30.6-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-12-14 15:41:36.365][INF] ID-IP-CHAN[5-30.30.30.6-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-12-14 15:41:36.365][DBG] CCoreGlobalCtrl::LoadDSo, HPR_LoadDSo, hHandleRet[-1190985728], enumDllType[2], Path[SystemTransform.dll], syserror[0]
+[2025-12-14 15:41:36.365][INF] CStreamConvert::LoadConvertLib Load Succ, m_iInitCount = 1
+[2025-12-14 15:41:36.365][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 2
+[2025-12-14 15:41:36.365][DBG] ID-IP-CHAN[7-50.50.50.11-1] RTP Format
+[2025-12-14 15:41:36.365][DBG] ID-IP-CHAN[5-30.30.30.6-1] RTP Format
+[2025-12-14 15:41:36.366][INF] ID-IP-CHAN[2-20.20.20.1-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-12-14 15:41:36.366][INF] ID-IP-CHAN[2-20.20.20.1-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-12-14 15:41:36.366][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 3
+[2025-12-14 15:41:36.366][DBG] ID-IP-CHAN[2-20.20.20.1-1] RTP Format
+[2025-12-14 15:41:36.369][INF] ID-IP-CHAN[0-30.30.30.5-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-12-14 15:41:36.369][INF] ID-IP-CHAN[0-30.30.30.5-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-12-14 15:41:36.369][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 4
+[2025-12-14 15:41:36.369][DBG] ID-IP-CHAN[0-30.30.30.5-1] RTP Format
+[2025-12-14 15:41:36.370][INF] ID-IP-CHAN[6-20.20.20.3-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-12-14 15:41:36.370][INF] ID-IP-CHAN[6-20.20.20.3-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-12-14 15:41:36.370][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 5
+[2025-12-14 15:41:36.370][DBG] ID-IP-CHAN[6-20.20.20.3-1] RTP Format
+[2025-12-14 15:41:36.371][INF] ID-IP-CHAN[1-20.20.20.2-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-12-14 15:41:36.371][INF] ID-IP-CHAN[1-20.20.20.2-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-12-14 15:41:36.371][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 6
+[2025-12-14 15:41:36.371][DBG] ID-IP-CHAN[1-20.20.20.2-1] RTP Format
+[2025-12-14 15:41:36.372][INF] ID-IP-CHAN[8-50.50.50.12-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-12-14 15:41:36.372][INF] ID-IP-CHAN[8-50.50.50.12-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-12-14 15:41:36.372][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 7
+[2025-12-14 15:41:36.373][DBG] ID-IP-CHAN[8-50.50.50.12-1] RTP Format
+[2025-12-14 15:41:36.374][INF] ID-IP-CHAN[3-60.60.60.13-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-12-14 15:41:36.374][INF] ID-IP-CHAN[3-60.60.60.13-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-12-14 15:41:36.374][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 8
+[2025-12-14 15:41:36.374][DBG] ID-IP-CHAN[3-60.60.60.13-1] RTP Format
+[2025-12-14 15:41:36.375][INF] ID-IP-CHAN[9-30.30.30.4-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-12-14 15:41:36.375][INF] ID-IP-CHAN[9-30.30.30.4-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-12-14 15:41:36.375][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 9
+[2025-12-14 15:41:36.375][DBG] ID-IP-CHAN[9-30.30.30.4-1] RTP Format
+[2025-12-14 15:41:36.378][INF] ID-IP-CHAN[4-50.50.50.10-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2025-12-14 15:41:36.378][INF] ID-IP-CHAN[4-50.50.50.10-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2025-12-14 15:41:36.378][INF] CStreamConvert::LoadConvertLib Lib Already Load, m_iInitCount = 10
+[2025-12-14 15:41:36.378][DBG] ID-IP-CHAN[4-50.50.50.10-1] RTP Format
+[2025-12-14 15:41:39.208][ERR] Private connect 40.40.40.7:8000 sock=3264 this=0xb76f4e2c cmd=0x10000 sys_err=10060, timeout= 3500 port=0
+[2025-12-14 15:41:39.209][ERR] [40.40.40.7:8000]LogonDevice Link_CreateLink fail[7].
+[2025-12-14 15:41:39.209][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[1]
+[2025-12-14 15:41:39.209][ERR] Private connect 40.40.40.8:8000 sock=3236 this=0xb76f90f8 cmd=0x10000 sys_err=10060, timeout= 3500 port=0
+[2025-12-14 15:41:39.209][ERR] [40.40.40.8:8000]LogonDevice Link_CreateLink fail[7].
+[2025-12-14 15:41:39.209][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[11]
+[2025-12-14 15:41:39.209][INF] COM_Logout[-1][0]
+[2025-12-14 15:41:39.209][INF] COM_Logout[-1][0]
+[2025-12-14 15:41:39.210][ERR] Private connect 40.40.40.9:8000 sock=3356 this=0xb76f898c cmd=0x10000 sys_err=10060, timeout= 3500 port=0
+[2025-12-14 15:41:39.210][ERR] [40.40.40.9:8000]LogonDevice Link_CreateLink fail[7].
+[2025-12-14 15:41:39.210][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[10]
+[2025-12-14 15:41:39.210][INF] COM_Logout[-1][0]
