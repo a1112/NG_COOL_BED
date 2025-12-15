@@ -97,6 +97,9 @@ class Db6RecognitionSender(threading.Thread):
         self._client.SetSlotAndRack(PLC_config.ROCK, PLC_config.SLOT)
         self.last_data_dict = {}
         self.last_bytes: bytes = b""
+        self.last_write_ok_ts: float | None = None
+        self.last_write_error: str = ""
+        self._last_write_error_ts = 0.0
         self._last_read_error_ts = 0.0
         self.start()
 
@@ -142,7 +145,36 @@ class Db6RecognitionSender(threading.Thread):
         self.last_data_dict.update({**decoded, **other})
 
     def write_bytes(self, packet: bytes) -> None:
-        self._client.Write(self._db_address, bytearray(packet))
+        try:
+            response = self._client.Write(self._db_address, bytearray(packet))
+
+            ok = True
+            message = ""
+            if response is None:
+                ok = False
+                message = "DB6 write: response is None"
+            elif hasattr(response, "IsSuccess"):
+                ok = bool(getattr(response, "IsSuccess", False))
+                message = getattr(response, "Message", "") or ""
+            elif isinstance(response, bool):
+                ok = response
+
+            if ok:
+                self.last_write_ok_ts = time.time()
+                self.last_write_error = ""
+                return
+
+            now = time.time()
+            self.last_write_error = message or "DB6 write failed"
+            if now - self._last_write_error_ts >= 2.0:
+                self._last_write_error_ts = now
+                logger.error("%s", self.last_write_error)
+        except Exception as exc:  # pragma: no cover - runtime only
+            now = time.time()
+            self.last_write_error = f"DB6 write error: {exc}"
+            if now - self._last_write_error_ts >= 2.0:
+                self._last_write_error_ts = now
+                logger.error("%s", self.last_write_error)
 
     def write_byte(self, packet: bytes) -> None:
         self.write_bytes(packet)
@@ -152,9 +184,13 @@ class Db6RecognitionDebug:
     def __init__(self) -> None:
         self.last_data_dict = {}
         self.last_bytes: bytes = b""
+        self.last_write_ok_ts: float | None = None
+        self.last_write_error: str = ""
 
     def write_bytes(self, packet: bytes) -> None:  # pragma: no cover - 仿真
         self.last_bytes = bytes(packet)
+        self.last_write_ok_ts = time.time()
+        self.last_write_error = ""
         decoded = decode_db6_packet(self.last_bytes)
         if decoded is not None:
             self.last_data_dict.update({**decoded, "getDateTime": time.time(), "getTimeLen": 0.0})

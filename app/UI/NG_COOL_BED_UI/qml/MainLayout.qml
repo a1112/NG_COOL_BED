@@ -44,6 +44,8 @@ ApplicationWindow {
             send_data: sendDataCore && sendDataCore.lastPayload && sendDataCore.lastPayload.data
                         ? sendDataCore.lastPayload.data : ({})
             send_byte: sendDataCore && sendDataCore.lastPayload ? (sendDataCore.lastPayload.bytes || "") : ""
+            plcLastWriteOkTs: sendDataCore && sendDataCore.lastPayload
+                              ? (sendDataCore.lastPayload.plc_last_write_ok_ts || 0) : 0
         }
         Db6Dialog {
             id: db6_dialog

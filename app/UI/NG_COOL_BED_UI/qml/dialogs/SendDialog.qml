@@ -10,6 +10,23 @@ Menu {
 
     property var send_data: { return {}}
     property string send_byte: ""
+    property real plcLastWriteOkTs: 0
+    property int plcLastWriteOkBefore01s: -1
+
+    Timer {
+        interval: 100
+        repeat: true
+        running: root.visible
+        onTriggered: {
+            if (plcLastWriteOkTs > 0) {
+                plcLastWriteOkBefore01s = Math.max(
+                            0,
+                            Math.floor(((Date.now() / 1000.0) - plcLastWriteOkTs) * 10))
+            } else {
+                plcLastWriteOkBefore01s = -1
+            }
+        }
+    }
     onSend_dataChanged: {
       for (let key in send_data){
         let has_data=false
@@ -37,6 +54,13 @@ Menu {
     property ListModel dataModel: ListModel{}
     Flow{
         anchors.fill: parent
+        Label {
+            width: parent.width
+            height: 30
+            text: plcLastWriteOkBefore01s < 0
+                  ? qsTr("最后一次PLC写入成功: --")
+                  : qsTr("最后一次PLC写入成功: %1 (0.1s)").arg(plcLastWriteOkBefore01s)
+        }
         Repeater{
             anchors.fill: parent
             model: dataModel

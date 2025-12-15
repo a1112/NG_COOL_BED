@@ -1,4 +1,5 @@
 import json
+import time
 from datetime import datetime
 from typing import Optional, Dict
 
@@ -73,9 +74,22 @@ class Business:
 
     @property
     def send_data(self):
+        last_write_ok_ts = 0.0
+        last_write_ok_before_0_1s = None
+        try:
+            from CommPlc.communication import db6_sender
+
+            last_write_ok_ts = float(getattr(db6_sender, "last_write_ok_ts", 0.0) or 0.0)
+            if last_write_ok_ts > 0:
+                last_write_ok_before_0_1s = max(0, int((time.time() - last_write_ok_ts) * 10))
+        except Exception:
+            pass
+
         return {
             "bytes":str(bytes(self.send_data_byte)),
             "data":self.send_data_dict,
+            "plc_last_write_ok_ts": last_write_ok_ts,
+            "plc_last_write_ok_before_0_1s": last_write_ok_before_0_1s,
         }
 
 

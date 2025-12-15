@@ -21,7 +21,7 @@
       "interface_description": "Realtek Gaming 2.5GbE Family Controller #2",
       "dhcp": false,
       "ipv4": {
-        "address": "40.40.40.5",
+        "address": "40.40.40.45",
         "prefix_length": 24,
         "gateway": ""
       },
