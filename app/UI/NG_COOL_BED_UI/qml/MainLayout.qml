@@ -25,6 +25,7 @@ ApplicationWindow {
             windowItem: rootWindow
             settingView: settingView
             sendDialog: send_dialog
+            db6Dialog: db6_dialog
             mapDialog: map_dialog
             algTestDialog: alg_test_dialog
         }
@@ -44,6 +45,12 @@ ApplicationWindow {
                         ? sendDataCore.lastPayload.data : ({})
             send_byte: sendDataCore && sendDataCore.lastPayload ? (sendDataCore.lastPayload.bytes || "") : ""
         }
+        Db6Dialog {
+            id: db6_dialog
+            db6_data: db6DataCore && db6DataCore.lastPayload && db6DataCore.lastPayload.data
+                      ? db6DataCore.lastPayload.data : ({})
+            db6_byte: db6DataCore && db6DataCore.lastPayload ? (db6DataCore.lastPayload.bytes || "") : ""
+        }
         MapDialog {
             id: map_dialog
             send_data: sendDataCore && sendDataCore.lastPayload && sendDataCore.lastPayload.data
@@ -55,6 +62,9 @@ ApplicationWindow {
         }
         ViewCore.SendDataCore {
             id: sendDataCore
+        }
+        ViewCore.Db6DataCore {
+            id: db6DataCore
         }
     }
 }

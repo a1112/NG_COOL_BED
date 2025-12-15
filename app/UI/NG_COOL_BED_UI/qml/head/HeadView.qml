@@ -11,6 +11,7 @@ HeadBase {
     property var windowItem: null
     property var settingView: null
     property var sendDialog: null
+    property var db6Dialog: null
     property var mapDialog: null
     property var algTestDialog: null
     Layout.fillWidth: true
@@ -127,6 +128,7 @@ HeadBase {
         id: mainMenu
         windowItem: root.windowItem
         sendDialog: root.sendDialog
+        db6Dialog: root.db6Dialog
         mapDialog: root.mapDialog
         algTestDialog: root.algTestDialog
     }

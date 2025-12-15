@@ -7,6 +7,7 @@ Menu {
 
     property var windowItem: null
     property var sendDialog: null
+    property var db6Dialog: null
     property var mapDialog: null
     property var algTestDialog: null
     property bool opencvDisplayEnabled: true
@@ -95,6 +96,13 @@ Menu {
             onTriggered: {
                 if (sendDialog && sendDialog.open_)
                     sendDialog.open_()
+            }
+        }
+        MenuItem {
+            text: qsTr("plc数据 -> DB6.0...")
+            onTriggered: {
+                if (db6Dialog && db6Dialog.open_)
+                    db6Dialog.open_()
             }
         }
         MenuItem {

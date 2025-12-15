@@ -198,4 +198,4 @@ class DataMap:
 
 
     def send(self,send_data_byte):
-        self.db6_sender.write_byte(send_data_byte)
+        self.db6_sender.write_bytes(send_data_byte)

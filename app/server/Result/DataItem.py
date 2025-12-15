@@ -100,10 +100,14 @@ class DataItem:
 
     @property
     def steel_info(self):
-        return [[round(i/1000,1) for i in list(steel.mm_rec)] for steel in self.steels.steel_list]
+        if self.steels is None:
+            return []
+        return [[round(i / 1000, 1) for i in list(steel.mm_rec)] for steel in self.steels.steel_list]
 
     @property
     def group_key(self):
+        if self.steels is None:
+            return ""
         return self.steels.map_config.key
 
     def get_info(self):

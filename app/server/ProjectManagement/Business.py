@@ -170,7 +170,7 @@ class Business:
         for cool_bed_key, data_item in self.current_datas.items():
             group_key = ""
             if data_item is not None:
-                group_key = data_item.group_key or ""
+                group_key = (getattr(data_item, "group_key", "") or "")
             if group_key:
                 priority_registry.mark_sending(cool_bed_key, group_key)
             else:

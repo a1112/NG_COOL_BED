@@ -2,6 +2,7 @@ import cv2
 import json
 import asyncio
 import time
+import math
 from pathlib import Path
 from typing import Optional
 import numpy as np
@@ -34,7 +35,8 @@ from fastapi.responses import StreamingResponse, FileResponse, Response
 import tool as common_tool
 from Server.tool import noFindImageByte
 from Server.alg_test_manager import alg_test_manager
-from CommPlc import db5_reader
+from CommPlc import db5_reader, db6_sender
+from Loger import logger
 
 business_main: Business
 
@@ -182,7 +184,7 @@ async def get_data(cool_bed:str):
 
 @app.get("/send_data")
 async def send_data():
-    return business_main.send_data
+    return _sanitize_json(business_main.send_data)
 
 
 @app.websocket("/ws/send_data")
@@ -191,7 +193,75 @@ async def ws_send_data(websocket: WebSocket):
     try:
         while True:
             payload = business_main.send_data
-            await websocket.send_text(json.dumps(payload, ensure_ascii=False))
+            try:
+                await websocket.send_text(_safe_json_dumps(payload))
+            except WebSocketDisconnect:
+                break
+            except Exception as exc:  # pragma: no cover - runtime only
+                logger.error("ws/send_data send error: %s", exc)
+            await asyncio.sleep(0.2)
+    except WebSocketDisconnect:
+        pass
+
+
+def _sanitize_json(value):
+    if isinstance(value, dict):
+        return {str(k): _sanitize_json(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_sanitize_json(v) for v in value]
+    if isinstance(value, float):
+        if math.isnan(value) or math.isinf(value):
+            return None
+        return value
+    if isinstance(value, (bytes, bytearray, memoryview)):
+        return str(bytes(value))
+    if hasattr(value, "isoformat"):
+        try:
+            return value.isoformat()
+        except Exception:
+            pass
+    if hasattr(value, "item"):
+        try:
+            return _sanitize_json(value.item())
+        except Exception:
+            pass
+    return value
+
+
+def _safe_json_dumps(payload: dict) -> str:
+    try:
+        return json.dumps(payload, ensure_ascii=False, allow_nan=False)
+    except (TypeError, ValueError):
+        return json.dumps(_sanitize_json(payload), ensure_ascii=False, allow_nan=False)
+
+
+def _get_db6_payload() -> dict:
+    last_bytes = getattr(db6_sender, "last_bytes", b"") or b""
+    last_data_dict = getattr(db6_sender, "last_data_dict", {}) or {}
+    safe_data = dict(last_data_dict)
+    return {
+        "bytes": str(bytes(last_bytes)),
+        "data": safe_data,
+    }
+
+
+@app.get("/db6_data")
+async def db6_data():
+    return _sanitize_json(_get_db6_payload())
+
+
+@app.websocket("/ws/db6_data")
+async def ws_db6_data(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            payload = _get_db6_payload()
+            try:
+                await websocket.send_text(_safe_json_dumps(payload))
+            except WebSocketDisconnect:
+                break
+            except Exception as exc:  # pragma: no cover - runtime only
+                logger.error("ws/db6_data send error: %s", exc)
             await asyncio.sleep(0.2)
     except WebSocketDisconnect:
         pass

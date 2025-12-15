@@ -4,8 +4,8 @@ import QtWebSockets
 Item {
     property var lastPayload: ({})
 
-    property WebSocket sendSocket: WebSocket {
-        id: sendSocket
+    property WebSocket db6Socket: WebSocket {
+        id: db6Socket
         active: false
         url: ""
         onStatusChanged: {
@@ -17,8 +17,8 @@ Item {
             try {
                 lastPayload = JSON.parse(message)
             } catch(e) {
-                console.warn("ws/send_data parse error", e)
-                sendSocket.active = false
+                console.warn("ws/db6_data parse error", e)
+                db6Socket.active = false
                 reconnectTimer.start()
             }
         }
@@ -33,15 +33,15 @@ Item {
 
     function socketUrl() {
         if (!app_api || !app_api.server_url) return ""
-        return app_api.server_url.wsServerUrl + "/ws/send_data"
+        return app_api.server_url.wsServerUrl + "/ws/db6_data"
     }
 
     function openSocket() {
         var url = socketUrl()
         if (!url) return
-        sendSocket.active = false
-        sendSocket.url = url
-        sendSocket.active = true
+        db6Socket.active = false
+        db6Socket.url = url
+        db6Socket.active = true
     }
 
     Component.onCompleted: openSocket()

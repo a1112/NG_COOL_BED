@@ -42,44 +42,6 @@ class SliceField:
         return self.parser(payload[self.start:self.end])
 
 
-DB5_FIELD_SPECS = [
-    SliceField("DB_VAR2", 4, 6, _read_int),
-    SliceField("DB_VAR3", 8, 10, _read_int),
-    SliceField("STEEL_LENGTH_19", 10, 14, _read_real),
-    SliceField("STEEL_WIDTH_19", 10, 14, _read_real),
-    SliceField("STEEL_THICK_19", 14, 18, _read_real),
-    SliceField("STEEL_TEMP_IN", 18, 22, _read_real),
-    SliceField("DB_VAR12", 26, 28, _read_int),
-    SliceField("DB_VAR11", 28, 30, _read_int),
-    SliceField("STEEL_WEIGHT", 30, 34, _read_real),
-    SliceField("STEEL_NO", 34, 54, _read_string),
-    SliceField("AL_ROLL_SPEED_REF", 58, 62, _read_real),
-    SliceField("R0_RTD_L2_SPEED", 70, 74, _read_real),
-    SliceField("R0_RTCB1_SPEED", 74, 78, _read_real),
-    SliceField("R0_RTCB2_SPEED", 78, 82, _read_real),
-    SliceField("R0_RTCB3_SPEED", 82, 86, _read_real),
-    SliceField("R0_RTCB4_SPEED", 86, 90, _read_real),
-    SliceField("R0_RTCB5_SPEED", 90, 94, _read_real),
-    SliceField("R0_RTCB6_SPEED", 94, 98, _read_real),
-    SliceField("R0_RTCB7_SPEED", 98, 102, _read_real),
-    SliceField("R0_RTCB8_SPEED", 102, 106, _read_real),
-    SliceField("R0_RTCB_SPEED_REF", 106, 110, _read_real),
-]
-
-
-def _decode_bool_flags(flag_bytes: bytes) -> Dict[str, bool]:
-    bit_string = "".join(f"{byte:08b}" for byte in flag_bytes)
-    bits = [c == "1" for c in bit_string]
-    return {
-        "D0_RTD_L2": bits[1],
-        "D0_RTCB_11": bits[2],
-        "D0_RTCB_12": bits[3],
-        "D0_RTCB_13": bits[4],
-        "D0_RTCB_14": bits[5],
-        "D0_RTCB_21": bits[6],
-        "D0_RTCB_22": bits[7],
-        "D0_RTCB_23": bits[8],
-    }
 
 
 class Db5TmeicReader(threading.Thread):
@@ -164,14 +126,9 @@ class Db5TmeicReaderDebug(threading.Thread):
                 "getDateTime": datetime.datetime.now(),
                 "getTimeLen": self._interval,
             }
-            payload.update(_decode_bool_flags(b"\x00\xfe"))
-            for field in DB5_FIELD_SPECS:
-                payload[field.name] = (
-                    self._tick if field.parser is _read_int else float(self._tick)
-                )
             payload["STEEL_NO"] = f"SIM-{self._tick:04d}"
             self._latest = payload
-
+            time.sleep(5)
 
 def create_db5_reader() -> Db5TmeicReader | Db5TmeicReaderDebug:
     return Db5TmeicReaderDebug() if DEBUG_MODEL else Db5TmeicReader()
