@@ -23,6 +23,8 @@ CONFIG_FOLDER = next((p for p in _CONFIG_CANDIDATES if p.is_dir()), None)
 if CONFIG_FOLDER is None:
     raise FileNotFoundError(f"CONFIG_FOLDER 不存在，已尝试: {', '.join(str(p) for p in _CONFIG_CANDIDATES)}")
 
+IS_LOC = CONFIG_FOLDER.resolve() == (PROJECT_ROOT / "config").resolve()
+
 SOFT_FOLDER = next(
     (p for p in [
         CONFIG_FOLDER / "soft",
@@ -87,7 +89,8 @@ encoding = "utf-8"
 
 MappingPath.mkdir(exist_ok=True, parents=True)
 MappingCurrent.mkdir(exist_ok=True, parents=True)
-FIRST_SAVE_FOLDER.mkdir(exist_ok=True, parents=True)
+if not IS_LOC:
+    FIRST_SAVE_FOLDER.mkdir(exist_ok=True, parents=True)
 DATA_FOLDER = CONFIG_FOLDER / "data"
 DATA_FOLDER.mkdir(exist_ok=True, parents=True)
 DEBUG_MODEL = False

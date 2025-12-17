@@ -28,6 +28,9 @@ class CameraImageSave(ImageSaveBase):
         :return:
         """
 
+        if not getattr(save_config, "first_save_enabled", True):
+            return
+
         if not self.first_buffer_saved:
             """
             开机保存

@@ -2,7 +2,10 @@
 入口
 
 """
-
+import sys
+from pathlib import Path
+print(str(Path(__file__).parent.parent.parent))
+sys.path.append(str(Path(__file__).parent.parent.parent))
 from multiprocessing import freeze_support
 import logging
 

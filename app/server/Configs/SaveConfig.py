@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import CONFIG
 from tool import load_json
 from CONFIG import SAVE_CONFIG, CAMERA_CONFIG_FOLDER, FIRST_SAVE_FOLDER, CAMERA_SAVE_FOLDER
 from .ConfigBase import ConfigBase
@@ -14,11 +15,14 @@ class SaveConfig(ConfigBase):
         self.camera_save_config = self.config["camera"]
         self.camera_saved = self.camera_save_config["enable"]
         self.camera_save_folder = CAMERA_SAVE_FOLDER / Path(self.camera_save_config["folder"])
-        self.first_save_map_folder =  FIRST_SAVE_FOLDER/"mapping"
-        self.first_save_map_folder.mkdir(parents=True, exist_ok=True)
+        self.first_save_enabled = not getattr(CONFIG, "IS_LOC", False)
+        self.first_save_map_folder = FIRST_SAVE_FOLDER / "mapping"
+        if self.first_save_enabled:
+            self.first_save_map_folder.mkdir(parents=True, exist_ok=True)
         self.camera_save_folder.mkdir(parents=True, exist_ok=True)
-        self.first_save_camera_folder =  FIRST_SAVE_FOLDER/"camera"
-        self.first_save_camera_folder.mkdir(parents=True, exist_ok=True)
+        self.first_save_camera_folder = FIRST_SAVE_FOLDER / "camera"
+        if self.first_save_enabled:
+            self.first_save_camera_folder.mkdir(parents=True, exist_ok=True)
 
         self.camera_save_name = self.camera_save_config["name"]
 
