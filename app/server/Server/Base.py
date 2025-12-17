@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Optional
 import numpy as np
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+import xml.etree.ElementTree as ET
 
 import CONFIG
 from Configs.AppConfigs import app_configs
@@ -31,6 +32,7 @@ from CONFIG import (
     FIRST_SAVE_FOLDER,
 )
 from fastapi.responses import StreamingResponse, FileResponse, Response
+from CameraStreamer.ConversionImage import ConversionImage
 
 import tool as common_tool
 from Server.tool import noFindImageByte
@@ -44,6 +46,9 @@ app = FastAPI(debug=False)
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
+
+
+_last_stream_frame_cache = {}
 
 
 def get_data_item_info(data:DataItem):
@@ -126,9 +131,38 @@ async def get_image(cool_bed:str, key:str, cap_index:int,show_mask=0):
     return Response(content=encoded_image.tobytes(), media_type="image/jpeg")
 
 
-def _video_stream(worker: CoolBedThreadWorker, group_key: str, show_mask: int):
+def _video_stream(
+    worker: CoolBedThreadWorker,
+    cool_bed: str,
+    group_key: str,
+    show_mask: int,
+    fmt: str = "jpg",
+    jpeg_quality: int = 80,
+    color: str = "bgr",
+):
     boundary = b"--frame"
     show_mask = int(show_mask)
+    fmt = (fmt or "jpg").lower()
+    if fmt == "jpeg":
+        fmt = "jpg"
+    if fmt not in {"jpg", "png"}:
+        fmt = "jpg"
+    jpeg_quality = int(jpeg_quality)
+    jpeg_quality = max(10, min(95, jpeg_quality))
+    content_type = b"image/png" if fmt == "png" else b"image/jpeg"
+    color = (color or "bgr").lower()
+    if color not in {"bgr", "rgb"}:
+        color = "bgr"
+    cache_key = (cool_bed, group_key, show_mask, fmt, jpeg_quality, color)
+    cached = _last_stream_frame_cache.get(cache_key)
+    if cached:
+        frame_len = str(len(cached)).encode("ascii")
+        yield (
+            boundary + b"\r\n"
+            b"Content-Type: " + content_type + b"\r\n"
+            b"Content-Length: " + frame_len + b"\r\n\r\n"
+            + cached + b"\r\n"
+        )
     while True:
         try:
             _, cv_image = worker.get_image(group_key, show_mask)
@@ -138,23 +172,42 @@ def _video_stream(worker: CoolBedThreadWorker, group_key: str, show_mask: int):
             time.sleep(0.05)
             continue
         frame_to_encode = _ensure_limited_range(cv_image)
-        ok, encoded_image = cv2.imencode(".jpg", frame_to_encode)
+        if color == "rgb":
+            frame_to_encode = cv2.cvtColor(frame_to_encode, cv2.COLOR_BGR2RGB)
+        if fmt == "png":
+            ok, encoded_image = cv2.imencode(".png", frame_to_encode)
+        else:
+            ok, encoded_image = cv2.imencode(
+                ".jpg",
+                frame_to_encode,
+                [int(cv2.IMWRITE_JPEG_QUALITY), jpeg_quality],
+            )
         if not ok:
             continue
         frame = encoded_image.tobytes()
+        _last_stream_frame_cache[cache_key] = frame
+        frame_len = str(len(frame)).encode("ascii")
         yield (
             boundary + b"\r\n"
-            b"Content-Type: image/jpeg\r\n\r\n"
+            b"Content-Type: " + content_type + b"\r\n"
+            b"Content-Length: " + frame_len + b"\r\n\r\n"
             + frame + b"\r\n"
         )
         time.sleep(0.03)
 
 
 def _ensure_limited_range(frame):
-    if frame is None or frame.dtype != np.uint8:
+    """
+    Convert to uint8 and clamp to limited range (TV):
+    - Y:   [16, 235]
+    - U/V: [16, 240]
+    """
+    if frame is None:
         return frame
     if frame.ndim != 3 or frame.shape[2] != 3:
         return frame
+    if frame.dtype != np.uint8:
+        frame = cv2.convertScaleAbs(frame)
     yuv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
     y_channel = np.clip(yuv[:, :, 0], 16, 235)
     u_channel = np.clip(yuv[:, :, 1], 16, 240)
@@ -162,9 +215,192 @@ def _ensure_limited_range(frame):
     yuv = np.stack((y_channel, u_channel, v_channel), axis=2).astype(np.uint8, copy=False)
     return cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR)
 
+class _MuxBuffer:
+    def __init__(self):
+        self._buf = bytearray()
+
+    def write(self, data: bytes) -> int:
+        self._buf.extend(data)
+        return len(data)
+
+    def flush(self) -> None:  # file-like compatibility
+        return None
+
+    def pop(self) -> bytes:
+        if not self._buf:
+            return b""
+        data = bytes(self._buf)
+        self._buf.clear()
+        return data
+
+
+def _video_stream_ts(
+    worker: CoolBedThreadWorker,
+    group_key: str,
+    show_mask: int,
+    fps: int = 25,
+    crf: int = 28,
+    preset: str = "ultrafast",
+    color: str = "bgr",
+):
+    try:
+        import av  # type: ignore
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="PyAV not available") from exc
+
+    fps = int(fps)
+    fps = max(1, min(60, fps))
+    crf = int(crf)
+    crf = max(0, min(51, crf))
+    preset = (preset or "ultrafast").strip()
+    color = (color or "bgr").lower()
+    if color not in {"bgr", "rgb"}:
+        color = "bgr"
+    show_mask = int(show_mask)
+
+    width = None
+    height = None
+    while True:
+        try:
+            _, cv_image = worker.get_image(group_key, show_mask)
+        except Exception:
+            cv_image = None
+        if cv_image is None:
+            time.sleep(0.05)
+            continue
+        if cv_image is not None and cv_image.ndim == 3 and cv_image.shape[2] == 3:
+            height, width = cv_image.shape[:2]
+            break
+
+    pad_right = 1 if int(width) % 2 else 0
+    pad_bottom = 1 if int(height) % 2 else 0
+    enc_width = int(width) + pad_right
+    enc_height = int(height) + pad_bottom
+
+    mux_buffer = _MuxBuffer()
+    output = av.open(mux_buffer, mode="w", format="mpegts")
+    stream = output.add_stream("libx264", rate=fps)
+    stream.width = enc_width
+    stream.height = enc_height
+    stream.pix_fmt = "yuv420p"
+    # Limited range (TV) to match the 16-235 clamping above.
+    stream.codec_context.color_range = 1
+    stream.options = {
+        "preset": preset,
+        "tune": "zerolatency",
+        "crf": str(crf),
+    }
+
+    try:
+        last_time = 0.0
+        while True:
+            if fps > 0:
+                now = time.time()
+                min_dt = 1.0 / fps
+                if last_time and now - last_time < min_dt:
+                    time.sleep(min_dt - (now - last_time))
+                last_time = time.time()
+
+            try:
+                _, cv_image = worker.get_image(group_key, show_mask)
+            except Exception:
+                cv_image = None
+            if cv_image is None:
+                continue
+
+            frame_to_encode = _ensure_limited_range(cv_image)
+            if frame_to_encode is None:
+                continue
+            if frame_to_encode.ndim != 3 or frame_to_encode.shape[2] != 3:
+                continue
+            if frame_to_encode.dtype != np.uint8:
+                frame_to_encode = frame_to_encode.astype(np.uint8, copy=False)
+            if frame_to_encode.shape[1] != width or frame_to_encode.shape[0] != height:
+                frame_to_encode = cv2.resize(frame_to_encode, (int(width), int(height)))
+            if pad_right or pad_bottom:
+                frame_to_encode = cv2.copyMakeBorder(
+                    frame_to_encode,
+                    0,
+                    pad_bottom,
+                    0,
+                    pad_right,
+                    borderType=cv2.BORDER_CONSTANT,
+                    value=(0, 0, 0),
+                )
+
+            if color == "rgb":
+                frame_to_encode = cv2.cvtColor(frame_to_encode, cv2.COLOR_BGR2RGB)
+                video_frame = av.VideoFrame.from_ndarray(frame_to_encode, format="rgb24")
+            else:
+                video_frame = av.VideoFrame.from_ndarray(frame_to_encode, format="bgr24")
+            for packet in stream.encode(video_frame):
+                output.mux(packet)
+                chunk = mux_buffer.pop()
+                if chunk:
+                    yield chunk
+    finally:
+        try:
+            for packet in stream.encode(None):
+                output.mux(packet)
+                chunk = mux_buffer.pop()
+                if chunk:
+                    yield chunk
+        except Exception:
+            pass
+        try:
+            output.close()
+        except Exception:
+            pass
+
 
 @app.get("/video/{cool_bed:str}/{key:str}/{show_mask:int}")
-async def get_video_stream(cool_bed: str, key: str, show_mask: int = 0):
+async def get_video_stream(
+    cool_bed: str,
+    key: str,
+    show_mask: int = 0,
+    fmt: str = "jpg",
+    jpeg_quality: int = 80,
+    fps: int = 4,
+    crf: int = 28,
+    preset: str = "ultrafast",
+    color: str = "bgr",
+):
+    if cool_bed not in cool_bed_thread_worker_map:
+        raise HTTPException(status_code=404, detail=f"cool_bed not found: {cool_bed}")
+    worker = cool_bed_thread_worker_map[cool_bed]
+    worker: CoolBedThreadWorker
+    if key not in worker.config.groups_dict:
+        raise HTTPException(status_code=404, detail=f"group not found: {key}")
+    fmt_norm = (fmt or "jpg").strip().lower()
+    if fmt_norm in {"ts", "mpegts", "h264", "h.264"}:
+        return StreamingResponse(
+            _video_stream_ts(worker, key, show_mask, fps=fps, crf=crf, preset=preset, color=color),
+            media_type="video/mp2t",
+        )
+    return StreamingResponse(
+        _video_stream(
+            worker,
+            cool_bed,
+            key,
+            show_mask,
+            fmt=fmt,
+            jpeg_quality=jpeg_quality,
+            color=color,
+        ),
+        media_type="multipart/x-mixed-replace;boundary=frame",
+    )
+
+
+@app.get("/video_ts/{cool_bed:str}/{key:str}/{show_mask:int}")
+async def get_video_stream_ts(
+    cool_bed: str,
+    key: str,
+    show_mask: int = 0,
+    fps: int = 25,
+    crf: int = 28,
+    preset: str = "ultrafast",
+    color: str = "bgr",
+):
     if cool_bed not in cool_bed_thread_worker_map:
         raise HTTPException(status_code=404, detail=f"cool_bed not found: {cool_bed}")
     worker = cool_bed_thread_worker_map[cool_bed]
@@ -172,8 +408,8 @@ async def get_video_stream(cool_bed: str, key: str, show_mask: int = 0):
     if key not in worker.config.groups_dict:
         raise HTTPException(status_code=404, detail=f"group not found: {key}")
     return StreamingResponse(
-        _video_stream(worker, key, show_mask),
-        media_type="multipart/x-mixed-replace; boundary=frame",
+        _video_stream_ts(worker, key, show_mask, fps=fps, crf=crf, preset=preset, color=color),
+        media_type="video/mp2t",
     )
 
 
@@ -360,6 +596,62 @@ def _load_calibrate_file(calibrate: str, filename: str):
         raise HTTPException(status_code=500, detail=f"failed to read {filename}") from exc
 
 
+def _safe_calibrate_folder(calibrate: str) -> Path:
+    base = (CAMERA_CONFIG_FOLDER / "cameras").resolve()
+    folder = (base / calibrate).resolve()
+    try:
+        folder.relative_to(base)
+    except Exception:
+        raise HTTPException(status_code=400, detail="invalid calibrate folder")
+    if not folder.is_dir():
+        raise HTTPException(status_code=404, detail=f"calibrate folder not found: {calibrate}")
+    return folder
+
+
+def _safe_mapping_folder(calibrate: str) -> Path:
+    base = MappingPath.resolve()
+    folder = (base / calibrate).resolve()
+    try:
+        folder.relative_to(base)
+    except Exception:
+        raise HTTPException(status_code=400, detail="invalid mapping folder")
+    folder.mkdir(parents=True, exist_ok=True)
+    return folder
+
+
+def _find_group_config(camera_manage: dict, group_key: str) -> dict:
+    group_root = (camera_manage or {}).get("group") or {}
+    for bed_key, bed_cfg in group_root.items():
+        bed_cfg = bed_cfg or {}
+        groups = bed_cfg.get("group") or []
+        if isinstance(groups, dict):
+            groups = list(groups.values())
+        for g in groups:
+            g = g or {}
+            if g.get("key") == group_key:
+                return g
+    raise HTTPException(status_code=404, detail=f"group not found: {group_key}")
+
+
+def _update_mapping_xml_size(xml_path: Path, width: int, height: int) -> None:
+    if not xml_path.is_file():
+        return
+    try:
+        root = ET.fromstring(xml_path.read_text(encoding="utf-8"))
+        size_node = root.find("size")
+        if size_node is None:
+            return
+        w_node = size_node.find("width")
+        h_node = size_node.find("height")
+        if w_node is not None:
+            w_node.text = str(int(width))
+        if h_node is not None:
+            h_node.text = str(int(height))
+        xml_path.write_text(ET.tostring(root, encoding="unicode"), encoding="utf-8")
+    except Exception:
+        return
+
+
 def _safe_mapping_path(calibrate: str, filename: str) -> Path:
     base = (MappingPath / calibrate).resolve()
     path = (base / filename).resolve()
@@ -443,6 +735,60 @@ def get_calibrate_camera_manage(calibrate: str):
 @app.get("/calibrate/camera_manage")
 def get_current_calibrate_camera_manage():
     return _load_calibrate_file(CURRENT_CALIBRATE, "CameraManage.json")
+
+
+@app.post("/calibrate/perspective/refresh")
+def refresh_calibrate_perspective(payload: Optional[dict] = None):
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="payload must be object")
+    folder = payload.get("folder") or CURRENT_CALIBRATE
+    group_key = payload.get("group")
+    if not isinstance(folder, str) or not folder.strip():
+        raise HTTPException(status_code=400, detail="folder must be string")
+    if not isinstance(group_key, str) or not group_key.strip():
+        raise HTTPException(status_code=400, detail="group must be string")
+    folder = folder.strip()
+    group_key = group_key.strip()
+
+    calibrate_root = _safe_calibrate_folder(folder)
+    camera_manage = _load_calibrate_file(folder, "CameraManage.json")
+    group_cfg = _find_group_config(camera_manage, group_key)
+    camera_list = group_cfg.get("camera_list") or []
+    size_list = group_cfg.get("size_list") or []
+    if not camera_list or not size_list or len(camera_list) != len(size_list):
+        raise HTTPException(status_code=400, detail="invalid group camera/size list")
+
+    images = []
+    for cam_id, size in zip(camera_list, size_list):
+        if not isinstance(cam_id, str) or not cam_id:
+            raise HTTPException(status_code=400, detail="invalid camera id")
+        try:
+            width, height = int(size[0]), int(size[1])
+        except Exception as exc:
+            raise HTTPException(status_code=400, detail=f"invalid size for {cam_id}") from exc
+
+        img_path = _safe_calibrate_path(folder, f"{cam_id}.jpg")
+        if not img_path.is_file():
+            img_path = _safe_calibrate_path(folder, f"{cam_id}.png")
+        if not img_path.is_file():
+            raise HTTPException(status_code=404, detail=f"camera image not found: {cam_id}")
+        frame = cv2.imread(str(img_path), cv2.IMREAD_COLOR)
+        if frame is None:
+            raise HTTPException(status_code=500, detail=f"failed to read image: {cam_id}")
+
+        conv = ConversionImage(cam_id, width, height, calibrate_root=calibrate_root)
+        warped = conv.image_conversion(frame)
+        images.append(warped)
+
+    joined = np.hstack(images) if len(images) > 1 else images[0]
+    mapping_folder = _safe_mapping_folder(folder)
+    out_jpg = (mapping_folder / f"{group_key}.jpg").resolve()
+    ok = cv2.imwrite(str(out_jpg), joined)
+    if not ok:
+        raise HTTPException(status_code=500, detail="failed to write mapping image")
+
+    _update_mapping_xml_size(mapping_folder / f"{group_key}.xml", int(joined.shape[1]), int(joined.shape[0]))
+    return {"ok": True, "image": str(out_jpg), "size": {"width": int(joined.shape[1]), "height": int(joined.shape[0])}}
 
 
 @app.get("/test_pre_image")

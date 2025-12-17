@@ -36,10 +36,12 @@ Item {
 
     function get_video_url(cool_bed_key, key, show_mask, token){
         var base = server_url.url(server_url.serverUrl, "video", cool_bed_key, key, parseInt(show_mask+0))
+        var sep = base.indexOf("?") === -1 ? "?" : "&"
+        base = base + sep + "fmt=ts&color=rgb"
         if (token === undefined || token === null) {
             return base
         }
-        var sep = base.indexOf("?") === -1 ? "?" : "&"
+        sep = base.indexOf("?") === -1 ? "?" : "&"
         return base + sep + "t=" + token
     }
 

@@ -2,13 +2,19 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "../base"
-
-ColumnLayout {
+Item{
     id: page
     property var core: null
     property QtObject coreRef: core
+    ScrollView{
+        anchors.fill: parent
+        contentWidth: parent.width
+        contentHeight: col.height
+
+ColumnLayout {
+    id:col
     spacing: 8
-    anchors.fill: parent
+    width: parent.width
 
     function toFileUrl(path) {
         if (!path || !path.length)
@@ -160,4 +166,7 @@ ColumnLayout {
     }
 
     Item { Layout.fillHeight: true }
+}
+}
+
 }

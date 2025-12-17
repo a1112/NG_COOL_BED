@@ -9,7 +9,6 @@ Dialog {
     property SettingCore core: settingCore
     property bool predictDisplayEnabled: true
     property bool predictDisplayBusy: false
-
     modal: true
     focus: true
     x: (parent ? parent.width - width : 800) / 2
@@ -61,9 +60,8 @@ Dialog {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 12
-        spacing: 10
-
+        anchors.margins: 2
+        spacing: 1
         RowLayout {
             Layout.fillWidth: true
             Label {
@@ -93,6 +91,7 @@ Dialog {
             currentIndex: tabs.currentIndex
 
             GeneralSettingsPage {
+                anchors.fill: parent
                 core: settingCore
             }
 

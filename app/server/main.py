@@ -2,12 +2,16 @@
 入口
 
 """
+import os
 import sys
 from pathlib import Path
 print(str(Path(__file__).parent.parent.parent))
 sys.path.append(str(Path(__file__).parent.parent.parent))
 from multiprocessing import freeze_support
 import logging
+
+# Reduce noisy FFmpeg swscaler warnings from OpenCV decode pipeline.
+os.environ.setdefault("OPENCV_FFMPEG_LOGLEVEL", "24")
 
 from Configs.CameraManageConfig import camera_manage_config
 from Configs.CoolBedGroupConfig import CoolBedGroupConfig

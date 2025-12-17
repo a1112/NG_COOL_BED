@@ -39,16 +39,45 @@ class ShowThread(Thread):
     def __init__(self):
         super().__init__()
         self.image_show_queue = Queue()
+        self._windows = set()
         self.start()
 
     def run(self):
         while True:
-            title,img = self.image_show_queue.get()
-            cv2.namedWindow(title, flags=cv2.WINDOW_NORMAL)
-            cv2.imshow(zh_ch(title), img)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                return
-            time.sleep(0.01)
+            if not getattr(CONFIG, "SHOW_OPENCV", True):
+                try:
+                    cv2.destroyAllWindows()
+                except Exception:
+                    pass
+                self._windows.clear()
+                time.sleep(0.05)
+                continue
+
+            try:
+                title, img = self.image_show_queue.get(timeout=0.03)
+            except Exception:
+                cv2.waitKey(1)
+                continue
+
+            window_name = zh_ch(title)
+            try:
+                if window_name not in self._windows:
+                    cv2.namedWindow(window_name, flags=cv2.WINDOW_NORMAL)
+                    self._windows.add(window_name)
+                cv2.imshow(window_name, img)
+                key = cv2.waitKey(1) & 0xFF
+                if key == ord('q'):
+                    try:
+                        cv2.destroyWindow(window_name)
+                    except Exception:
+                        pass
+                    self._windows.discard(window_name)
+            except Exception:
+                try:
+                    cv2.destroyWindow(window_name)
+                except Exception:
+                    pass
+                self._windows.discard(window_name)
 
     def add(self,title,img):
         self.image_show_queue.put([title, img])

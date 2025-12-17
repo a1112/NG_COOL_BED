@@ -6,6 +6,9 @@ Item {
     Layout.fillWidth: true
     Layout.fillHeight: true
 
+    property bool tsFallbackUsed: false
+    property bool jpgFallbackUsed: false
+
     property MapConfigItem map_config_item: MapConfigItem{
         draw_width:map_view.width
         draw_height: map_view.height
@@ -24,6 +27,29 @@ Item {
         source: cool_bed_core.video_url
         onErrorOccurred: {
             console.warn("video error:", errorString)
+            if (source) {
+                var src = source.toString()
+                if (!tsFallbackUsed && src.indexOf("fmt=png") !== -1) {
+                    tsFallbackUsed = true
+                    var fallbackTs = src.replace("fmt=png", "fmt=ts")
+                    console.warn("fallback to ts:", fallbackTs)
+                    videoPlayer.stop()
+                    videoPlayer.source = ""
+                    videoPlayer.source = fallbackTs
+                    videoPlayer.play()
+                    return
+                }
+                if (!jpgFallbackUsed && src.indexOf("fmt=ts") !== -1) {
+                    jpgFallbackUsed = true
+                    var fallbackJpg = src.replace("fmt=ts", "fmt=jpg")
+                    console.warn("fallback to mjpeg:", fallbackJpg)
+                    videoPlayer.stop()
+                    videoPlayer.source = ""
+                    videoPlayer.source = fallbackJpg
+                    videoPlayer.play()
+                    return
+                }
+            }
             streamReconnectTimer.restart()
         }
         onPlaybackStateChanged: {
@@ -36,6 +62,8 @@ Item {
     Connections {
         target: cool_bed_core
         function onVideo_urlChanged() {
+            tsFallbackUsed = false
+            jpgFallbackUsed = false
             restartStream()
         }
     }

@@ -48,7 +48,7 @@ ColumnLayout {
         spacing: 10
         ActionButton {
             text: qsTr("刷新")
-            onClicked: Core.CalibrationViewCore.loadMappingForGroup()
+            onClicked: Core.CalibrationViewCore.refreshPerspective()
         }
         ActionButton {
             text: qsTr("保存")
