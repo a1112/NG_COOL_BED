@@ -139,6 +139,10 @@ Item {
         return ajax.post(calibrateUrl("perspective", "refresh"), payload, success, failure)
     }
 
+    function replace_calibrate_image(payload, success, failure) {
+        return ajax.post(calibrateUrl("image", "replace"), payload, success, failure)
+    }
+
     function get_alg_models(success, failure) {
         return ajax.get(server_url.url(server_url.serverUrl, "alg", "models"), success, failure)
     }

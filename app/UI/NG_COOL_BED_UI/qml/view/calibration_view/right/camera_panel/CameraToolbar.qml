@@ -87,8 +87,26 @@ RowLayout {
 
     ActionButton {
         visible: !Core.CalibrationViewCore.offlineMode && Core.CalibrationViewCore.selectedCameraId.length > 0
+        text: qsTr("最新保存")
+        onClicked: Core.CalibrationViewCore.useLatestSavedCameraImage()
+    }
+
+    ActionButton {
+        visible: !Core.CalibrationViewCore.offlineMode && Core.CalibrationViewCore.selectedCameraId.length > 0
         text: qsTr("保存图像")
         onClicked: Core.CalibrationViewCore.saveCapturedImages()
+    }
+
+    ActionButton {
+        visible: !Core.CalibrationViewCore.offlineMode && Core.CalibrationViewCore.cameraImagePending
+        text: qsTr("替换")
+        onClicked: Core.CalibrationViewCore.replacePendingCameraImage()
+    }
+
+    ActionButton {
+        visible: !Core.CalibrationViewCore.offlineMode && Core.CalibrationViewCore.cameraImagePending
+        text: qsTr("还原")
+        onClicked: Core.CalibrationViewCore.restoreCameraImage()
     }
     Item{
         Layout.fillWidth: true

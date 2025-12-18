@@ -3,6 +3,7 @@ import json
 import asyncio
 import time
 import math
+import shutil
 from pathlib import Path
 from typing import Optional
 import numpy as np
@@ -673,6 +674,43 @@ def _sdk_capture_camera_path(camera_id: str) -> Path:
     return path
 
 
+CAPTURE_TMP_FOLDER = CAMERA_CONFIG_FOLDER / "capture_tmp"
+
+
+def _safe_capture_tmp_path(calibrate: str, camera_id: str, suffix: str = ".jpg") -> Path:
+    _safe_calibrate_folder(calibrate)
+    base = (CAPTURE_TMP_FOLDER / calibrate).resolve()
+    base.mkdir(parents=True, exist_ok=True)
+    name = f"{camera_id}{suffix}"
+    path = (base / name).resolve()
+    try:
+        path.relative_to(base)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail="invalid camera id") from exc
+    return path
+
+
+def _find_latest_camera_frame(camera_id: str):
+    for worker in (cool_bed_thread_worker_map or {}).values():
+        try:
+            capture = getattr(worker, "camera_map", {}).get(camera_id)
+            if capture is None:
+                continue
+            frame = capture.get_latest_frame()
+            if frame is not None:
+                return frame
+        except Exception:
+            continue
+    for worker in (cool_bed_thread_worker_map or {}).values():
+        try:
+            frames = worker.snapshot_camera_frames()
+            if camera_id in frames:
+                return frames[camera_id]
+        except Exception:
+            continue
+    return None
+
+
 @app.get("/calibrate/label/{calibrate}/{cam_id}")
 def get_calibrate_label(calibrate: str, cam_id: str):
     return _load_calibrate_file(calibrate, f"{cam_id}.json")
@@ -705,6 +743,106 @@ def get_calibrate_image(calibrate: str, image_name: str):
     if not path.is_file():
         raise HTTPException(status_code=404, detail=f"image not found: {name}")
     return FileResponse(path, media_type="image/jpeg")
+
+
+@app.get("/calibrate/capture/preview/{calibrate}/{camera_id}")
+def get_calibrate_capture_preview(calibrate: str, camera_id: str):
+    path = _safe_capture_tmp_path(calibrate, camera_id)
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail=f"capture preview not found: {camera_id}")
+    return FileResponse(path, media_type="image/jpeg")
+
+
+@app.post("/calibrate/capture")
+def capture_calibrate_camera(payload: Optional[dict] = None):
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="payload must be object")
+    folder = payload.get("folder") or CURRENT_CALIBRATE
+    camera_id = payload.get("camera")
+    if not isinstance(folder, str) or not folder.strip():
+        raise HTTPException(status_code=400, detail="folder must be string")
+    if not isinstance(camera_id, str) or not camera_id.strip():
+        raise HTTPException(status_code=400, detail="camera must be string")
+    folder = folder.strip()
+    camera_id = camera_id.strip()
+
+    _safe_calibrate_folder(folder)
+    frame = _find_latest_camera_frame(camera_id)
+    if frame is None:
+        raise HTTPException(status_code=404, detail=f"camera frame not ready: {camera_id}")
+    out_path = _safe_capture_tmp_path(folder, camera_id)
+    ok = cv2.imwrite(str(out_path), frame)
+    if not ok:
+        raise HTTPException(status_code=500, detail="failed to write capture image")
+    logger.info("calibrate capture: folder=%s camera=%s -> %s", folder, camera_id, out_path)
+    return {"ok": True, "folder": folder, "camera": camera_id, "path": str(out_path)}
+
+
+@app.post("/calibrate/capture/save")
+def save_calibrate_capture(payload: Optional[dict] = None):
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="payload must be object")
+    folder = payload.get("folder") or CURRENT_CALIBRATE
+    if not isinstance(folder, str) or not folder.strip():
+        raise HTTPException(status_code=400, detail="folder must be string")
+    folder = folder.strip()
+
+    _safe_calibrate_folder(folder)
+    staged_dir = (CAPTURE_TMP_FOLDER / folder).resolve()
+    if not staged_dir.is_dir():
+        raise HTTPException(status_code=404, detail="no captured images staged")
+
+    saved = 0
+    for staged in staged_dir.glob("*.jpg"):
+        dest = _safe_calibrate_path(folder, staged.name)
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(staged, dest)
+        saved += 1
+    if saved:
+        for staged in staged_dir.glob("*.jpg"):
+            try:
+                staged.unlink(missing_ok=True)
+            except Exception:
+                continue
+    logger.info("calibrate capture save: folder=%s count=%s", folder, saved)
+    return {"ok": True, "folder": folder, "count": saved}
+
+
+@app.post("/calibrate/image/replace")
+def replace_calibrate_image(payload: Optional[dict] = None):
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="payload must be object")
+    folder = payload.get("folder") or CURRENT_CALIBRATE
+    camera_id = payload.get("camera")
+    source = payload.get("source")
+    if not isinstance(folder, str) or not folder.strip():
+        raise HTTPException(status_code=400, detail="folder must be string")
+    if not isinstance(camera_id, str) or not camera_id.strip():
+        raise HTTPException(status_code=400, detail="camera must be string")
+    if not isinstance(source, str) or not source.strip():
+        raise HTTPException(status_code=400, detail="source must be string")
+    folder = folder.strip()
+    camera_id = camera_id.strip()
+    source = source.strip()
+
+    _safe_calibrate_folder(folder)
+
+    if source == "first_save":
+        src = _sdk_capture_camera_path(camera_id)
+        if not src.is_file():
+            raise HTTPException(status_code=404, detail="first_save image not found")
+    elif source == "capture":
+        src = _safe_capture_tmp_path(folder, camera_id)
+        if not src.is_file():
+            raise HTTPException(status_code=404, detail="capture image not found")
+    else:
+        raise HTTPException(status_code=400, detail="invalid source")
+
+    dest = _safe_calibrate_path(folder, f"{camera_id}.jpg")
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, dest)
+    logger.info("calibrate image replace: folder=%s camera=%s source=%s", folder, camera_id, source)
+    return {"ok": True, "folder": folder, "camera": camera_id, "source": source}
 
 
 @app.get("/capture/rtsp/{camera_id}")

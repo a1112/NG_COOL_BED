@@ -29,6 +29,9 @@ Item {
     property string cameraImageSource: ""
     property var objectSettings: []
 
+    property bool cameraImagePending: false
+    property string cameraImagePendingType: ""
+
     property bool autoRefresh: false
     property string statusMessage: ""
     property bool busy: false
@@ -65,6 +68,8 @@ Item {
     onSelectedGroupKeyChanged: applySelectedGroup()
 
     onSelectedCameraIdChanged: {
+        cameraImagePending = false
+        cameraImagePendingType = ""
         refreshCameraImage()
         loadLabelForCamera(selectedCameraId)
     }
@@ -319,6 +324,7 @@ Item {
     }
 
     function refreshCameraImage() {
+        if (cameraImagePending) return
         if (!selectedCameraId || !currentFolder) {
             cameraImageSource = ""
             labelImagePath = ""
@@ -326,6 +332,73 @@ Item {
         }
         const imgName = labelImagePath && labelImagePath.length ? labelImagePath : selectedCameraId
         cameraImageSource = cameraRemoteUrl(currentFolder, imgName, "jpg")
+    }
+
+    function capturePreviewUrl(folder, cameraId) {
+        if (!folder || !cameraId) return ""
+        return httpUrl([ApiMod.Api.server_url.serverUrl, "calibrate", "capture", "preview", folder, cameraId])
+    }
+
+    function firstSavePreviewUrl(cameraId) {
+        if (!cameraId) return ""
+        return httpUrl([ApiMod.Api.server_url.serverUrl, "capture", "rtsp", cameraId])
+    }
+
+    function setPendingCameraImage(url, type) {
+        if (!url || !url.length) return
+        cameraImagePending = true
+        cameraImagePendingType = type || ""
+        cameraImageSource = buildImageSource(url)
+    }
+
+    function useLatestSavedCameraImage() {
+        if (!selectedCameraId) {
+            statusMessage = qsTr("请选择相机")
+            return
+        }
+        if (!(ApiMod.Api && ApiMod.Api.server_url)) {
+            statusMessage = qsTr("缺少服务器配置")
+            return
+        }
+        const url = firstSavePreviewUrl(selectedCameraId)
+        setPendingCameraImage(url, "first_save")
+        statusMessage = qsTr("已使用最新保存")
+    }
+
+    function restoreCameraImage() {
+        cameraImagePending = false
+        cameraImagePendingType = ""
+        refreshCameraImage()
+        statusMessage = qsTr("已还原")
+    }
+
+    function replacePendingCameraImage(callback) {
+        if (!cameraImagePending || !cameraImagePendingType) return
+        if (!currentFolder || !selectedCameraId) return
+        if (!(ApiMod.Api && ApiMod.Api.replace_calibrate_image)) {
+            statusMessage = qsTr("缺少替换接口")
+            return
+        }
+        const payload = {
+            folder: currentFolder,
+            camera: selectedCameraId,
+            source: cameraImagePendingType
+        }
+        busy = true
+        ApiMod.Api.replace_calibrate_image(payload,
+                                          function(resp) {
+                                              busy = false
+                                              cameraImagePending = false
+                                              cameraImagePendingType = ""
+                                              refreshCameraImage()
+                                              statusMessage = qsTr("替换完成")
+                                              if (callback) callback(true, resp)
+                                          },
+                                          function(err) {
+                                              busy = false
+                                              statusMessage = qsTr("替换失败")
+                                              if (callback) callback(false, err)
+                                          })
     }
 
     function loadLabelForCamera(camId) {
@@ -556,7 +629,8 @@ Item {
                                             function(resp){
                                                 busy = false
                                                 statusMessage = qsTr("采集完成")
-                                                refreshCameraImage()
+                                                const previewUrl = capturePreviewUrl(currentFolder, selectedCameraId)
+                                                setPendingCameraImage(previewUrl, "capture")
                                                 if (callback) callback(true, resp)
                                             },
                                             function(err){
