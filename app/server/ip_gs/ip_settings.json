@@ -2,32 +2,6 @@
   "version": 1,
   "profiles": [
     {
-      "name": "L2",
-      "mac_address": "00-E0-4C-6A-47-1A",
-      "interface_alias": "L2",
-      "interface_description": "Realtek Gaming 2.5GbE Family Controller #3",
-      "dhcp": false,
-      "ipv4": {
-        "address": "10.20.28.143",
-        "prefix_length": 24,
-        "gateway": ""
-      },
-      "dns_servers": []
-    },
-    {
-      "name": "7,8,9_b",
-      "mac_address": "00-E0-4C-6A-47-18",
-      "interface_alias": "7,8,9_b",
-      "interface_description": "Realtek Gaming 2.5GbE Family Controller #2",
-      "dhcp": false,
-      "ipv4": {
-        "address": "40.40.40.45",
-        "prefix_length": 24,
-        "gateway": ""
-      },
-      "dns_servers": []
-    },
-    {
       "name": "10,11,12",
       "mac_address": "A0-36-9F-80-0A-5A",
       "interface_alias": "10,11,12",
@@ -54,27 +28,14 @@
       "dns_servers": []
     },
     {
-      "name": "4,5,6_b",
-      "mac_address": "00-E0-4C-6A-47-19",
-      "interface_alias": "4,5,6_b",
-      "interface_description": "Realtek Gaming 2.5GbE Family Controller",
-      "dhcp": false,
-      "ipv4": {
-        "address": "30.30.30.32",
-        "prefix_length": 24,
-        "gateway": ""
-      },
-      "dns_servers": []
-    },
-    {
       "name": "7,8,9",
       "mac_address": "A0-36-9F-80-0A-59",
       "interface_alias": "7,8,9",
       "interface_description": "Intel(R) Ethernet Server Adapter I350-T4 #2",
       "dhcp": false,
       "ipv4": {
-        "address": "169.254.42.126",
-        "prefix_length": 16,
+        "address": "40.40.40.40",
+        "prefix_length": 24,
         "gateway": ""
       },
       "dns_servers": []
@@ -86,8 +47,8 @@
       "interface_description": "Intel(R) Ethernet Server Adapter I350-T4",
       "dhcp": false,
       "ipv4": {
-        "address": "169.254.128.176",
-        "prefix_length": 16,
+        "address": "30.30.30.30",
+        "prefix_length": 24,
         "gateway": ""
       },
       "dns_servers": []
@@ -100,6 +61,19 @@
       "dhcp": false,
       "ipv4": {
         "address": "60.60.60.60",
+        "prefix_length": 24,
+        "gateway": ""
+      },
+      "dns_servers": []
+    },
+    {
+      "name": "��̫�� 3",
+      "mac_address": "00-E0-4C-34-6C-80",
+      "interface_alias": " 3",
+      "interface_description": "Realtek USB GbE Family Controller",
+      "dhcp": false,
+      "ipv4": {
+        "address": "10.20.28.143",
         "prefix_length": 24,
         "gateway": ""
       },

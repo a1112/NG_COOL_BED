@@ -1,0 +1,1 @@
+python ip_get.py --export-non-dhcp --out ip_settings.json

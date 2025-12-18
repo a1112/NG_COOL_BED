@@ -7,12 +7,12 @@ class GlobalCoolBedConfigBase:
     """
     def __init__(self,width, height):
         self.roll_width = 1000 # 辊宽
-        self.roll_height = 4920 # 棍子高度
-        self.up_seat_height = 750 # 轴承座上
-        self.down_seat_height = 425 # 轴承座下
+        self.roll_height = 5000 # 棍子高度
+        self.up_seat_height = 700 # 轴承座上
+        self.down_seat_height = 330 # 轴承座下
         self.roll_count = 48
         self.cool_bed_width = 48000 # 长度
-        self.cool_bed_height = 5810  # 识别高度
+        self.cool_bed_height = 5800  # 识别高度
 
     @property
     def MAX_T_CAR_HEIGHT(self):
@@ -62,14 +62,14 @@ class GlobalCoolBedConfigL1(GlobalCoolBedConfigBase):
         super().__init__(width, height)
         self.roll_count = 48
         self.cool_bed_width = 48000
-        self.cool_bed_height = 5810
+        self.cool_bed_height = 5800
 
 class  GlobalCoolBedConfigL2(GlobalCoolBedConfigBase):
     def __init__(self,width, height):
         super().__init__(width, height)
         self.roll_count = 50
         self.cool_bed_width = 50000
-        self.cool_bed_height = 5780
+        self.cool_bed_height = 5800
 
 def get_config(key, width, height):
     print(f"get_config cool_bed_key {key}")

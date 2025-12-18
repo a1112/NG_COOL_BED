@@ -43,6 +43,19 @@ Item {
 
     property string statusMessage: ""
 
+    property int apiRetryIntervalMs: 2000
+    property int apiRetryCount: 0
+    property bool _refreshInFlight: false
+    property bool _refreshPending: false
+    property real _activeRefreshToken: 0
+
+    Timer {
+        id: apiRetryTimer
+        interval: apiRetryIntervalMs
+        repeat: false
+        onTriggered: refreshFromApi()
+    }
+
     function currentLayoutConfig() {
         const count = layoutConfigs ? layoutConfigs.length : 0
         if (!count) return null
@@ -273,27 +286,65 @@ Item {
     }
 
     function refreshFromApi() {
+        if (_refreshInFlight) {
+            _refreshPending = true
+            return
+        }
+
+        _refreshInFlight = true
+        _refreshPending = false
+        apiRetryTimer.stop()
+
+        const token = Date.now() + Math.random()
+        _activeRefreshToken = token
+
+        function finish(ok) {
+            if (_activeRefreshToken !== token) return
+            _refreshInFlight = false
+
+            if (_refreshPending) {
+                refreshFromApi()
+                return
+            }
+
+            if (ok) {
+                apiRetryCount = 0
+                apiRetryTimer.stop()
+                return
+            }
+
+            apiRetryCount += 1
+            if (!apiRetryTimer.running) apiRetryTimer.start()
+        }
+
         if (!ApiMod.Api || !ApiMod.Api.get_cameras) {
             buildCameraInfo([])
             statusMessage = "缺少 API，无法获取相机列表"
+            finish(false)
             return
         }
+
         statusMessage = "请求相机信息..."
         ApiMod.Api.get_cameras(
             (text)=>{
+                if (_activeRefreshToken !== token) return
                 try{
                     const data = JSON.parse(text)
                     buildCameraInfo(data)
                     statusMessage = "相机信息已刷新"
+                    finish(true)
                 }catch(e){
                     statusMessage = "相机信息解析失败"
                     buildCameraInfo([])
+                    finish(false)
                 }
             },
-            (err)=>{
-                console.warn("get_cameras error", err)
+            (err, status)=>{
+                if (_activeRefreshToken !== token) return
+                console.warn("get_cameras error", status, err)
                 statusMessage = "接口错误"
                 buildCameraInfo([])
+                finish(false)
             })
     }
 

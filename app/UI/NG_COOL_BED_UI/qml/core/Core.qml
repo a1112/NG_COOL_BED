@@ -16,6 +16,19 @@ Item {
     property ApiMod.Tool tool: ApiMod.Tool {}
     property ApiMod.Api api: ApiMod.Api
 
+    property int retryIntervalMs: 2000
+    property int retryCount: 0
+    property bool _flushInFlight: false
+    property bool _flushPending: false
+    property real _activeFlushToken: 0
+
+    Timer {
+        id: retryTimer
+        interval: retryIntervalMs
+        repeat: false
+        onTriggered: flush()
+    }
+
     property ListModel coolBedListModel: ListModel { }
 
     onGlobal_infoChanged: {
@@ -35,20 +48,80 @@ Item {
     }
 
     function flush(){
+        if (!api || !api.get_info || !api.get_map) return
+        if (_flushInFlight) {
+            _flushPending = true
+            return
+        }
+
+        _flushInFlight = true
+        _flushPending = false
+        retryTimer.stop()
+
+        const token = Date.now() + Math.random()
+        _activeFlushToken = token
+
+        let infoDone = false
+        let mapDone = false
+        let infoOk = false
+        let mapOk = false
+
+        function finish() {
+            if (_activeFlushToken !== token) return
+            if (!infoDone || !mapDone) return
+
+            _flushInFlight = false
+
+            if (_flushPending) {
+                flush()
+                return
+            }
+
+            if (infoOk && mapOk) {
+                retryCount = 0
+                retryTimer.stop()
+                return
+            }
+
+            retryCount += 1
+            if (!retryTimer.running) retryTimer.start()
+        }
+
         api.get_info((text)=>{
-            try { global_info = JSON.parse(text) } catch(e) { console.log("global_info parse error", e) }
-        },(err)=>{
-            console.log("global_info get error  ",err)
+            if (_activeFlushToken !== token) return
+            try {
+                global_info = JSON.parse(text)
+                infoOk = true
+            } catch(e) {
+                console.log("global_info parse error", e)
+            }
+            infoDone = true
+            finish()
+        },(err, status)=>{
+            if (_activeFlushToken !== token) return
+            console.log("global_info get error", status, err)
+            infoDone = true
+            finish()
         })
 
         api.get_map(
                     (text)=>{
-                        try { global_map_info = JSON.parse(text) } catch(e) { console.log("get_map parse error", e) }
-                    },(err)=>{
-                        console.log("get_map error  ",err)
+                        if (_activeFlushToken !== token) return
+                        try {
+                            global_map_info = JSON.parse(text)
+                            mapOk = true
+                        } catch(e) {
+                            console.log("get_map parse error", e)
+                        }
+                        mapDone = true
+                        finish()
+                    },(err, status)=>{
+                        if (_activeFlushToken !== token) return
+                        console.log("get_map error", status, err)
+                        mapDone = true
+                        finish()
                     }
                     )
-
     }
 
     Component.onCompleted: {

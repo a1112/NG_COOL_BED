@@ -553,6 +553,37 @@ def _derive_seq(cam_id: str):
     return (line - 1) * 6 + idx
 
 
+def _rtsp_url_from_config(ip: str, cam_info: dict) -> str:
+    """
+    Build RTSP url for frontend display/playback.
+    If config already provides `rtsp_url`, use it; otherwise build from ip + credentials.
+    """
+    from urllib.parse import quote
+
+    ip = (ip or "").strip()
+    if not ip:
+        return ""
+
+    cam_info = cam_info or {}
+    explicit = cam_info.get("rtsp_url", "")
+    if isinstance(explicit, str) and explicit.strip():
+        return explicit.strip()
+
+    user = cam_info.get("rtsp_user", "admin")
+    password = cam_info.get("rtsp_pass", "ng123456")
+    path = cam_info.get("rtsp_path", "/stream")
+    if not isinstance(path, str) or not path:
+        path = "/stream"
+    if not path.startswith("/"):
+        path = "/" + path
+
+    user = quote(str(user or ""), safe="")
+    password = quote(str(password or ""), safe="")
+    if user and password:
+        return f"rtsp://{user}:{password}@{ip}{path}"
+    return f"rtsp://{ip}{path}"
+
+
 @app.get("/cameras")
 async def get_cameras():
     """
@@ -565,11 +596,13 @@ async def get_cameras():
         ip_list = (bed_info or {}).get("ipList", {}) or {}
         for cam_id, cam_info in ip_list.items():
             cam_info = cam_info or {}
+            ip = cam_info.get("ip", "")
+            rtsp_url = _rtsp_url_from_config(ip, cam_info)
             res.append({
                 "camera": cam_id,
                 "bed": bed_key,
-                "ip": cam_info.get("ip", ""),
-                "rtsp_url": cam_info.get("rtsp_url", ""),
+                "ip": ip,
+                "rtsp_url": rtsp_url,
                 "seq": cam_info.get("seq") or _derive_seq(cam_id),
                 "position": cam_info.get("position", ""),
                 "enable": cam_info.get("enable", True),

@@ -16,9 +16,29 @@ class CameraConfig(ConfigBase):
         self.ip = self.config["ip"]
         self.enable = self.config["enable"] if not DEBUG_MODEL else True
         # self.conversion = ConversionImage(self.key)
-        base_rtsp_url = "rtsp://admin:ng123456@{}/stream" #Streaming/Channels/1
-        self.rtsp_url = base_rtsp_url.format(self.ip)
+        self.rtsp_url = self._build_rtsp_url()
         self.start = datetime.now().strftime(DATETIME_FMT)
+
+    def _build_rtsp_url(self) -> str:
+        from urllib.parse import quote
+
+        explicit = self.config.get("rtsp_url", "")
+        if isinstance(explicit, str) and explicit.strip():
+            return explicit.strip()
+
+        user = self.config.get("rtsp_user", "admin")
+        password = self.config.get("rtsp_pass", "ng123456")
+        path = self.config.get("rtsp_path", "/stream")
+        if not isinstance(path, str) or not path:
+            path = "/stream"
+        if not path.startswith("/"):
+            path = "/" + path
+
+        user = quote(str(user or ""), safe="")
+        password = quote(str(password or ""), safe="")
+        if user and password:
+            return f"rtsp://{user}:{password}@{self.ip}{path}"
+        return f"rtsp://{self.ip}{path}"
 
     # @property
     # def trans(self):
