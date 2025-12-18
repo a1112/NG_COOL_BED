@@ -15,6 +15,9 @@ class CameraConfig(ConfigBase):
         self.config = camera_list_config.get_item_config(cool_bed_key, camera_key)
         self.ip = self.config["ip"]
         self.enable = self.config["enable"] if not DEBUG_MODEL else True
+        self.rtsp_user = self.config.get("rtsp_user", "admin")
+        self.rtsp_pass = self.config.get("rtsp_pass", "ng123456")
+        self.rtsp_path = self.config.get("rtsp_path", "/stream")
         # self.conversion = ConversionImage(self.key)
         self.rtsp_url = self._build_rtsp_url()
         self.start = datetime.now().strftime(DATETIME_FMT)
@@ -26,9 +29,9 @@ class CameraConfig(ConfigBase):
         if isinstance(explicit, str) and explicit.strip():
             return explicit.strip()
 
-        user = self.config.get("rtsp_user", "admin")
-        password = self.config.get("rtsp_pass", "ng123456")
-        path = self.config.get("rtsp_path", "/stream")
+        user = self.rtsp_user
+        password = self.rtsp_pass
+        path = self.rtsp_path
         if not isinstance(path, str) or not path:
             path = "/stream"
         if not path.startswith("/"):

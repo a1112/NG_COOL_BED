@@ -44,7 +44,7 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         if CAP_MODEL == CapModelEnum.AV:
             return AvCameraSdk(self.camera_key, self.rtsp_url)
         if CAP_MODEL == CapModelEnum.SDK:
-            return HkCameraSdk(self.camera_key, self.ip)
+            return HkCameraSdk(self.camera_key, self.ip, username=self.camera_config.rtsp_user, password=self.camera_config.rtsp_pass)
 
 
     def run(self):

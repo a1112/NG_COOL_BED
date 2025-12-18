@@ -54,10 +54,13 @@
             "ip": "50.50.50.12",
             "enable": true
         },
-        "L2_7": {
-            "ip": "60.60.60.13",
-            "enable": true
-        }
-    }
-  }
+         "L2_7": {
+             "ip": "60.60.60.13",
+            "enable": true,
+            "rtsp_user": "admin",
+            "rtsp_pass": "BKV_IESL",
+            "rtsp_path": "/stream"
+         }
+     }
+   }
 }

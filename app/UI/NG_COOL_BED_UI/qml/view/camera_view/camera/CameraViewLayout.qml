@@ -66,6 +66,9 @@ Item {
             showOverlay: root.showOverlay
             visibilityMap: root.visibilityMap
             shapesProvider: root.shapesProvider
+            onTileDoubleClicked: {
+                Core.CameraViewCore.selectedLayoutType = 0
+            }
         }
     }
 }

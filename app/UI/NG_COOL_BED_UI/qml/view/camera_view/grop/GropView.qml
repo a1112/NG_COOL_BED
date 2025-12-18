@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import "."
 import "../camera"
+import "../../../core" as Core
 
 ColumnLayout {
     id: root
@@ -46,6 +47,13 @@ ColumnLayout {
             showOverlay: root.showOverlay
             visibilityMap: root.visibilityMap
             shapesProvider: root.shapesProvider
+            onTileDoubleClicked: {
+                if (slotNumber === null || slotNumber === undefined) return
+                Core.CameraViewCore.selectedSlotNumber = slotNumber
+                const idx = Core.CameraViewCore.layoutIndexForSlot(slotNumber)
+                if (idx >= 0) Core.CameraViewCore.selectedLayoutIndex = idx
+                Core.CameraViewCore.selectedLayoutType = 1
+            }
         }
     }
 }

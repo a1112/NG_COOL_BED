@@ -14,6 +14,7 @@ Rectangle {
     property bool showOverlay: true
     property var visibilityMap: ({})
     property var shapesProvider: null    // function(cameraId) -> shapes
+    signal tileDoubleClicked(int slotNumber, var camera)
     readonly property bool showLiveStream: imageSourceKey === "camera_stream"
     readonly property string _snapshotPath: camera ? (camera.snapshot || "") : ""
     readonly property string _sdkCapturePath: camera ? (camera.sdk_capture || "") : ""
@@ -108,6 +109,14 @@ Rectangle {
                 Layout.fillWidth: true
             }
         }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton
+        hoverEnabled: true
+        preventStealing: false
+        onDoubleClicked: root.tileDoubleClicked(root.slotNumber, root.camera)
     }
 
     function footerText() {

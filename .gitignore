@@ -16,3 +16,4 @@ soft/aTrust_*.exe
 /app/UI/NG_COOL_BED_UI/CMakeLists.txt.user
 
 /.config
+/app/server/SDK/SdkLog_Python/

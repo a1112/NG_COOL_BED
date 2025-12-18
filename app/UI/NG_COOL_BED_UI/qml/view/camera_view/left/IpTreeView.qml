@@ -8,10 +8,34 @@ Frame {
     property alias currentIndex: cameraList.currentIndex
     signal rowClicked(var rowData)
 
+    function findCameraRowIndex(seq) {
+        if (seq === null || seq === undefined) return -1
+        const list = root.rows || []
+        for (var i = 0; i < list.length; ++i) {
+            const row = list[i]
+            if (row && row.level === 1 && row.seq == seq) return i
+        }
+        return -1
+    }
+
+    function syncSelectionToCore() {
+        const idx = findCameraRowIndex(CameraViewCore.selectedSlotNumber)
+        if (idx < 0) return
+        if (cameraList.currentIndex !== idx) cameraList.currentIndex = idx
+        cameraList.positionViewAtIndex(idx, ListView.Visible)
+    }
+
     Layout.fillWidth: true
     Layout.fillHeight: true
     padding: 0
     background: Rectangle { color: "#1a1a1a"; radius: 4 }
+
+    onRowsChanged: syncSelectionToCore()
+
+    Connections {
+        target: CameraViewCore
+        function onSelectedSlotNumberChanged() { root.syncSelectionToCore() }
+    }
 
     ListView {
         id: cameraList
@@ -85,4 +109,6 @@ Frame {
 
         }
     }
+
+    Component.onCompleted: syncSelectionToCore()
 }

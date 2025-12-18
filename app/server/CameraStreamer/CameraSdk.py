@@ -117,11 +117,11 @@ class DebugCameraSdk(CameraSdkBase):
 
 class HkCameraSdk(CameraSdkBase):
 
-    def __init__(self, key, ip):
+    def __init__(self, key, ip, username="admin", password="ng123456"):
         super().__init__()
         self.key = key
         self.ip = ip
-        self.sdk = HkSdkCap(self.ip)
+        self.sdk = HkSdkCap(self.ip, username=username, password=password)
 
     def release(self):
         pass
