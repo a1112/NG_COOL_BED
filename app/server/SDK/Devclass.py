@@ -1,6 +1,7 @@
 # coding=utf-8
 import queue
 import time
+import logging
 
 import cv2
 import numpy as np
@@ -9,6 +10,10 @@ from Base import RollingQueue
 from .HCNetSDK import *
 from .PlayCtrl import *
 from threading import Thread
+from Loger import logger
+
+sdk_logger = logging.getLogger("hk_sdk")
+sdk_logger.setLevel(logging.INFO)
 
 class DevClass(Thread):
     def __init__(self):
@@ -34,11 +39,11 @@ class DevClass(Thread):
         hikSDK = None
         playM4SDK = None
         try:
-            print("netsdkdllpath: ", netsdkdllpath)
+            sdk_logger.debug("netsdkdllpath: %s", netsdkdllpath)
             hikSDK = load_library(netsdkdllpath)
             playM4SDK = load_library(playM4dllpath)
         except OSError as e:
-            print('动态库加载失败', e)
+            sdk_logger.error("动态库加载失败: %s", e)
         return hikSDK, playM4SDK
 
     # 设置SDK初始化依赖库路径
@@ -46,48 +51,49 @@ class DevClass(Thread):
         # 设置HCNetSDKCom组件库和SSL库加载路径
         if sys_platform == 'windows':
             basePath = os.getcwd().encode('gbk')
-            base_dir = b'\lib'
-            print(fr"basePath {basePath+base_dir}")
+            base_dir = b'\\lib'
+            sdk_logger.debug("basePath %s", basePath + base_dir)
             strPath = basePath + base_dir
             sdk_ComPath = NET_DVR_LOCAL_SDK_PATH()
             sdk_ComPath.sPath = strPath 
-            print('strPath: ', strPath)
+            sdk_logger.debug("strPath: %s", strPath)
             if self.hikSDK.NET_DVR_SetSDKInitCfg(NET_SDK_INIT_CFG_TYPE.NET_SDK_INIT_CFG_SDK_PATH.value,
                                                  byref(sdk_ComPath)):
-                print('NET_DVR_SetSDKInitCfg: 2 Succ')
+                sdk_logger.debug("NET_DVR_SetSDKInitCfg: 2 Succ")
             if self.hikSDK.NET_DVR_SetSDKInitCfg(NET_SDK_INIT_CFG_TYPE.NET_SDK_INIT_CFG_LIBEAY_PATH.value,
-                                                 create_string_buffer(strPath + b'\libcrypto-1_1-x64.dll')):
-                print('NET_DVR_SetSDKInitCfg: 3 Succ')
+                                                 create_string_buffer(strPath + b'\\libcrypto-1_1-x64.dll')):
+                sdk_logger.debug("NET_DVR_SetSDKInitCfg: 3 Succ")
             if self.hikSDK.NET_DVR_SetSDKInitCfg(NET_SDK_INIT_CFG_TYPE.NET_SDK_INIT_CFG_SSLEAY_PATH.value,
-                                                 create_string_buffer(strPath + b'\libssl-1_1-x64.dll')):
-                print('NET_DVR_SetSDKInitCfg: 4 Succ')
+                                                 create_string_buffer(strPath + b'\\libssl-1_1-x64.dll')):
+                sdk_logger.debug("NET_DVR_SetSDKInitCfg: 4 Succ")
         else:
             basePath = os.getcwd().encode('utf-8')
-            print(basePath)
-            strPath = basePath + b'\lib'
+            sdk_logger.debug("%s", basePath)
+            strPath = basePath + b'\\lib'
             sdk_ComPath = NET_DVR_LOCAL_SDK_PATH()
             sdk_ComPath.sPath = strPath
             if self.hikSDK.NET_DVR_SetSDKInitCfg(NET_SDK_INIT_CFG_TYPE.NET_SDK_INIT_CFG_SDK_PATH.value,
                                                  byref(sdk_ComPath)):
-                print('NET_DVR_SetSDKInitCfg: 2 Succ')
+                sdk_logger.debug("NET_DVR_SetSDKInitCfg: 2 Succ")
             if self.hikSDK.NET_DVR_SetSDKInitCfg(NET_SDK_INIT_CFG_TYPE.NET_SDK_INIT_CFG_LIBEAY_PATH.value,
                                                  create_string_buffer(strPath + b'/libcrypto.so.1.1')):
-                print('NET_DVR_SetSDKInitCfg: 3 Succ')
+                sdk_logger.debug("NET_DVR_SetSDKInitCfg: 3 Succ")
             if self.hikSDK.NET_DVR_SetSDKInitCfg(NET_SDK_INIT_CFG_TYPE.NET_SDK_INIT_CFG_SSLEAY_PATH.value,
                                                  create_string_buffer(strPath + b'/libssl.so.1.1')):
-                print('NET_DVR_SetSDKInitCfg: 4 Succ')
+                sdk_logger.debug("NET_DVR_SetSDKInitCfg: 4 Succ")
         self.basePath = basePath
 
         try:
-            print(f"尝试加载SDK: {playM4dllpath}")
+            sdk_logger.debug("尝试加载SDK: %s", playM4dllpath)
             playM4SDK = CDLL(playM4dllpath)
-            print("SDK加载成功，获取版本信息...")
+            sdk_logger.debug("SDK加载成功，获取版本信息...")
             if hasattr(playM4SDK, 'PlayM4_GetSDKVersion'):
                 version = playM4SDK.PlayM4_GetSDKVersion()
-                print(f"PlayM4 SDK版本: {version}")
-            return playM4SDK
+                sdk_logger.debug("PlayM4 SDK版本: %s", version)
+            self.playM4SDK = playM4SDK
+            return self.playM4SDK
         except Exception as e:
-            print(f'动态库加载失败: {e}')
+            sdk_logger.error("动态库加载失败: %s", e)
             return None
 
 
@@ -125,32 +131,34 @@ class DevClass(Thread):
             # 撤销布防，退出程序时调用
             self.hikSDK.NET_DVR_Logout(self.iUserID)
     def DecCBFun(self, nPort, pBuf, nSize, pFrameInfo, nUser, nReserved2):
-        if (time.time()-self.last_time)<(1/self.FPS):
-            return
-        self.last_time = time.time()
-        if pFrameInfo.contents.nType == 3:
-            # 获取图像参数
-            nWidth = pFrameInfo.contents.nWidth
-            nHeight = pFrameInfo.contents.nHeight
+        try:
+            if (time.time() - self.last_time) < (1 / self.FPS):
+                return
+            self.last_time = time.time()
+            if not pFrameInfo:
+                return
+            if pFrameInfo.contents.nType != 3:
+                return
 
-            # 将指针数据转为numpy数组
+            nWidth = int(pFrameInfo.contents.nWidth or 0)
+            nHeight = int(pFrameInfo.contents.nHeight or 0)
+            if nWidth <= 0 or nHeight <= 0 or nSize <= 0 or not pBuf:
+                return
+
             buf_type = (c_ubyte * nSize).from_address(addressof(pBuf.contents))
             yuv_data = np.frombuffer(buf_type, dtype=np.uint8)
 
-            # 检查数据长度
             expected_size = nWidth * nHeight * 3 // 2
             if yuv_data.size != expected_size:
                 return
 
-            # 重塑形状并转换YUV420到RGB
             yuv_frame = yuv_data.reshape((nHeight * 3 // 2, nWidth))
-            try:
-                rgb_frame = cv2.cvtColor(yuv_frame, cv2.COLOR_YUV2RGB_IYUV) # cv2.cvtColor(yuv_frame, cv2.COLOR_YUV2RGB_I420)
-                # rgb_frame= cv2.cvtColor(rgb_frame,cv2.COLOR_RGB2BGR)
-            except:
-                return
-
+            rgb_frame = cv2.cvtColor(yuv_frame, cv2.COLOR_YUV2RGB_IYUV)
             self.frame_queue.put(rgb_frame)
+        except Exception:
+            # ctypes 回调里抛异常会打印 "Exception ignored ..."；这里吞掉并记录 debug 以免刷屏
+            logger.debug("DevClass.DecCBFun callback error", exc_info=True)
+            return
 
     def DecCBFun_1(self, nPort, pBuf, nSize, pFrameInfo, nUser, nReserved2):
         # 解码回调函数
@@ -191,19 +199,25 @@ class DevClass(Thread):
         preview_file_output.close()
 
     def RealDataCallBack_V30(self, lPlayHandle, dwDataType, pBuffer, dwBufSize, pUser):
-        if dwDataType == NET_DVR_SYSHEAD:
-            # 设置流播放模式和解码回调
-            self.playM4SDK.PlayM4_SetStreamOpenMode(self.PlayCtrlPort, 0)
-            if self.playM4SDK.PlayM4_OpenStream(self.PlayCtrlPort, pBuffer, dwBufSize, 1024 * 1024):
-                # 注册解码回调函数
-                self.FuncDecCB = DECCBFUNWIN(self.DecCBFun)
-                print("PlayM4_SetDecCallBackExMend")
-                self.playM4SDK.PlayM4_SetDecCallBackExMend(self.PlayCtrlPort, self.FuncDecCB, None, 0, None)
-                self.playM4SDK.PlayM4_Play(self.PlayCtrlPort, 0)
-                # 输入数据启动解码
-        elif dwDataType == NET_DVR_STREAMDATA:
-            # 直接输入流数据
-            self.playM4SDK.PlayM4_InputData(self.PlayCtrlPort, pBuffer, dwBufSize)
+        try:
+            play_sdk = getattr(self, "playM4SDK", None)
+            if not play_sdk:
+                return
+            if dwDataType == NET_DVR_SYSHEAD:
+                play_sdk.PlayM4_SetStreamOpenMode(self.PlayCtrlPort, 0)
+                if play_sdk.PlayM4_OpenStream(
+                        self.PlayCtrlPort, pBuffer, dwBufSize, 1024 * 1024
+                ):
+                    self.FuncDecCB = DECCBFUNWIN(self.DecCBFun)
+                    play_sdk.PlayM4_SetDecCallBackExMend(
+                        self.PlayCtrlPort, self.FuncDecCB, None, 0, None
+                    )
+                    play_sdk.PlayM4_Play(self.PlayCtrlPort, 0)
+            elif dwDataType == NET_DVR_STREAMDATA:
+                play_sdk.PlayM4_InputData(self.PlayCtrlPort, pBuffer, dwBufSize)
+        except Exception:
+            logger.debug("DevClass.RealDataCallBack_V30 callback error", exc_info=True)
+            return
 
     def startPlay(self):
         # 获取一个播放句柄

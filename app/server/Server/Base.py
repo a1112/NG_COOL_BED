@@ -378,7 +378,7 @@ async def get_video_stream(
     show_mask: int = 0,
     fmt: str = "jpg",
     jpeg_quality: int = 80,
-    fps: int = 4,
+    fps: int = 10,
     crf: int = 28,
     preset: str = "ultrafast",
     color: str = "bgr",

@@ -13,36 +13,56 @@ Item {
     ColumnLayout {
         anchors.fill: parent
         spacing: 8
-        StackLayout {
-            id: stack
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            currentIndex: app_core.app_index
-            onCurrentIndexChanged: {
-                if (currentIndex === 1) {
-                    Core.CameraViewCore.reloadFromServer()
-                    Core.CameraViewCore.refreshFromApi()
-                }
-            }
 
-            // 主视图：沿用原有 CoolBedView 列表
+        Component {
+            id: mainViewComponent
             ColumnLayout {
                 spacing: 0
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
+                property var viewModel: root.coolBedListModel
+
                 Repeater {
-                    model: root.coolBedListModel
+                    model: parent.viewModel
                     delegate: CoolBedView { }
                 }
             }
+        }
 
-            // 相机视图
-            CameraViw {
+        Component {
+            id: cameraViewComponent
+            CameraViw { }
+        }
+
+        Component {
+            id: calibrationViewComponent
+            CalibrationView { }
+        }
+
+        Loader {
+            id: viewLoader
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            sourceComponent: {
+                switch (app_core.app_index) {
+                case 1:
+                    return cameraViewComponent
+                case 2:
+                    return calibrationViewComponent
+                default:
+                    return mainViewComponent
+                }
             }
+        }
+    }
 
-            // 标定视图
-            CalibrationView {
+    Connections {
+        target: app_core
+        function onApp_indexChanged() {
+            if (app_core.app_index === 1) {
+                Core.CameraViewCore.reloadFromServer()
+                Core.CameraViewCore.refreshFromApi()
             }
         }
     }

@@ -1,12 +1,14 @@
 from threading import Thread
+import queue
 
 from .Devclass import DevClass
+from Loger import logger
 
 class HkSdkCap(Thread):
     def __init__(self, ip: str, username: str = "admin", password: str = "ng123456"):
         super().__init__()
         self.ip = ip.encode("gbk")
-        print(fr"HkSdkCap {self.ip}")
+        logger.info(f"HkSdkCap init ip={ip}")
         self.dev = DevClass()
         self.frame_queue =self.dev.frame_queue
         self.dev.SetSDKInitCfg()  # 设置SDK初始化依赖库路径
@@ -27,4 +29,7 @@ class HkSdkCap(Thread):
         self.dev.LogoutDev()
         self.dev.hikSDK.NET_DVR_Cleanup()
     def get_last_frame(self):
-        return self.frame_queue.get()
+        try:
+            return self.frame_queue.get(timeout=1.0)
+        except queue.Empty:
+            return None

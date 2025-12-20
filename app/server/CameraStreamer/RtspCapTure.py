@@ -105,7 +105,7 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
             buffer.ret = ret
             buffer.frame = frame
             index += 1
-            if (not ret) or (frame is None):
+            if (frame is None) or (ret is False):
                 logger.warning(f"[{self.camera_key}] camera frame empty (ret={ret}); reconnecting")
                 self._safe_release(self.cap)
                 self.cap = None
