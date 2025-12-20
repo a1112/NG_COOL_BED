@@ -6,9 +6,22 @@ Rectangle {
     // property rect rect_box: value
     property ObjectType objectType: ObjectType{}
 
+    property color objectColor: {
+        switch (objectType.name_) {
+        case "t_car":
+            return "#ff9800"
+        case "d_car":
+            return "#03a9f4"
+        case "steel":
+            return "#4caf50"
+        default:
+            return "green"
+        }
+    }
+
     color : "#22000000"
     border.width : 2
-    border.color : "green"
+    border.color : objectColor
     x : objectType.rect_.x
     y : objectType.rect_.y
     width:  objectType.rect_.width
@@ -46,7 +59,7 @@ Rectangle {
         anchors.right : parent.right
         text : objectType.name_
         font.bold: true
-        color: "green"
+        color: objectColor
     }
     ItemDelegate{
         anchors.fill: parent

@@ -34,7 +34,40 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         self._latest_lock = Lock()
         self._latest_frame = None
         self._latest_frame_ts = 0.0
+        self._reconnect_backoff_s = 1.0
         self.start()
+
+    def _reset_latest(self):
+        with self._latest_lock:
+            self._latest_frame = None
+            self._latest_frame_ts = 0.0
+
+    @staticmethod
+    def _safe_release(cap):
+        try:
+            if cap is not None:
+                cap.release()
+        except Exception:
+            pass
+
+    def _connect_with_retry(self):
+        max_backoff_s = 30.0
+        while self.camera_config.enable:
+            try:
+                cap = self.get_video_capture()
+                if cap is None:
+                    raise RuntimeError("get_video_capture returned None")
+                self._reconnect_backoff_s = 1.0
+                return cap
+            except Exception as exc:
+                logger.warning(
+                    f"[{self.camera_key}] camera connect failed; retry in {self._reconnect_backoff_s:.1f}s: {exc}"
+                )
+                time.sleep(self._reconnect_backoff_s)
+                self._reconnect_backoff_s = min(
+                    max_backoff_s, self._reconnect_backoff_s * 2.0
+                )
+        return None
 
 
     def get_video_capture(self):
@@ -53,25 +86,32 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         # self.conversion = self.camera_config.conversion
         self.conversion: ConversionImage    # 图像转换
         logger.debug(f"start RtspCapTure {self.camera_key}")
-        self.cap = self.get_video_capture()
+        self.cap = self._connect_with_retry()
         self.camera_image_save = CameraImageSave(self.camera_config)
         # ret, frame = cap.read()
         index = 0
         num = 0
         while self.camera_config.enable:
             buffer = ImageBuffer(self.camera_config)
-            ret, frame = self.cap.read()
+            if self.cap is None:
+                self.cap = self._connect_with_retry()
+                self._reset_latest()
+                continue
+            try:
+                ret, frame = self.cap.read()
+            except Exception as exc:
+                logger.warning(f"[{self.camera_key}] camera read error: {exc}")
+                ret, frame = False, None
             buffer.ret = ret
             buffer.frame = frame
             index += 1
-            if frame is None:
-                print("相机为空")
-                self.cap.release()
-                time.sleep(2)
-                self.cap = self.get_video_capture()
-                with self._latest_lock:
-                    self._latest_frame = None
-                    self._latest_frame_ts = 0.0
+            if (not ret) or (frame is None):
+                logger.warning(f"[{self.camera_key}] camera frame empty (ret={ret}); reconnecting")
+                self._safe_release(self.cap)
+                self.cap = None
+                time.sleep(1)
+                self.cap = self._connect_with_retry()
+                self._reset_latest()
                 continue
             with self._latest_lock:
                 self._latest_frame = frame.copy()
@@ -90,6 +130,8 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
                 pass
                 # if num % 500 == 1:
                 #     self.camera_image_save.save_buffer(buffer)
+
+        self._safe_release(self.cap)
 
     def get_cap(self):
         return self.camera_buffer.get()

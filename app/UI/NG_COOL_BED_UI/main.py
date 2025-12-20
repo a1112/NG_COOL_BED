@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 from PySide6.QtCore import QUrl
-from PySide6.QtGui import QGuiApplication
+from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
 
@@ -30,6 +30,18 @@ def main() -> int:
         use_qrc = False
 
     engine = QQmlApplicationEngine()
+
+    icon_candidates = [
+        ":/qt/qml/NG_COOL_BED_UI/icons/app_icon.ico",
+        ":/qt/qml/NG_COOL_BED_UI/icons/app_icon.png",
+        str(base_dir / "icons" / "app_icon.ico"),
+        str(base_dir / "icons" / "app_icon.png"),
+    ]
+    for icon_path in icon_candidates:
+        icon = QIcon(icon_path)
+        if not icon.isNull():
+            app.setWindowIcon(icon)
+            break
 
     if use_qrc:
         url = QUrl("qrc:/qt/qml/NG_COOL_BED_UI/Main.qml")
