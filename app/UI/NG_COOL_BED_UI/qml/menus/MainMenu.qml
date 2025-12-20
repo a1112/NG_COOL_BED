@@ -10,6 +10,7 @@ Menu {
     property var db6Dialog: null
     property var mapDialog: null
     property var algTestDialog: null
+    property var ipSettingDialog: null
     property bool opencvDisplayEnabled: true
     property bool opencvDisplayBusy: false
 
@@ -86,6 +87,13 @@ Menu {
             text: qsTr("接口文档")
             enabled: _docsUrl.length > 0
             onTriggered: Qt.openUrlExternally(_docsUrl)
+        }
+        MenuItem {
+            text: qsTr("IP 设置...")
+            onTriggered: {
+                if (ipSettingDialog && ipSettingDialog.openDialog)
+                    ipSettingDialog.openDialog()
+            }
         }
     }
 

@@ -70,4 +70,10 @@ Item {
     onVideo_reload_tokenChanged: {}
 
     Component.onCompleted: refresh_video_source()
+
+    Connections {
+        target: (typeof app_api !== "undefined" && app_api) ? app_api.server_url : null
+        function onServer_ipChanged() { refresh_video_source() }
+        function onServer_portChanged() { refresh_video_source() }
+    }
 }

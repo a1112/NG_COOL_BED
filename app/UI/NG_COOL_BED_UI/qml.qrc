@@ -18,6 +18,7 @@
         <file>qml/dialogs/SettingCore.qml</file>
         <file>qml/dialogs/GeneralSettingsPage.qml</file>
         <file>qml/dialogs/TestingSettingsPage.qml</file>
+        <file>qml/dialogs/IpSettingDialog.qml</file>
         <file>qml/dialogs/AlgTestDialog.qml</file>
         <file>qml/head/HeadView.qml</file>
         <file>qml/head/SettingButton.qml</file>

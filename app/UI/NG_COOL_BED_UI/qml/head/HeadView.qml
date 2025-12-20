@@ -14,6 +14,7 @@ HeadBase {
     property var db6Dialog: null
     property var mapDialog: null
     property var algTestDialog: null
+    property var ipSettingDialog: null
     Layout.fillWidth: true
     height: 45
     RowLayout{
@@ -131,5 +132,6 @@ HeadBase {
         db6Dialog: root.db6Dialog
         mapDialog: root.mapDialog
         algTestDialog: root.algTestDialog
+        ipSettingDialog: root.ipSettingDialog
     }
 }

@@ -28,6 +28,7 @@ ApplicationWindow {
             db6Dialog: db6_dialog
             mapDialog: map_dialog
             algTestDialog: alg_test_dialog
+            ipSettingDialog: ip_setting_dialog
         }
         MainViewLayout {
             Layout.fillWidth: true
@@ -61,6 +62,9 @@ ApplicationWindow {
         }
         AlgTestDialog {
             id: alg_test_dialog
+        }
+        IpSettingDialog {
+            id: ip_setting_dialog
         }
         ViewCore.SendDataCore {
             id: sendDataCore
