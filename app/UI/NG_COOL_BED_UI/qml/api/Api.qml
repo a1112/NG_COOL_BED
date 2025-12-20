@@ -30,14 +30,22 @@ Item {
         return ajax.get(url,success, failure)
     }
 
-    function get_image_url(cool_bed_key, key, index, show_mask){
-        return server_url.url(server_url.serverUrl, "image",cool_bed_key, key, index,parseInt(show_mask+0))
+    function get_image_url(cool_bed_key, key, index, show_mask, w, h, jpeg_quality){
+        var base = server_url.url(server_url.serverUrl, "image",cool_bed_key, key, index,parseInt(show_mask+0))
+        var query = {}
+        if (w !== undefined && w !== null && w > 0) query["w"] = parseInt(w)
+        if (h !== undefined && h !== null && h > 0) query["h"] = parseInt(h)
+        if (jpeg_quality !== undefined && jpeg_quality !== null) query["jpeg_quality"] = parseInt(jpeg_quality)
+        if (Object.keys(query).length === 0) return base
+        return base + server_url.getGetArgs(query)
     }
 
-    function get_video_url(cool_bed_key, key, show_mask, token){
+    function get_video_url(cool_bed_key, key, show_mask, token, w, h){
         var base = server_url.url(server_url.serverUrl, "video", cool_bed_key, key, parseInt(show_mask+0))
         var sep = base.indexOf("?") === -1 ? "?" : "&"
         base = base + sep + "fmt=ts"
+        if (w !== undefined && w !== null && w > 0) base = base + "&w=" + parseInt(w)
+        if (h !== undefined && h !== null && h > 0) base = base + "&h=" + parseInt(h)
         if (token === undefined || token === null) {
             return base
         }

@@ -108,11 +108,16 @@ Item {
         if (!cool_bed_core || !cool_bed_core.current_key || cool_bed_core.current_key.length === 0)
             return
         imageRefreshIndex += 1
+        var w = Math.round(displayWidth || 0)
+        var h = Math.round(displayHeight || 0)
         overlayImage.source = app_api.get_image_url(
                     cool_bed_core.cool_bed_key,
                     cool_bed_core.current_key,
                     imageRefreshIndex,
-                    cool_bed_core.show_mask)
+                    cool_bed_core.show_mask,
+                    w,
+                    h,
+                    70)
     }
 
     function onPlayerError(slot, errorString) {
@@ -161,12 +166,22 @@ Item {
         refreshOverlayImage()
         overlayRefreshTimer.restart()
 
+        var sizedUrl = url
+        var w = Math.round(displayWidth || 0)
+        var h = Math.round(displayHeight || 0)
+        if (w > 0 && sizedUrl.indexOf("w=") === -1) {
+            sizedUrl += (sizedUrl.indexOf("?") === -1 ? "?" : "&") + "w=" + w
+        }
+        if (h > 0 && sizedUrl.indexOf("h=") === -1) {
+            sizedUrl += (sizedUrl.indexOf("?") === -1 ? "?" : "&") + "h=" + h
+        }
+
         var activePlayer = playerFor(activeSlot)
         if (!activePlayer.source || activePlayer.source.toString().length === 0) {
             resetFallback(activeSlot)
             pendingSlot = -1
             activePlayer.stop()
-            activePlayer.source = url
+            activePlayer.source = sizedUrl
             setFrameReady(activeSlot, false)
             activePlayer.play()
             return
@@ -177,7 +192,7 @@ Item {
 
         var nextPlayer = playerFor(nextSlot)
         nextPlayer.stop()
-        nextPlayer.source = url
+        nextPlayer.source = sizedUrl
         setFrameReady(nextSlot, false)
         nextPlayer.play()
 

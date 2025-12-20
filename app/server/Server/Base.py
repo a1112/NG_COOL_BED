@@ -50,6 +50,37 @@ def read_root():
 
 
 _last_stream_frame_cache = {}
+_last_image_cache = {}
+
+
+def _resize_to_fit(image: np.ndarray, max_w: int = 0, max_h: int = 0) -> np.ndarray:
+    """
+    Resize `image` to fit within (max_w, max_h) while keeping aspect ratio.
+    Only downsizes (never upscales).
+    """
+    if image is None:
+        return image
+    try:
+        height, width = image.shape[:2]
+    except Exception:
+        return image
+
+    max_w = int(max_w or 0)
+    max_h = int(max_h or 0)
+    if max_w <= 0 and max_h <= 0:
+        return image
+    if width <= 0 or height <= 0:
+        return image
+
+    scale_w = (max_w / width) if max_w > 0 else 1.0
+    scale_h = (max_h / height) if max_h > 0 else 1.0
+    scale = min(scale_w, scale_h, 1.0)
+    if scale >= 0.999:
+        return image
+
+    new_w = max(1, int(width * scale))
+    new_h = max(1, int(height * scale))
+    return cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_AREA)
 
 
 def get_data_item_info(data:DataItem):
@@ -121,7 +152,15 @@ async def get_map_all():
 
 
 @app.get("/image/{cool_bed:str}/{key:str}/{cap_index:int}/{show_mask:int}")
-async def get_image(cool_bed:str, key:str, cap_index:int,show_mask=0):
+async def get_image(
+    cool_bed: str,
+    key: str,
+    cap_index: int,
+    show_mask: int = 0,
+    w: int = 0,
+    h: int = 0,
+    jpeg_quality: int = 80,
+):
     cool_bed_thread_worker = cool_bed_thread_worker_map[cool_bed]
     cool_bed_thread_worker:CoolBedThreadWorker
     index, cv_image = cool_bed_thread_worker.get_latest_image(key, show_mask)
@@ -135,10 +174,41 @@ async def get_image(cool_bed:str, key:str, cap_index:int,show_mask=0):
             media_type="image/jpg",
             headers={"Cache-Control": "no-store", "X-Image-Source": source},
         )
-    _, encoded_image = cv2.imencode(".jpg", cv_image)
+
+    jpeg_quality = int(jpeg_quality)
+    jpeg_quality = max(10, min(95, jpeg_quality))
+    w = int(w or 0)
+    h = int(h or 0)
+
+    cache_key = (cool_bed, key, int(show_mask), int(index), w, h, jpeg_quality)
+    cached = _last_image_cache.get(cache_key)
+    if cached and isinstance(cached, (bytes, bytearray)):
+        encoded_bytes = bytes(cached)
+    else:
+        try:
+            frame_to_encode = _ensure_limited_range(cv_image)
+            frame_to_encode = _resize_to_fit(frame_to_encode, w, h)
+        except Exception:
+            frame_to_encode = cv_image
+
+        ok, encoded_image = cv2.imencode(
+            ".jpg",
+            frame_to_encode,
+            [int(cv2.IMWRITE_JPEG_QUALITY), jpeg_quality],
+        )
+        if not ok:
+            return Response(
+                content=noFindImageByte,
+                media_type="image/jpg",
+                headers={"Cache-Control": "no-store", "X-Image-Source": source},
+            )
+        encoded_bytes = encoded_image.tobytes()
+        _last_image_cache[cache_key] = encoded_bytes
+        if len(_last_image_cache) > 300:
+            _last_image_cache.clear()
     # 返回图像响应
     return Response(
-        content=encoded_image.tobytes(),
+        content=encoded_bytes,
         media_type="image/jpeg",
         headers={"Cache-Control": "no-store", "X-Image-Source": source},
     )
@@ -151,6 +221,8 @@ def _video_stream(
     show_mask: int,
     fmt: str = "jpg",
     jpeg_quality: int = 80,
+    w: int = 0,
+    h: int = 0,
     color: str = "bgr",
 ):
     boundary = b"--frame"
@@ -166,7 +238,9 @@ def _video_stream(
     color = (color or "bgr").lower()
     if color not in {"bgr", "rgb"}:
         color = "bgr"
-    cache_key = (cool_bed, group_key, show_mask, fmt, jpeg_quality, color)
+    w = int(w or 0)
+    h = int(h or 0)
+    cache_key = (cool_bed, group_key, show_mask, fmt, jpeg_quality, w, h, color)
     cached = _last_stream_frame_cache.get(cache_key)
     if cached:
         if isinstance(cached, tuple) and len(cached) == 2:
@@ -190,6 +264,7 @@ def _video_stream(
             time.sleep(0.05)
             continue
         frame_to_encode = _ensure_limited_range(cv_image)
+        frame_to_encode = _resize_to_fit(frame_to_encode, w, h)
         if color == "rgb":
             frame_to_encode = cv2.cvtColor(frame_to_encode, cv2.COLOR_BGR2RGB)
         if fmt == "png":
@@ -259,6 +334,8 @@ def _video_stream_ts(
     fps: int = 25,
     crf: int = 28,
     preset: str = "ultrafast",
+    w: int = 0,
+    h: int = 0,
     color: str = "bgr",
 ):
     try:
@@ -275,6 +352,8 @@ def _video_stream_ts(
     if color not in {"bgr", "rgb"}:
         color = "bgr"
     show_mask = int(show_mask)
+    w = int(w or 0)
+    h = int(h or 0)
 
     width = None
     height = None
@@ -289,6 +368,17 @@ def _video_stream_ts(
         if cv_image is not None and cv_image.ndim == 3 and cv_image.shape[2] == 3:
             height, width = cv_image.shape[:2]
             break
+
+    if width is None or height is None:
+        raise HTTPException(status_code=500, detail="no frames available")
+
+    if w > 0 or h > 0:
+        scale_w = (w / width) if w > 0 else 1.0
+        scale_h = (h / height) if h > 0 else 1.0
+        scale = min(scale_w, scale_h, 1.0)
+        if scale < 0.999:
+            width = max(1, int(width * scale))
+            height = max(1, int(height * scale))
 
     pad_right = 1 if int(width) % 2 else 0
     pad_bottom = 1 if int(height) % 2 else 0
@@ -381,6 +471,8 @@ async def get_video_stream(
     fps: int = 10,
     crf: int = 28,
     preset: str = "ultrafast",
+    w: int = 0,
+    h: int = 0,
     color: str = "bgr",
 ):
     if cool_bed not in cool_bed_thread_worker_map:
@@ -392,7 +484,17 @@ async def get_video_stream(
     fmt_norm = (fmt or "jpg").strip().lower()
     if fmt_norm in {"ts", "mpegts", "h264", "h.264"}:
         return StreamingResponse(
-            _video_stream_ts(worker, key, show_mask, fps=fps, crf=crf, preset=preset, color=color),
+            _video_stream_ts(
+                worker,
+                key,
+                show_mask,
+                fps=fps,
+                crf=crf,
+                preset=preset,
+                w=w,
+                h=h,
+                color=color,
+            ),
             media_type="video/mp2t",
         )
     return StreamingResponse(
@@ -403,6 +505,8 @@ async def get_video_stream(
             show_mask,
             fmt=fmt,
             jpeg_quality=jpeg_quality,
+            w=w,
+            h=h,
             color=color,
         ),
         media_type="multipart/x-mixed-replace;boundary=frame",
@@ -417,6 +521,8 @@ async def get_video_stream_ts(
     fps: int = 25,
     crf: int = 28,
     preset: str = "ultrafast",
+    w: int = 0,
+    h: int = 0,
     color: str = "bgr",
 ):
     if cool_bed not in cool_bed_thread_worker_map:
@@ -426,7 +532,7 @@ async def get_video_stream_ts(
     if key not in worker.config.groups_dict:
         raise HTTPException(status_code=404, detail=f"group not found: {key}")
     return StreamingResponse(
-        _video_stream_ts(worker, key, show_mask, fps=fps, crf=crf, preset=preset, color=color),
+        _video_stream_ts(worker, key, show_mask, fps=fps, crf=crf, preset=preset, w=w, h=h, color=color),
         media_type="video/mp2t",
     )
 
