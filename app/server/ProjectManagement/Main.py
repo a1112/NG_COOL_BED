@@ -1,6 +1,8 @@
 import time
 from typing import Optional
 
+import numpy as np
+
 import CONFIG
 from Base import RollingQueue
 from Base.Error import CoolBedError
@@ -9,7 +11,7 @@ from Configs.GlobalConfig import GlobalConfig
 from Configs.GroupConfig import GroupConfig
 from Configs.CoolBedGroupConfig import CoolBedGroupConfig
 from Loger import logger
-from threading import Thread
+from threading import Thread, Lock
 from Configs.CameraConfig import CameraConfig
 from CameraStreamer.RtspCapTure import RtspCapTure
 from Configs.CameraManageConfig import camera_manage_config
@@ -35,6 +37,10 @@ class CoolBedThreadWorker(Thread):
         self.steel_data_queue = RollingQueue(maxsize=1)
         self.DEBUG_FPS = 7
 
+        self._image_lock = Lock()
+        self._latest_image_cache = {}
+        self._latest_image_cache_id = {}
+
         self.join_image_dict = {}  # 全部的 返回參數
         self.priority_controller = priority_registry.create_controller(key, self.config.groups)
         self.group_results = {group.group_key: None for group in self.config.groups}
@@ -44,13 +50,76 @@ class CoolBedThreadWorker(Thread):
             self.start()
 
     def get_image(self, key,show_mask):
-        if key in self.join_image_dict:
-            id_,calibrate = self.join_image_dict[key]
-            calibrate:CalibrateConfig
+        with self._image_lock:
+            item = self.join_image_dict.get(key)
+        if item is not None:
+            id_, calibrate = item
+            calibrate: CalibrateConfig
             if show_mask:
                 return id_, calibrate.mask_image
             return id_, calibrate.image
         return -1, None
+
+    def _build_latest_calibrate(self, group_key: str):
+        group_config = self.config.groups_dict.get(group_key)
+        if group_config is None:
+            return None, 0.0
+        frames = []
+        newest_ts = 0.0
+        for camera_id in group_config.camera_list:
+            capture = self.camera_map.get(camera_id)
+            if capture is None:
+                return None, 0.0
+            if hasattr(capture, "get_latest_frame_with_ts"):
+                frame, ts = capture.get_latest_frame_with_ts()
+            else:
+                frame, ts = capture.get_latest_frame(), 0.0
+            if frame is None:
+                return None, 0.0
+            frames.append(frame)
+            if ts and ts > newest_ts:
+                newest_ts = ts
+        conversion_image_list = [
+            conv.image_conversion(frame)
+            for conv, frame in zip(group_config.conversion_list, frames)
+        ]
+        return CalibrateConfig(conversion_image_list), newest_ts
+
+    def get_latest_image(self, group_key: str, show_mask: int, min_interval_s: float = 0.05):
+        """
+        Build the latest stitched image directly from each camera's latest frame.
+        This bypasses the full detection loop to avoid UI latency.
+        """
+        now = time.time()
+        show_mask = int(show_mask)
+        with self._image_lock:
+            cached = self._latest_image_cache.get(group_key)
+            if cached and now - float(cached.get("ts") or 0.0) < float(min_interval_s):
+                cached_id = int(cached.get("id") or 0)
+                return cached_id, (cached.get("mask") if show_mask else cached.get("image"))
+
+        calibrate, frame_ts = self._build_latest_calibrate(group_key)
+        if calibrate is None:
+            return -1, None
+
+        image = calibrate.image
+        mask = None
+        if show_mask:
+            mask = getattr(calibrate, "mask_image", None)
+            if mask is None:
+                mask = np.zeros_like(image)
+
+        with self._image_lock:
+            next_id = int(self._latest_image_cache_id.get(group_key) or 0) + 1
+            self._latest_image_cache_id[group_key] = next_id
+            self._latest_image_cache[group_key] = {
+                "id": next_id,
+                "ts": now,
+                "frame_ts": frame_ts,
+                "image": image,
+                "mask": mask,
+            }
+        return next_id, (mask if show_mask else image)
 
     def snapshot_camera_frames(self):
         frames = {}
@@ -61,11 +130,12 @@ class CoolBedThreadWorker(Thread):
         return frames
 
     def _up_join_image_(self,key, calibrate:CalibrateConfig):
-        if key in self.join_image_dict:
-            self.join_image_dict[key][0] = self.join_image_dict[key][0]+1
-            self.join_image_dict[key][1] = calibrate
-        else:
-            self.join_image_dict[key] = [0, calibrate]
+        with self._image_lock:
+            if key in self.join_image_dict:
+                self.join_image_dict[key][0] = self.join_image_dict[key][0] + 1
+                self.join_image_dict[key][1] = calibrate
+            else:
+                self.join_image_dict[key] = [0, calibrate]
 
     def get_data(self):
         return

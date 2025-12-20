@@ -33,6 +33,7 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         self.camera_image_save = None
         self._latest_lock = Lock()
         self._latest_frame = None
+        self._latest_frame_ts = 0.0
         self.start()
 
 
@@ -70,9 +71,11 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
                 self.cap = self.get_video_capture()
                 with self._latest_lock:
                     self._latest_frame = None
+                    self._latest_frame_ts = 0.0
                 continue
             with self._latest_lock:
                 self._latest_frame = frame.copy()
+                self._latest_frame_ts = time.time()
             self.camera_image_save.save_first_buffer(buffer)    # 保存第一帧图像
 
             self.camera_buffer.put(buffer)
@@ -96,3 +99,9 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
             if self._latest_frame is None:
                 return None
             return self._latest_frame.copy()
+
+    def get_latest_frame_with_ts(self):
+        with self._latest_lock:
+            if self._latest_frame is None:
+                return None, 0.0
+            return self._latest_frame.copy(), float(self._latest_frame_ts or 0.0)

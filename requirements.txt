@@ -24,7 +24,6 @@ argparse
 six
 wsproto
 cryptography
-redis
 python-multipart
 typing_extensions
 sympy

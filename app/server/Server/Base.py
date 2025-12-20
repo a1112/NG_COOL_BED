@@ -124,12 +124,24 @@ async def get_map_all():
 async def get_image(cool_bed:str, key:str, cap_index:int,show_mask=0):
     cool_bed_thread_worker = cool_bed_thread_worker_map[cool_bed]
     cool_bed_thread_worker:CoolBedThreadWorker
-    index, cv_image = cool_bed_thread_worker.get_image(key,show_mask)
+    index, cv_image = cool_bed_thread_worker.get_latest_image(key, show_mask)
+    source = "latest"
+    if index < 0 or cv_image is None:
+        index, cv_image = cool_bed_thread_worker.get_image(key, show_mask)
+        source = "processed"
     if index < 0:
-        return Response(content=noFindImageByte, media_type="image/jpg")
+        return Response(
+            content=noFindImageByte,
+            media_type="image/jpg",
+            headers={"Cache-Control": "no-store", "X-Image-Source": source},
+        )
     _, encoded_image = cv2.imencode(".jpg", cv_image)
     # 返回图像响应
-    return Response(content=encoded_image.tobytes(), media_type="image/jpeg")
+    return Response(
+        content=encoded_image.tobytes(),
+        media_type="image/jpeg",
+        headers={"Cache-Control": "no-store", "X-Image-Source": source},
+    )
 
 
 def _video_stream(
@@ -157,16 +169,21 @@ def _video_stream(
     cache_key = (cool_bed, group_key, show_mask, fmt, jpeg_quality, color)
     cached = _last_stream_frame_cache.get(cache_key)
     if cached:
-        frame_len = str(len(cached)).encode("ascii")
-        yield (
-            boundary + b"\r\n"
-            b"Content-Type: " + content_type + b"\r\n"
-            b"Content-Length: " + frame_len + b"\r\n\r\n"
-            + cached + b"\r\n"
-        )
+        if isinstance(cached, tuple) and len(cached) == 2:
+            cached_ts, cached_frame = cached
+        else:
+            cached_ts, cached_frame = 0.0, cached
+        if cached_frame and (time.time() - float(cached_ts or 0.0)) < 0.3:
+            frame_len = str(len(cached_frame)).encode("ascii")
+            yield (
+                boundary + b"\r\n"
+                b"Content-Type: " + content_type + b"\r\n"
+                b"Content-Length: " + frame_len + b"\r\n\r\n"
+                + cached_frame + b"\r\n"
+            )
     while True:
         try:
-            _, cv_image = worker.get_image(group_key, show_mask)
+            _, cv_image = worker.get_latest_image(group_key, show_mask)
         except Exception:
             cv_image = None
         if cv_image is None:
@@ -186,7 +203,7 @@ def _video_stream(
         if not ok:
             continue
         frame = encoded_image.tobytes()
-        _last_stream_frame_cache[cache_key] = frame
+        _last_stream_frame_cache[cache_key] = (time.time(), frame)
         frame_len = str(len(frame)).encode("ascii")
         yield (
             boundary + b"\r\n"
@@ -263,7 +280,7 @@ def _video_stream_ts(
     height = None
     while True:
         try:
-            _, cv_image = worker.get_image(group_key, show_mask)
+            _, cv_image = worker.get_latest_image(group_key, show_mask)
         except Exception:
             cv_image = None
         if cv_image is None:
@@ -303,7 +320,7 @@ def _video_stream_ts(
                 last_time = time.time()
 
             try:
-                _, cv_image = worker.get_image(group_key, show_mask)
+                _, cv_image = worker.get_latest_image(group_key, show_mask)
             except Exception:
                 cv_image = None
             if cv_image is None:
