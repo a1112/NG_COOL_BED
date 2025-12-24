@@ -83,6 +83,20 @@ def _resize_to_fit(image: np.ndarray, max_w: int = 0, max_h: int = 0) -> np.ndar
     return cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_AREA)
 
 
+def _prepare_frame_for_encode(frame: np.ndarray, w: int = 0, h: int = 0, color: str = "bgr") -> np.ndarray:
+    try:
+        frame = _ensure_limited_range(frame)
+    except Exception:
+        pass
+    frame = _resize_to_fit(frame, w, h)
+    if (color or "bgr").lower() == "rgb":
+        try:
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        except Exception:
+            pass
+    return frame
+
+
 def get_data_item_info(data:DataItem):
     if data is None:
         return "w无数据，刷新后再尝试吧。"
@@ -185,11 +199,7 @@ async def get_image(
     if cached and isinstance(cached, (bytes, bytearray)):
         encoded_bytes = bytes(cached)
     else:
-        try:
-            frame_to_encode = _ensure_limited_range(cv_image)
-            frame_to_encode = _resize_to_fit(frame_to_encode, w, h)
-        except Exception:
-            frame_to_encode = cv_image
+        frame_to_encode = _prepare_frame_for_encode(cv_image, w=w, h=h, color="bgr")
 
         ok, encoded_image = cv2.imencode(
             ".jpg",
@@ -263,10 +273,7 @@ def _video_stream(
         if cv_image is None:
             time.sleep(0.05)
             continue
-        frame_to_encode = _ensure_limited_range(cv_image)
-        frame_to_encode = _resize_to_fit(frame_to_encode, w, h)
-        if color == "rgb":
-            frame_to_encode = cv2.cvtColor(frame_to_encode, cv2.COLOR_BGR2RGB)
+        frame_to_encode = _prepare_frame_for_encode(cv_image, w=w, h=h, color=color)
         if fmt == "png":
             ok, encoded_image = cv2.imencode(".png", frame_to_encode)
         else:
@@ -441,6 +448,8 @@ def _video_stream_ts(
                 video_frame = av.VideoFrame.from_ndarray(frame_to_encode, format="rgb24")
             else:
                 video_frame = av.VideoFrame.from_ndarray(frame_to_encode, format="bgr24")
+            # Ensure limited (TV) range is declared for the encoder.
+            video_frame.color_range = "mpeg"
             for packet in stream.encode(video_frame):
                 output.mux(packet)
                 chunk = mux_buffer.pop()

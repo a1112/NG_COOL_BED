@@ -43,7 +43,8 @@ Item {
     function get_video_url(cool_bed_key, key, show_mask, token, w, h){
         var base = server_url.url(server_url.serverUrl, "video", cool_bed_key, key, parseInt(show_mask+0))
         var sep = base.indexOf("?") === -1 ? "?" : "&"
-        base = base + sep + "fmt=ts"
+        // Use MJPEG by default to reduce live view latency.
+        base = base + sep + "fmt=jpg"
         if (w !== undefined && w !== null && w > 0) base = base + "&w=" + parseInt(w)
         if (h !== undefined && h !== null && h > 0) base = base + "&h=" + parseInt(h)
         if (token === undefined || token === null) {

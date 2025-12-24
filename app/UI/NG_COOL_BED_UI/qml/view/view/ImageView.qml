@@ -125,6 +125,16 @@ Item {
         console.warn("video error:", errorString)
         if (player.source) {
             var src = player.source.toString()
+            if (!tsFallbackUsed(slot) && src.indexOf("fmt=jpg") !== -1) {
+                markTsFallbackUsed(slot)
+                var fallbackTsFromJpg = src.replace("fmt=jpg", "fmt=ts")
+                console.warn("fallback to ts:", fallbackTsFromJpg)
+                player.stop()
+                player.source = fallbackTsFromJpg
+                setFrameReady(slot, false)
+                player.play()
+                return
+            }
             if (!tsFallbackUsed(slot) && src.indexOf("fmt=png") !== -1) {
                 markTsFallbackUsed(slot)
                 var fallbackTs = src.replace("fmt=png", "fmt=ts")

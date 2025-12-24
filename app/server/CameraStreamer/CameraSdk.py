@@ -66,10 +66,13 @@ class AvCameraSdk(CameraSdkBase):
         self.det +=1
         cap_image = next(self.container_cap)
 
-        # image = cap_image.to_rgb().to_ndarray()
-
-        image = cap_image.to_image()
-        image =  np.array(image)
+        try:
+            # Convert with limited (TV) range metadata to avoid swscale warnings.
+            cap_image = cap_image.reformat(format="rgb24", color_range="mpeg")
+            image = cap_image.to_ndarray()
+        except Exception:
+            image = cap_image.to_image()
+            image = np.array(image)
 
         return self.det, image
 
