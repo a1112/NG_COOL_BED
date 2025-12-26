@@ -5,6 +5,9 @@
 import os
 import sys
 from pathlib import Path
+import faulthandler
+import threading
+import traceback
 print(str(Path(__file__).parent.parent.parent))
 sys.path.append(str(Path(__file__).parent.parent.parent))
 from multiprocessing import freeze_support
@@ -19,6 +22,33 @@ from Globals import cool_bed_thread_worker_map, business_main
 from Loger import logger
 from Server import ApiServer
 
+
+
+def setup_fatal_handlers():
+    log_dir = Path(__file__).resolve().parents[2] / "logs" / "server"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    fatal_log = log_dir / "fatal.log"
+    try:
+        fh = open(fatal_log, "a", encoding="utf-8")
+        faulthandler.enable(fh)
+        faulthandler.dump_traceback_later(120, repeat=True, file=fh)
+    except Exception:
+        logger.exception("Failed to enable faulthandler")
+
+    def _log_thread_exception(args):
+        logger.error(
+            "Thread exception: %s",
+            "".join(traceback.format_exception(args.exc_type, args.exc_value, args.exc_traceback)).strip(),
+        )
+
+    def _log_sys_exception(exc_type, exc_value, exc_traceback):
+        logger.error(
+            "Unhandled exception: %s",
+            "".join(traceback.format_exception(exc_type, exc_value, exc_traceback)).strip(),
+        )
+
+    threading.excepthook = _log_thread_exception
+    sys.excepthook = _log_sys_exception
 
 def main():
     logger.info("start main")
@@ -58,6 +88,7 @@ if __name__ == "__main__":
     logging.getLogger("yolo").setLevel(logging.ERROR)
 
     freeze_support()
+    setup_fatal_handlers()
     # 启动 HTTP 服务
     ApiServer.start()
     # 启动运行线程

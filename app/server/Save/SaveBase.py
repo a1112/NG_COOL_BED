@@ -20,11 +20,17 @@ class ImageSaveBase(Thread):
     def run(self):
         while CONFIG.APP_RUN:
             frame, save_url = self.camera_buffer.get()
-            logger.debug(f"save {save_url}")
-            if isinstance(frame, np.ndarray):
-                frame=cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)
-                image = Image.fromarray(frame)
-            else:
-                image = frame
-            Path(save_url).parent.mkdir(parents=True, exist_ok=True)
-            image.save(save_url)
+            try:
+                if frame is None or not save_url:
+                    continue
+                logger.debug(f"save {save_url}")
+                if isinstance(frame, np.ndarray):
+                    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+                    image = Image.fromarray(frame)
+                else:
+                    image = frame
+                Path(save_url).parent.mkdir(parents=True, exist_ok=True)
+                image.save(save_url)
+            except Exception:
+                logger.exception("image save failed: %s", save_url)
+                continue
