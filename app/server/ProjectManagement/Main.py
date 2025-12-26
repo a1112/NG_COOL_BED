@@ -1,4 +1,5 @@
 import time
+import queue
 from typing import Optional
 
 import numpy as np
@@ -151,64 +152,71 @@ class CoolBedThreadWorker(Thread):
             self.camera_map[key] = RtspCapTure(camera_config, self.global_config)  # 执行采集   <<<-------------------
         cap_index = 0
         while True:
-            cap_index += 1
-            start_time = time.time()
-            plan_groups = self.priority_controller.next_iteration_groups()
-            if not plan_groups:
-                if all(getattr(group_config, "shield", False) for group_config in self.config.groups):
-                    steel_info_dict = {group.group_key: None for group in self.config.groups}
-                    self.steel_data_queue.put(steel_info_dict)
-                    time.sleep(0.2)
-                else:
-                    time.sleep(0.1)
-                continue
-            need_cameras = set()
-            for group_key in plan_groups:
-                group_config = self.config.groups_dict.get(group_key)
-                if group_config:
-                    need_cameras.update(group_config.camera_list)
-            if not need_cameras:
-                time.sleep(0.02)
-                continue
-            cap_dict = {key: self.camera_map[key].get_cap() for key in need_cameras if key in self.camera_map}
             try:
+                cap_index += 1
+                start_time = time.time()
+                plan_groups = self.priority_controller.next_iteration_groups()
+                if not plan_groups:
+                    if all(getattr(group_config, "shield", False) for group_config in self.config.groups):
+                        steel_info_dict = {group.group_key: None for group in self.config.groups}
+                        self.steel_data_queue.put(steel_info_dict)
+                        time.sleep(0.2)
+                    else:
+                        time.sleep(0.1)
+                    continue
+                need_cameras = set()
                 for group_key in plan_groups:
                     group_config = self.config.groups_dict.get(group_key)
-                    if group_config is None:
-                        continue
-                    calibrate = group_config.calibrate_image(cap_dict)
-                    self._up_join_image_(group_config.group_key, calibrate)
-                    if self.save_thread:
-                        self.save_thread.save_buffer(group_config.group_key, calibrate)
-                    steel_info = predictor.predict(calibrate, group_config)
-                    self.group_results[group_key] = steel_info
-                    priority_registry.record_detection(self.key, group_key, steel_info)
-                steel_info_dict = {}
-                missing_data = False
-                for group_config in self.config.groups:
-                    result = self.group_results.get(group_config.group_key)
-                    if result is None and not getattr(group_config, "shield", False):
-                        missing_data = True
-                    steel_info_dict[group_config.group_key] = result
-                if missing_data:
-                    time.sleep(0.01)
+                    if group_config:
+                        need_cameras.update(group_config.camera_list)
+                if not need_cameras:
+                    time.sleep(0.02)
                     continue
-                self.steel_data_queue.put(steel_info_dict)
-                end_time = time.time()
-                use_time = end_time - start_time
-                if CONFIG.DEBUG_MODEL:
-                    if use_time < 1 / self.DEBUG_FPS:
-                        time.sleep(1 / self.DEBUG_FPS - use_time)
-                    else:
-                        logger.warning(f"单帧处理时间 {use_time}")
-                    time.sleep(0.2)
-            except BaseException as e:
-                logger.error(e)
-                for group_key in plan_groups:
-                    priority_registry.record_detection(self.key, group_key, None)
+                cap_dict = {key: self.camera_map[key].get_cap() for key in need_cameras if key in self.camera_map}
+                try:
+                    for group_key in plan_groups:
+                        group_config = self.config.groups_dict.get(group_key)
+                        if group_config is None:
+                            continue
+                        calibrate = group_config.calibrate_image(cap_dict)
+                        self._up_join_image_(group_config.group_key, calibrate)
+                        if self.save_thread:
+                            self.save_thread.save_buffer(group_config.group_key, calibrate)
+                        steel_info = predictor.predict(calibrate, group_config)
+                        self.group_results[group_key] = steel_info
+                        priority_registry.record_detection(self.key, group_key, steel_info)
+                    steel_info_dict = {}
+                    missing_data = False
+                    for group_config in self.config.groups:
+                        result = self.group_results.get(group_config.group_key)
+                        if result is None and not getattr(group_config, "shield", False):
+                            missing_data = True
+                        steel_info_dict[group_config.group_key] = result
+                    if missing_data:
+                        time.sleep(0.01)
+                        continue
+                    self.steel_data_queue.put(steel_info_dict)
+                    end_time = time.time()
+                    use_time = end_time - start_time
+                    if CONFIG.DEBUG_MODEL:
+                        if use_time < 1 / self.DEBUG_FPS:
+                            time.sleep(1 / self.DEBUG_FPS - use_time)
+                        else:
+                            logger.warning(f"单帧处理时间 {use_time}")
+                        time.sleep(0.2)
+                except BaseException as e:
+                    logger.error(e)
+                    for group_key in plan_groups:
+                        priority_registry.record_detection(self.key, group_key, None)
+            except Exception as exc:
+                logger.exception("CoolBedThreadWorker loop error: %s", exc)
+                time.sleep(0.5)
 
-    def get_steel_info(self):
-        return self.steel_data_queue.get()
+    def get_steel_info(self, timeout: float = 1.0):
+        try:
+            return self.steel_data_queue.get(timeout=timeout)
+        except queue.Empty:
+            return None
 
 
     # for key, cool_bed_thread_worker in cool_bed_thread_worker_map.items():  # 等待

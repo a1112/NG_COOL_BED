@@ -24,6 +24,10 @@ class Business:
         self.send_data_dict = {}
         self.current_datas = {}
         self.send_data_byte = bytearray(b"")
+        self.fault_active = False
+        self.fault_message = ""
+        self.fault_ts = 0.0
+        self._last_fault_send_ts = 0.0
 
     def get_current_data(self,cool_bed_key):
         item : DataItem = self.current_datas[cool_bed_key]
@@ -90,7 +94,37 @@ class Business:
             "data":self.send_data_dict,
             "plc_last_write_ok_ts": last_write_ok_ts,
             "plc_last_write_ok_before_0_1s": last_write_ok_before_0_1s,
+            "fault_active": self.fault_active,
+            "fault_message": self.fault_message,
+            "fault_ts": self.fault_ts,
         }
+
+    def mark_fault(self, message, send_fault_signal: bool = True):
+        self.fault_active = True
+        self.fault_message = str(message)
+        self.fault_ts = time.time()
+        if not send_fault_signal:
+            return
+        if not self.data_map or not self.send_data_dict:
+            return
+        now = time.time()
+        if now - self._last_fault_send_ts < 1.0:
+            return
+        fault_data = dict(self.send_data_dict)
+        fault_data["I_NAI_ERROR_CB1"] = True
+        fault_data["I_NAI_ERROR_CB2"] = True
+        try:
+            self.send_data_byte = self.data_map.data_to_byte(fault_data)
+            self.send_data_dict = fault_data
+            self.data_map.send(self.send_data_byte)
+            self._last_fault_send_ts = now
+        except Exception:
+            pass
+
+    def clear_fault(self):
+        self.fault_active = False
+        self.fault_message = ""
+        self.fault_ts = 0.0
 
 
     def update(self,steel_infos:Dict[str,DetResult]):
@@ -107,6 +141,7 @@ class Business:
         self.send_data_byte = self.data_map.data_to_byte(self.send_data_dict)
         # print(fr"send data {self.send_data_byte}")
         self.data_map.send(self.send_data_byte)
+        self.clear_fault()
         # self.save_cap()
 
     def save_cap(self):

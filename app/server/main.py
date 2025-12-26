@@ -26,13 +26,30 @@ def main():
         try:
             steel_infos = {}
             for key, config in camera_manage_config.group_dict.items():
-                config: CoolBedGroupConfig  # 冷床 参数中心，用于管理冷床参数
+                config: CoolBedGroupConfig  # ?????? ???????????????????????????????????????
                 worker = cool_bed_thread_worker_map[key]
-                steel_infos[key] = worker.get_steel_info()
+                steel_info = worker.get_steel_info(timeout=1.0)
+                if steel_info is None:
+                    business_main.mark_fault(f"{key} steel_info timeout", send_fault_signal=True)
+                    raise TimeoutError(f"{key} steel_info timeout")
+                if isinstance(steel_info, dict):
+                    missing = False
+                    for group_config in config.groups:
+                        if steel_info.get(group_config.group_key) is None and not getattr(group_config, 'shield', False):
+                            missing = True
+                            break
+                    if missing:
+                        business_main.mark_fault(f"{key} steel_info missing", send_fault_signal=True)
+                        raise TimeoutError(f"{key} steel_info missing")
+                steel_infos[key] = steel_info
             business_main.update(steel_infos)
         except Exception as e:
             logger.error(fr"主进程存在报错")
             logger.error(e)
+            try:
+                business_main.mark_fault(e, send_fault_signal=True)
+            except Exception:
+                pass
 
 
 if __name__ == "__main__":

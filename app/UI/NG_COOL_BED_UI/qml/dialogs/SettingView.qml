@@ -14,7 +14,7 @@ Dialog {
     x: (parent ? parent.width - width : 800) / 2
     y: (parent ? parent.height - height : 600) / 2
     standardButtons: Dialog.NoButton
-    width: 520
+    width: 680
     height: 640
 
     Rectangle {

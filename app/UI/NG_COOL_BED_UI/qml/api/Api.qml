@@ -5,6 +5,7 @@ Item {
 
     property Ajax ajax: Ajax{}
     property ServerUrl server_url: ServerUrl{}
+    property string videoStreamFormat: "jpg"
     function calibrateUrl() {
         var parts = [server_url.serverUrl, "calibrate"]
         for (var i = 0; i < arguments.length; ++i) {
@@ -43,8 +44,13 @@ Item {
     function get_video_url(cool_bed_key, key, show_mask, token, w, h){
         var base = server_url.url(server_url.serverUrl, "video", cool_bed_key, key, parseInt(show_mask+0))
         var sep = base.indexOf("?") === -1 ? "?" : "&"
+        var fmt = (videoStreamFormat || "jpg").toString().toLowerCase()
+        if (fmt === "jpeg") fmt = "jpg"
+        if (["jpg", "png", "ts", "mpegts", "h264", "h.264"].indexOf(fmt) === -1) {
+            fmt = "jpg"
+        }
         // Use MJPEG by default to reduce live view latency.
-        base = base + sep + "fmt=jpg"
+        base = base + sep + "fmt=" + fmt
         if (w !== undefined && w !== null && w > 0) base = base + "&w=" + parseInt(w)
         if (h !== undefined && h !== null && h > 0) base = base + "&h=" + parseInt(h)
         if (token === undefined || token === null) {

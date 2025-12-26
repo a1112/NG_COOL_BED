@@ -76,4 +76,9 @@ Item {
         function onServer_ipChanged() { refresh_video_source() }
         function onServer_portChanged() { refresh_video_source() }
     }
+
+    Connections {
+        target: (typeof app_api !== "undefined" && app_api) ? app_api : null
+        function onVideoStreamFormatChanged() { refresh_video_source() }
+    }
 }

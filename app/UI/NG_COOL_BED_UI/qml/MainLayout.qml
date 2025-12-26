@@ -19,6 +19,10 @@ ApplicationWindow {
 
 
     title: app_core.title_text
+    Component.onCompleted: {
+        x = Math.round((Screen.width - width) / 2)
+        y = Math.round((Screen.height - height) / 2)
+    }
     ColumnLayout{
         anchors.fill: parent
         HeadView{   // 主菜单

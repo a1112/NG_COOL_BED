@@ -80,6 +80,48 @@ ColumnLayout {
                     onEditingFinished: if (coreRef) coreRef.modelType = text
                 }
             }
+
+            RowLayout {
+                spacing: 6
+                Layout.fillWidth: true
+                Label { text: qsTr("主要视图连接方式"); Layout.preferredWidth: 120 }
+                ComboBox {
+                    id: mainViewConnectionCombo
+                    Layout.fillWidth: true
+                    textRole: "text"
+                    model: ListModel {
+                        ListElement { text: qsTr("MJPEG (JPG)"); value: "jpg" }
+                        ListElement { text: qsTr("PNG"); value: "png" }
+                        ListElement { text: qsTr("MPEG-TS (H.264)"); value: "ts" }
+                    }
+
+                    function syncFromApi() {
+                        if (!app_api || !model || model.count === 0)
+                            return
+                        var fmt = (app_api.videoStreamFormat || "jpg").toString().toLowerCase()
+                        if (fmt === "jpeg") fmt = "jpg"
+                        if (fmt === "mpegts" || fmt === "h264" || fmt === "h.264") fmt = "ts"
+                        for (var i = 0; i < model.count; i++) {
+                            if (model.get(i).value === fmt) {
+                                currentIndex = i
+                                return
+                            }
+                        }
+                        currentIndex = 0
+                    }
+
+                    Component.onCompleted: syncFromApi()
+                    onActivated: {
+                        if (app_api && model && index >= 0)
+                            app_api.videoStreamFormat = model.get(index).value
+                    }
+
+                    Connections {
+                        target: (typeof app_api !== "undefined" && app_api) ? app_api : null
+                        function onVideoStreamFormatChanged() { mainViewConnectionCombo.syncFromApi() }
+                    }
+                }
+            }
         }
     }
 

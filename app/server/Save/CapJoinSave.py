@@ -1,3 +1,4 @@
+import time
 import CONFIG
 import tool
 from Configs import save_config
@@ -14,6 +15,7 @@ class CapJoinSave(ImageSaveBase):
         self.first_buffer_saved = False
         self.camera_config = camera_config
         self.save_first_dict={}
+        self.last_save_ts = {}
         self.start()
 
     def save_first_image(self,key, frame):
@@ -31,8 +33,11 @@ class CapJoinSave(ImageSaveBase):
         if key not in self.save_first_dict:
             self.save_first_image(key,frame)
             self.save_first_dict[key] = 1
-        self.save_first_dict[key]+=1
-        if not self.save_first_dict[key] % 50:
+            self.last_save_ts[key] = time.time()
+            return
+        last_ts = self.last_save_ts.get(key, 0.0)
+        if time.time() - last_ts >= 30.0:
             save_folder = save_config.camera_save_folder / "join"/ key
             save_url = save_folder / tool.get_new_data_str() / fr"{key}_{tool.get_now_data_time_str()}.{CONFIG.IMAGE_SAVE_TYPE}"
             self.camera_buffer.put([frame, save_url])
+            self.last_save_ts[key] = time.time()
