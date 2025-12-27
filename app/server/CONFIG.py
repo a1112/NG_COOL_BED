@@ -82,6 +82,7 @@ MappingCurrent = MappingPath / CURRENT_CALIBRATE
 SAVE_CONFIG = CAMERA_CONFIG_FOLDER / "Save.json"
 
 MODEL_FOLDER = CONFIG_FOLDER / "model"
+YOLO_DEVICE = "cuda:0"
 
 lOG_DIR = CONFIG_FOLDER / "log"
 lOG_DIR.mkdir(exist_ok=True, parents=True)

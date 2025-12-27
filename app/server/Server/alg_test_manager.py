@@ -369,7 +369,7 @@ class AlgTestManager:
                 self._finish_job(job, "任务已停止", finished=True)
                 return
             try:
-                results = model(str(image_path))
+                results = model(str(image_path), device=CONFIG.YOLO_DEVICE)
                 if not results:
                     raise RuntimeError("模型无返回结果")
                 result = results[0]

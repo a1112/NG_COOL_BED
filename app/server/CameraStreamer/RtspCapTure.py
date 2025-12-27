@@ -35,6 +35,8 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         self._latest_frame = None
         self._latest_frame_ts = 0.0
         self._reconnect_backoff_s = 1.0
+        self._empty_frame_count = 0
+        self._empty_frame_limit = 10
         self.start()
 
     def _reset_latest(self):
@@ -96,6 +98,7 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
             if self.cap is None:
                 self.cap = self._connect_with_retry()
                 self._reset_latest()
+                self._empty_frame_count = 0
                 continue
             try:
                 ret, frame = self.cap.read()
@@ -106,16 +109,26 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
             buffer.frame = frame
             index += 1
             if (frame is None) or (ret is False):
-                logger.warning(f"[{self.camera_key}] camera frame empty (ret={ret}); reconnecting")
-                self._safe_release(self.cap)
-                self.cap = None
-                time.sleep(1)
-                self.cap = self._connect_with_retry()
-                self._reset_latest()
+                self._empty_frame_count += 1
+                logger.warning(
+                    f"[{self.camera_key}] camera frame empty (ret={ret}) ["
+                    f"{self._empty_frame_count}/{self._empty_frame_limit}]"
+                )
+                if self._empty_frame_count >= self._empty_frame_limit:
+                    logger.warning(f"[{self.camera_key}] reconnecting after empty frames")
+                    self._safe_release(self.cap)
+                    self.cap = None
+                    time.sleep(1)
+                    self.cap = self._connect_with_retry()
+                    self._reset_latest()
+                    self._empty_frame_count = 0
+                else:
+                    time.sleep(0.05)
                 continue
             with self._latest_lock:
                 self._latest_frame = frame.copy()
                 self._latest_frame_ts = time.time()
+            self._empty_frame_count = 0
             self.camera_image_save.save_first_buffer(buffer)    # 保存第一帧图像
 
             self.camera_buffer.put(buffer)

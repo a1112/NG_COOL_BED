@@ -21,13 +21,13 @@ class SteelDetModel:
         self.model = YOLO(str(CONFIG.MODEL_FOLDER / "steelDet.pt"))   # load a custom model
 
     def predict(self, image):
-        results = self.model(image)
+        results = self.model(image, device=CONFIG.YOLO_DEVICE)
         if results[0].xyxy:
             return results[0].xyxy
         return None
 
     def get_steel_rect(self, image):
-        results = self.model(image)
+        results = self.model(image, device=CONFIG.YOLO_DEVICE)
         bounding_boxes = []
         for result in results:
             for box in result.boxes:
@@ -43,7 +43,7 @@ class SteelAreaSegModel:
         self.model = YOLO(str(CONFIG.MODEL_FOLDER / "steelSeg.pt"))   # load a custom model
 
     def predict(self, image_list):
-        results = self.model(image_list)
+        results = self.model(image_list, device=CONFIG.YOLO_DEVICE)
         len_= len(image_list)
         res_data = [YoloModelResults(index,len_,image, result) for index, image, result in zip(range(len_), image_list, results)]
         return res_data
