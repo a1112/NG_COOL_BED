@@ -1,0 +1,3 @@
+将冷床 相机采集拼接识别 单独成 CaptureL1.py，CaptureL2.py 2个独立的 python启动，main.py 在 不增加 --capture 参数时
+通过 http（fastapi） 向 CaptureL1.py，CaptureL2.py 获取检测框数据，CaptureL1.py，CaptureL2.py 输出tqdm 的检测速度
+默认显示opencv的拼接图像

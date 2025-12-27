@@ -212,9 +212,9 @@ class CoolBedThreadWorker(Thread):
                 logger.exception("CoolBedThreadWorker loop error: %s", exc)
                 time.sleep(0.5)
 
-    def get_steel_info(self, timeout: float = 1.0):
+    def get_steel_info(self):
         try:
-            return self.steel_data_queue.get(timeout=timeout)
+            return self.steel_data_queue.get()
         except queue.Empty:
             return None
 

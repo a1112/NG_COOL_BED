@@ -58,7 +58,7 @@ def main():
             for key, config in camera_manage_config.group_dict.items():
                 config: CoolBedGroupConfig  # ?????? ???????????????????????????????????????
                 worker = cool_bed_thread_worker_map[key]
-                steel_info = worker.get_steel_info(timeout=1.0)
+                steel_info = worker.get_steel_info()
                 if steel_info is None:
                     business_main.mark_fault(f"{key} steel_info timeout", send_fault_signal=True)
                     raise TimeoutError(f"{key} steel_info timeout")
@@ -74,6 +74,7 @@ def main():
                 steel_infos[key] = steel_info
             business_main.update(steel_infos)
         except Exception as e:
+            raise e
             logger.error(fr"主进程存在报错")
             logger.error(e)
             try:
