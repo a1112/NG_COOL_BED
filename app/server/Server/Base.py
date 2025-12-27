@@ -9,10 +9,12 @@ from typing import Optional
 import numpy as np
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 import xml.etree.ElementTree as ET
+from urllib.parse import urlencode
 
 import CONFIG
 from Configs.AppConfigs import app_configs
 from Configs.CameraManageConfig import camera_manage_config
+from Configs.CaptureServerConfig import CAPTURE_URLS
 from Configs.CoolBedGroupConfig import CoolBedGroupConfig
 from Configs.GroupConfig import GroupConfig
 from Configs.MappingConfig import MappingConfig
@@ -32,7 +34,7 @@ from CONFIG import (
     MODEL_FOLDER,
     FIRST_SAVE_FOLDER,
 )
-from fastapi.responses import StreamingResponse, FileResponse, Response
+from fastapi.responses import StreamingResponse, FileResponse, Response, RedirectResponse
 from CameraStreamer.ConversionImage import ConversionImage
 
 import tool as common_tool
@@ -51,6 +53,17 @@ def read_root():
 
 _last_stream_frame_cache = {}
 _last_image_cache = {}
+
+
+
+def _build_capture_redirect_url(cool_bed: str, path: str, params: dict) -> str | None:
+    base = CAPTURE_URLS.get(cool_bed)
+    if not base:
+        return None
+    query = urlencode({k: v for k, v in params.items() if v is not None})
+    if query:
+        return f"{base}{path}?{query}"
+    return f"{base}{path}"
 
 
 def _resize_to_fit(image: np.ndarray, max_w: int = 0, max_h: int = 0) -> np.ndarray:
@@ -175,6 +188,15 @@ async def get_image(
     h: int = 0,
     jpeg_quality: int = 80,
 ):
+    if cool_bed not in cool_bed_thread_worker_map:
+        redirect_url = _build_capture_redirect_url(
+            cool_bed,
+            f"/image/{cool_bed}/{key}/{cap_index}/{show_mask}",
+            {"w": w, "h": h, "jpeg_quality": jpeg_quality},
+        )
+        if redirect_url:
+            return RedirectResponse(redirect_url, status_code=307)
+        raise HTTPException(status_code=404, detail=f"cool_bed not found: {cool_bed}")
     cool_bed_thread_worker = cool_bed_thread_worker_map[cool_bed]
     cool_bed_thread_worker:CoolBedThreadWorker
     index, cv_image = cool_bed_thread_worker.get_latest_image(key, show_mask)
@@ -485,6 +507,22 @@ async def get_video_stream(
     color: str = "bgr",
 ):
     if cool_bed not in cool_bed_thread_worker_map:
+        redirect_url = _build_capture_redirect_url(
+            cool_bed,
+            f"/video/{cool_bed}/{key}/{show_mask}",
+            {
+                "fmt": fmt,
+                "jpeg_quality": jpeg_quality,
+                "fps": fps,
+                "crf": crf,
+                "preset": preset,
+                "w": w,
+                "h": h,
+                "color": color,
+            },
+        )
+        if redirect_url:
+            return RedirectResponse(redirect_url, status_code=307)
         raise HTTPException(status_code=404, detail=f"cool_bed not found: {cool_bed}")
     worker = cool_bed_thread_worker_map[cool_bed]
     worker: CoolBedThreadWorker
@@ -535,6 +573,20 @@ async def get_video_stream_ts(
     color: str = "bgr",
 ):
     if cool_bed not in cool_bed_thread_worker_map:
+        redirect_url = _build_capture_redirect_url(
+            cool_bed,
+            f"/video_ts/{cool_bed}/{key}/{show_mask}",
+            {
+                "fps": fps,
+                "crf": crf,
+                "preset": preset,
+                "w": w,
+                "h": h,
+                "color": color,
+            },
+        )
+        if redirect_url:
+            return RedirectResponse(redirect_url, status_code=307)
         raise HTTPException(status_code=404, detail=f"cool_bed not found: {cool_bed}")
     worker = cool_bed_thread_worker_map[cool_bed]
     worker: CoolBedThreadWorker

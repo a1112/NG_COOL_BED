@@ -1,30 +1,25 @@
-"""
+﻿"""
 入口
 
 """
+import argparse
 import os
 import sys
 from pathlib import Path
 import faulthandler
 import threading
 import traceback
-print(str(Path(__file__).parent.parent.parent))
-sys.path.append(str(Path(__file__).parent.parent.parent))
-from multiprocessing import freeze_support
 import logging
+from multiprocessing import freeze_support
 
 # Reduce noisy FFmpeg swscaler warnings from OpenCV decode pipeline.
 os.environ.setdefault("OPENCV_FFMPEG_LOGLEVEL", "24")
 
-from Configs.CameraManageConfig import camera_manage_config
-from Configs.CoolBedGroupConfig import CoolBedGroupConfig
-from Globals import cool_bed_thread_worker_map, business_main
-from Loger import logger
-from Server import ApiServer
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.append(str(PROJECT_ROOT))
 
 
-
-def setup_fatal_handlers():
+def setup_fatal_handlers(logger):
     log_dir = Path(__file__).resolve().parents[2] / "logs" / "server"
     log_dir.mkdir(parents=True, exist_ok=True)
     fatal_log = log_dir / "fatal.log"
@@ -50,47 +45,90 @@ def setup_fatal_handlers():
     threading.excepthook = _log_thread_exception
     sys.excepthook = _log_sys_exception
 
-def main():
-    logger.info("start main")
+
+def _run_capture_loop(camera_manage_config, cool_bed_thread_worker_map, business_main):
     while True:
-        try:
-            steel_infos = {}
-            for key, config in camera_manage_config.group_dict.items():
-                config: CoolBedGroupConfig  # ?????? ???????????????????????????????????????
-                worker = cool_bed_thread_worker_map[key]
-                steel_info = worker.get_steel_info()
-                if steel_info is None:
-                    business_main.mark_fault(f"{key} steel_info timeout", send_fault_signal=True)
-                    raise TimeoutError(f"{key} steel_info timeout")
-                if isinstance(steel_info, dict):
-                    missing = False
-                    for group_config in config.groups:
-                        if steel_info.get(group_config.group_key) is None and not getattr(group_config, 'shield', False):
-                            missing = True
-                            break
-                    if missing:
-                        business_main.mark_fault(f"{key} steel_info missing", send_fault_signal=True)
-                        raise TimeoutError(f"{key} steel_info missing")
-                steel_infos[key] = steel_info
-            business_main.update(steel_infos)
-        except Exception as e:
-            raise e
-            logger.error(fr"主进程存在报错")
-            logger.error(e)
-            try:
-                business_main.mark_fault(e, send_fault_signal=True)
-            except Exception:
-                pass
+        steel_infos = {}
+        for key, config in camera_manage_config.group_dict.items():
+            worker = cool_bed_thread_worker_map[key]
+            steel_info = worker.get_steel_info()
+            if steel_info is None:
+                business_main.mark_fault(f"{key} steel_info timeout", send_fault_signal=True)
+                raise TimeoutError(f"{key} steel_info timeout")
+            if isinstance(steel_info, dict):
+                missing = False
+                for group_config in config.groups:
+                    if steel_info.get(group_config.group_key) is None and not getattr(group_config, "shield", False):
+                        missing = True
+                        break
+                if missing:
+                    business_main.mark_fault(f"{key} steel_info missing", send_fault_signal=True)
+                    raise TimeoutError(f"{key} steel_info missing")
+            steel_infos[key] = steel_info
+        business_main.update(steel_infos)
 
 
-if __name__ == "__main__":
+def _run_http_loop(camera_manage_config, capture_clients, business_main):
+    while True:
+        steel_infos = {}
+        for key, config in camera_manage_config.group_dict.items():
+            client = capture_clients.get(key)
+            if client is None:
+                business_main.mark_fault(f"{key} capture client missing", send_fault_signal=True)
+                raise TimeoutError(f"{key} capture client missing")
+            steel_info = client.get_steel_info(config)
+            if steel_info is None:
+                business_main.mark_fault(f"{key} steel_info timeout", send_fault_signal=True)
+                raise TimeoutError(f"{key} steel_info timeout")
+            if isinstance(steel_info, dict):
+                missing = False
+                for group_config in config.groups:
+                    if steel_info.get(group_config.group_key) is None and not getattr(group_config, "shield", False):
+                        missing = True
+                        break
+                if missing:
+                    business_main.mark_fault(f"{key} steel_info missing", send_fault_signal=True)
+                    raise TimeoutError(f"{key} steel_info missing")
+            steel_infos[key] = steel_info
+        business_main.update(steel_infos)
+
+
+def main(enable_capture: bool):
+    if enable_capture:
+        os.environ["NG_CAPTURE_AUTO_START"] = "1"
+    else:
+        os.environ["NG_CAPTURE_AUTO_START"] = "0"
+
+    from Configs.CameraManageConfig import camera_manage_config
+    from Configs.CaptureServerConfig import CAPTURE_URLS
+    from CaptureClient import CaptureHttpClient
+    from Globals import business_main, cool_bed_thread_worker_map, init_cool_bed_workers
+    from Loger import logger
+    from Server import ApiServer
+
     # 仅屏蔽 YOLO/ultralytics 的日志，保留其他 FastAPI/uvicorn 等日志
     logging.getLogger("ultralytics").setLevel(logging.ERROR)
     logging.getLogger("yolo").setLevel(logging.ERROR)
 
     freeze_support()
-    setup_fatal_handlers()
-    # 启动 HTTP 服务
+    setup_fatal_handlers(logger)
+
+    if enable_capture:
+        init_cool_bed_workers(enable_capture=True)
     ApiServer.start()
-    # 启动运行线程
-    main()
+
+    if enable_capture:
+        _run_capture_loop(camera_manage_config, cool_bed_thread_worker_map, business_main)
+    else:
+        capture_clients = {
+            key: CaptureHttpClient(key, CAPTURE_URLS.get(key, ""))
+            for key in camera_manage_config.group_dict.keys()
+        }
+        _run_http_loop(camera_manage_config, capture_clients, business_main)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--capture", action="store_true", help="enable local camera capture in main process")
+    args = parser.parse_args()
+    main(enable_capture=args.capture)
