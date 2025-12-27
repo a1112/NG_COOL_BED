@@ -1,5 +1,4 @@
 from threading import Thread
-import queue
 
 from .Devclass import DevClass
 from Loger import logger
@@ -29,7 +28,4 @@ class HkSdkCap(Thread):
         self.dev.LogoutDev()
         self.dev.hikSDK.NET_DVR_Cleanup()
     def get_last_frame(self):
-        try:
-            return self.frame_queue.get(timeout=1.0)
-        except queue.Empty:
-            return None
+        return self.frame_queue.get()

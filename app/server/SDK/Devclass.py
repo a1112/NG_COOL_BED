@@ -11,7 +11,7 @@ from .HCNetSDK import *
 from .PlayCtrl import *
 from threading import Thread
 from Loger import logger
-
+import CONFIG
 sdk_logger = logging.getLogger("hk_sdk")
 sdk_logger.setLevel(logging.INFO)
 
@@ -29,8 +29,10 @@ class DevClass(Thread):
         self.preview_file = ''  # linux预览取流保存路径
         self.funcRealDataCallBack_V30 = REALDATACALLBACK(self.RealDataCallBack_V30)  # 预览回调函数
         self.frame_queue = RollingQueue(maxsize=1)  # 限制队列大小防止内存溢出
-        self.FPS = 15
+        self.FPS = 10
         self.last_time = time.time()
+        self._fps_last_ts = time.time()
+        self._fps_count = 0
 
         # self.start()
         # self.msg_callback_func = MSGCallBack_V31(self.g_fMessageCallBack_Alarm)  # 注册回调函数实现
@@ -154,6 +156,16 @@ class DevClass(Thread):
 
             yuv_frame = yuv_data.reshape((nHeight * 3 // 2, nWidth))
             rgb_frame = cv2.cvtColor(yuv_frame, cv2.COLOR_YUV2RGB_IYUV)
+
+            now = time.time()
+            self._fps_count += 1
+            if now - self._fps_last_ts >= 2.0:
+                fps = self._fps_count / (now - self._fps_last_ts)
+                if CONFIG.camera_fps_show:
+                    logger.info("DecCBFun fps=%.2f", fps)
+                self._fps_count = 0
+                self._fps_last_ts = now
+
             self.frame_queue.put(rgb_frame)
         except Exception:
             # ctypes 回调里抛异常会打印 "Exception ignored ..."；这里吞掉并记录 debug 以免刷屏

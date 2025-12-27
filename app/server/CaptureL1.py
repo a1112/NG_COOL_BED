@@ -10,7 +10,7 @@ from Configs.CaptureServerConfig import CAPTURE_BIND_HOST, CAPTURE_PORTS
 
 
 def main():
-    CONFIG.SHOW_OPENCV = True
+    CONFIG.SHOW_OPENCV = False
     CONFIG.SHOW_STEEL_PREDICT = True
     service = CaptureService("L1")
     service.run(CAPTURE_BIND_HOST, CAPTURE_PORTS["L1"])

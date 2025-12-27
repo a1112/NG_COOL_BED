@@ -36,7 +36,7 @@ class CoolBedThreadWorker(Thread):
         self.config = config  #  对于组别的参数试图
         self.camera_map = {}
         self.steel_data_queue = RollingQueue(maxsize=1)
-        self.DEBUG_FPS = 7
+        self.DEBUG_FPS = 12
 
         self._image_lock = Lock()
         self._latest_image_cache = {}
@@ -160,9 +160,9 @@ class CoolBedThreadWorker(Thread):
                     if all(getattr(group_config, "shield", False) for group_config in self.config.groups):
                         steel_info_dict = {group.group_key: None for group in self.config.groups}
                         self.steel_data_queue.put(steel_info_dict)
-                        time.sleep(0.2)
+                        time.sleep(0.02)
                     else:
-                        time.sleep(0.1)
+                        time.sleep(0.01)
                     continue
                 need_cameras = set()
                 for group_key in plan_groups:
@@ -170,7 +170,7 @@ class CoolBedThreadWorker(Thread):
                     if group_config:
                         need_cameras.update(group_config.camera_list)
                 if not need_cameras:
-                    time.sleep(0.02)
+                    time.sleep(0.002)
                     continue
                 cap_dict = {key: self.camera_map[key].get_cap() for key in need_cameras if key in self.camera_map}
                 try:
@@ -204,6 +204,7 @@ class CoolBedThreadWorker(Thread):
                         else:
                             logger.warning(f"单帧处理时间 {use_time}")
                         time.sleep(0.2)
+                    logger.warning(f"单帧处理时间 {use_time}")
                 except BaseException as e:
                     logger.error(e)
                     for group_key in plan_groups:
