@@ -20,3 +20,5 @@ soft/aTrust_*.exe
 /app/server/SdkLog_Python/
 /app/server/dist/
 /app/server/build/
+/logs
+*.log
