@@ -2,6 +2,7 @@ from tqdm import tqdm
 import time
 # from queue import Queue
 from threading import Lock
+import queue
 
 from Base import RollingQueue
 from CameraStreamer.ConversionImage import ConversionImage
@@ -10,7 +11,7 @@ from Configs.GlobalConfig import GlobalConfig
 from Loger import logger
 from .ImageBuffer import ImageBuffer
 from .CameraSdk import DebugCameraSdk, OpenCvCameraSdk, AvCameraSdk, HkCameraSdk
-from CONFIG import DEBUG_MODEL, CapTureBaseClass, CAP_MODEL, CapModelEnum
+from CONFIG import DEBUG_MODEL, CapTureBaseClass, CAP_MODEL, CapModelEnum, CapTureQueueClass
 from Save.ImageSave import CameraImageSave
 
 
@@ -28,7 +29,7 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         self.ip = camera_config.ip
         self.rtsp_url = camera_config.rtsp_url
         self.cap = None
-        self.camera_buffer = RollingQueue(maxsize=1)
+        self.camera_buffer = RollingQueue(maxsize=1, queue_cls=CapTureQueueClass)
 
         self.camera_image_save = None
         self._latest_lock = Lock()
@@ -43,6 +44,24 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         with self._latest_lock:
             self._latest_frame = None
             self._latest_frame_ts = 0.0
+
+    def _drain_latest(self):
+        latest = None
+        while True:
+            try:
+                latest = self.camera_buffer.get_nowait()
+            except queue.Empty:
+                break
+            except Exception:
+                break
+        if latest is None:
+            return
+        frame = getattr(latest, "frame", None)
+        if frame is None:
+            return
+        with self._latest_lock:
+            self._latest_frame = frame
+            self._latest_frame_ts = float(getattr(latest, "frame_time", 0.0) or 0.0)
 
     @staticmethod
     def _safe_release(cap):
@@ -150,12 +169,14 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         return self.camera_buffer.get()
 
     def get_latest_frame(self):
+        self._drain_latest()
         with self._latest_lock:
             if self._latest_frame is None:
                 return None
             return self._latest_frame.copy()
 
     def get_latest_frame_with_ts(self):
+        self._drain_latest()
         with self._latest_lock:
             if self._latest_frame is None:
                 return None, 0.0

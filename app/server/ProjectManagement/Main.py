@@ -12,7 +12,7 @@ from Configs.GlobalConfig import GlobalConfig
 from Configs.GroupConfig import GroupConfig
 from Configs.CoolBedGroupConfig import CoolBedGroupConfig
 from Loger import logger
-from threading import Thread, Lock
+from threading import Lock
 from Configs.CameraConfig import CameraConfig
 from CameraStreamer.RtspCapTure import RtspCapTure
 from Configs.CameraManageConfig import camera_manage_config
@@ -22,7 +22,7 @@ from Result.DetResult import DetResult
 from tool import show_cv2
 from collections import OrderedDict
 
-class CoolBedThreadWorker(Thread):
+class CoolBedThreadWorker(CONFIG.CoolBedBaseClass):
     """
     单个冷床 的 循环
     """
@@ -34,8 +34,19 @@ class CoolBedThreadWorker(Thread):
         self.run_worker = camera_manage_config.run_worker_key(key)
         self.config = config  #  对于组别的参数试图
         self.camera_map = {}
-        self.steel_data_queue = RollingQueue(maxsize=1)
+        self.steel_data_queue = RollingQueue(maxsize=1, queue_cls=CONFIG.WorkerQueueClass)
         self.DEBUG_FPS = 12
+        self._use_process = CONFIG.USE_WORKER_PROCESS
+        self._shared_manager = None
+        self._shared_join_images = None
+        self._shared_latest_cache = None
+        self._shared_latest_ids = None
+        if self._use_process:
+            import multiprocessing
+            self._shared_manager = multiprocessing.Manager()
+            self._shared_join_images = self._shared_manager.dict()
+            self._shared_latest_cache = self._shared_manager.dict()
+            self._shared_latest_ids = self._shared_manager.dict()
 
         self._image_lock = Lock()
         self._latest_image_cache = {}
@@ -49,6 +60,13 @@ class CoolBedThreadWorker(Thread):
             self.start()
 
     def get_image(self, key,show_mask):
+        if self._use_process and self._shared_join_images is not None:
+            item = self._shared_join_images.get(key)
+            if item is not None:
+                id_ = int(item.get("id") or 0)
+                image = item.get("mask") if show_mask else item.get("image")
+                return id_, image
+            return -1, None
         with self._image_lock:
             item = self.join_image_dict.get(key)
         if item is not None:
@@ -89,6 +107,12 @@ class CoolBedThreadWorker(Thread):
         Build the latest stitched image directly from each camera's latest frame.
         This bypasses the full detection loop to avoid UI latency.
         """
+        if self._use_process and self._shared_latest_cache is not None:
+            cached = self._shared_latest_cache.get(group_key)
+            if cached:
+                cached_id = int(cached.get("id") or 0)
+                return cached_id, (cached.get("mask") if show_mask else cached.get("image"))
+            return -1, None
         now = time.time()
         show_mask = int(show_mask)
         with self._image_lock:
@@ -135,6 +159,27 @@ class CoolBedThreadWorker(Thread):
                 self.join_image_dict[key][1] = calibrate
             else:
                 self.join_image_dict[key] = [0, calibrate]
+        if self._use_process and self._shared_join_images is not None:
+            prev = self._shared_join_images.get(key)
+            next_id = int(prev.get("id") or 0) + 1 if prev else 0
+            self._shared_join_images[key] = {
+                "id": next_id,
+                "image": calibrate.image,
+                "mask": getattr(calibrate, "mask_image", None),
+            }
+
+    def _update_latest_cache_process(self, group_key: str, calibrate: CalibrateConfig, frame_ts: float):
+        if not self._use_process or self._shared_latest_cache is None or self._shared_latest_ids is None:
+            return
+        next_id = int(self._shared_latest_ids.get(group_key, 0)) + 1
+        self._shared_latest_ids[group_key] = next_id
+        self._shared_latest_cache[group_key] = {
+            "id": next_id,
+            "ts": time.time(),
+            "frame_ts": float(frame_ts or 0.0),
+            "image": calibrate.image,
+            "mask": getattr(calibrate, "mask_image", None),
+        }
 
     def get_data(self):
         return
@@ -172,11 +217,15 @@ class CoolBedThreadWorker(Thread):
                         group_config = self.config.groups_dict.get(group_key)
                         if group_config is None:
                             continue
-                        calibrate, _ = self._build_latest_calibrate(group_key)
+                        calibrate, frame_ts = self._build_latest_calibrate(group_key)
                         if calibrate is None:
                             self.group_results[group_key] = None
                             missing_data = True
+                            if self._use_process and self._shared_latest_cache is not None:
+                                self._shared_latest_cache.pop(group_key, None)
                             continue
+                        if self._use_process:
+                            self._update_latest_cache_process(group_key, calibrate, frame_ts)
                         batch_items.append((group_key, group_config, calibrate))
                         batch_images.append(calibrate.image)
                     fetch_time = time.time() - fetch_start

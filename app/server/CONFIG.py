@@ -4,7 +4,8 @@ from pathlib import Path
 import json
 
 from threading import Thread
-from multiprocessing import Process
+from multiprocessing import Process, Queue as MpQueue
+import queue as queue_module
 
 import logging
 
@@ -103,7 +104,13 @@ SHOW_OPENCV = False
 SHOW_STEEL_PREDICT = False
 camera_fps_show = False
 
-CapTureBaseClass = Thread
+USE_CAPTURE_PROCESS = True
+USE_WORKER_PROCESS = False
+
+CapTureBaseClass = Process if USE_CAPTURE_PROCESS else Thread
+CoolBedBaseClass = Process if USE_WORKER_PROCESS else Thread
+CapTureQueueClass = MpQueue if USE_CAPTURE_PROCESS else queue_module.Queue
+WorkerQueueClass = MpQueue if USE_WORKER_PROCESS else queue_module.Queue
 
 class CapModelEnum(Enum):
     OPENCV=1

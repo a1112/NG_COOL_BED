@@ -87,7 +87,7 @@ def decode_db6_packet(data: bytes) -> dict | None:
 class Db6RecognitionSender(threading.Thread):
     """DB6：识别 -> TMEIC，负责写入 PLC。"""
 
-    def __init__(self, poll_interval: float = 0.2) -> None:
+    def __init__(self, poll_interval: float = 2) -> None:
         super().__init__(daemon=True)
         self._poll_interval = poll_interval
         self._running = True
