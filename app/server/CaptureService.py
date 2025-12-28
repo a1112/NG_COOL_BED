@@ -199,6 +199,29 @@ class CaptureService:
                 headers={"Cache-Control": "no-store", "X-Image-Source": source},
             )
 
+        @app.get("/capture/camera/{camera_id}")
+        def get_camera_frame(camera_id: str, jpeg_quality: int = 80):
+            capture = self.worker.camera_map.get(camera_id)
+            if capture is None:
+                raise HTTPException(status_code=404, detail=f"camera not found: {camera_id}")
+            frame = capture.get_latest_frame()
+            if frame is None:
+                raise HTTPException(status_code=404, detail=f"camera frame not ready: {camera_id}")
+            jpeg_quality = int(jpeg_quality)
+            jpeg_quality = max(10, min(95, jpeg_quality))
+            ok, encoded_image = cv2.imencode(
+                ".jpg",
+                frame,
+                [int(cv2.IMWRITE_JPEG_QUALITY), jpeg_quality],
+            )
+            if not ok:
+                raise HTTPException(status_code=500, detail="failed to encode capture image")
+            return Response(
+                content=encoded_image.tobytes(),
+                media_type="image/jpeg",
+                headers={"Cache-Control": "no-store"},
+            )
+
         def _video_stream(
             group_key: str,
             show_mask: int,

@@ -10,6 +10,7 @@ import faulthandler
 import threading
 import traceback
 import logging
+import time
 from multiprocessing import freeze_support
 # Reduce noisy FFmpeg swscaler warnings from OpenCV decode pipeline.
 os.environ.setdefault("OPENCV_FFMPEG_LOGLEVEL", "24")
@@ -25,8 +26,34 @@ def setup_fatal_handlers(logger):
     fatal_log = log_dir / "fatal.log"
     try:
         fh = open(fatal_log, "a", encoding="utf-8")
-        faulthandler.enable(fh)
-        faulthandler.dump_traceback_later(120, repeat=True, file=fh)
+
+        class _TimestampWriter:
+            def __init__(self, wrapped):
+                self._wrapped = wrapped
+                self._line_start = True
+
+            def write(self, data):
+                if not data:
+                    return 0
+                text = str(data)
+                total = 0
+                for chunk in text.splitlines(True):
+                    if self._line_start and chunk.strip():
+                        ts = time.strftime("%Y-%m-%d %H:%M:%S ")
+                        total += self._wrapped.write(ts)
+                    total += self._wrapped.write(chunk)
+                    self._line_start = chunk.endswith("\n")
+                return total
+
+            def flush(self):
+                return self._wrapped.flush()
+
+            def fileno(self):
+                return self._wrapped.fileno()
+
+        ts_writer = _TimestampWriter(fh)
+        faulthandler.enable(ts_writer)
+        faulthandler.dump_traceback_later(120, repeat=True, file=ts_writer)
     except Exception:
         logger.exception("Failed to enable faulthandler")
 

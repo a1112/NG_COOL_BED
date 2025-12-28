@@ -926,6 +926,39 @@ def _find_latest_camera_frame(camera_id: str):
     return None
 
 
+def _find_camera_cool_bed(camera_id: str):
+    for cool_bed_key, group_config in (camera_manage_config.group_dict or {}).items():
+        try:
+            if camera_id in (group_config.camera_list or []):
+                return cool_bed_key
+        except Exception:
+            continue
+    return None
+
+
+def _fetch_remote_camera_frame(camera_id: str):
+    cool_bed = _find_camera_cool_bed(camera_id)
+    if not cool_bed:
+        return None
+    url = _build_capture_redirect_url(cool_bed, f"/capture/camera/{camera_id}", {})
+    if not url:
+        return None
+    try:
+        import requests
+
+        resp = requests.get(url, timeout=1.2)
+        resp.raise_for_status()
+        data = resp.content
+        if not data:
+            return None
+        arr = np.frombuffer(data, dtype=np.uint8)
+        frame = cv2.imdecode(arr, cv2.IMREAD_COLOR)
+        return frame
+    except Exception as exc:
+        logger.warning("remote capture failed camera=%s url=%s err=%s", camera_id, url, exc)
+        return None
+
+
 @app.get("/calibrate/label/{calibrate}/{cam_id}")
 def get_calibrate_label(calibrate: str, cam_id: str):
     return _load_calibrate_file(calibrate, f"{cam_id}.json")
@@ -983,6 +1016,8 @@ def capture_calibrate_camera(payload: Optional[dict] = None):
 
     _safe_calibrate_folder(folder)
     frame = _find_latest_camera_frame(camera_id)
+    if frame is None:
+        frame = _fetch_remote_camera_frame(camera_id)
     if frame is None:
         raise HTTPException(status_code=404, detail=f"camera frame not ready: {camera_id}")
     out_path = _safe_capture_tmp_path(folder, camera_id)

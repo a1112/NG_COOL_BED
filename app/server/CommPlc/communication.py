@@ -87,7 +87,7 @@ def decode_db6_packet(data: bytes) -> dict | None:
 class Db6RecognitionSender(threading.Thread):
     """DB6：识别 -> TMEIC，负责写入 PLC。"""
 
-    def __init__(self, poll_interval: float = 0.1) -> None:
+    def __init__(self, poll_interval: float = 0.2) -> None:
         super().__init__(daemon=True)
         self._poll_interval = poll_interval
         self._running = True
@@ -99,8 +99,13 @@ class Db6RecognitionSender(threading.Thread):
         self.last_bytes: bytes = b""
         self.last_write_ok_ts: float | None = None
         self.last_write_error: str = ""
+        self._min_write_interval_s = 0.3
+        self._last_write_ts = 0.0
+        self._last_read_ts = 0.0
         self._last_write_error_ts = 0.0
         self._last_read_error_ts = 0.0
+        self._write_lock = threading.Lock()
+        self._pending_packet: bytes | None = None
         self.start()
 
     def close(self) -> None:
@@ -108,35 +113,48 @@ class Db6RecognitionSender(threading.Thread):
 
     def run(self) -> None:
         while self._running:
-            time.sleep(self._poll_interval)
-            try:
-                start_time = time.time()
-                response = self._client.Read(self._db_address, self._db_length)
-                if response is None:
-                    raise RuntimeError("DB6 read: response is None")
-                if hasattr(response, "IsSuccess") and not response.IsSuccess:
-                    msg = getattr(response, "Message", "") or ""
-                    raise RuntimeError(f"DB6 read failed: {msg}".strip())
+            now = time.time()
+            if now - self._last_read_ts >= self._poll_interval:
+                self._last_read_ts = now
+                try:
+                    start_time = time.time()
+                    response = self._client.Read(self._db_address, self._db_length)
+                    if response is None:
+                        raise RuntimeError("DB6 read: response is None")
+                    # if hasattr(response, "IsSuccess") and not response.IsSuccess:
+                    #     msg = getattr(response, "Message", "") or ""
+                    #     raise RuntimeError(f"DB6 read failed: {msg}".strip())
 
-                payload = getattr(response, "Content", None)
-                if payload is None:
-                    raise RuntimeError("DB6 read: Content is None")
+                    payload = getattr(response, "Content", None)
+                    if payload is None:
+                        raise RuntimeError("DB6 read: Content is None")
 
-                if isinstance(payload, (bytes, bytearray, memoryview)):
-                    payload_bytes = bytes(payload)
-                else:
-                    payload_bytes = bytes(payload)
+                    if isinstance(payload, (bytes, bytearray, memoryview)):
+                        payload_bytes = bytes(payload)
+                    else:
+                        payload_bytes = bytes(payload)
 
-                self.last_bytes = payload_bytes
-                self._decode(payload_bytes, {
-                    "getDateTime": time.time(),
-                    "getTimeLen": time.time() - start_time,
-                })
-            except Exception as exc:  # pragma: no cover - 真实 PLC
-                now = time.time()
-                if now - self._last_read_error_ts >= 2.0:
-                    self._last_read_error_ts = now
-                    logger.error("DB6 read error: %s", exc)
+                    self.last_bytes = payload_bytes
+                    self._decode(payload_bytes, {
+                        "getDateTime": time.time(),
+                        "getTimeLen": time.time() - start_time,
+                    })
+                except Exception as exc:  # pragma: no cover - 真实 PLC
+                    now = time.time()
+                    if now - self._last_read_error_ts >= 2.0:
+                        self._last_read_error_ts = now
+                        logger.error("DB6 read error: %s", exc)
+
+            if (now - self._last_write_ts) >= self._min_write_interval_s:
+                packet = None
+                with self._write_lock:
+                    if self._pending_packet is not None:
+                        packet = self._pending_packet
+                        self._pending_packet = None
+                if packet is not None:
+                    self._do_write(packet)
+
+            time.sleep(0.02)
 
     def _decode(self, data: bytes, other: dict) -> None:
         decoded = decode_db6_packet(data)
@@ -144,8 +162,10 @@ class Db6RecognitionSender(threading.Thread):
             return
         self.last_data_dict.update({**decoded, **other})
 
-    def write_bytes(self, packet: bytes) -> None:
+    def _do_write(self, packet: bytes) -> None:
         try:
+            now = time.time()
+            self._last_write_ts = now
             response = self._client.Write(self._db_address, bytearray(packet))
 
             ok = True
@@ -164,7 +184,6 @@ class Db6RecognitionSender(threading.Thread):
                 self.last_write_error = ""
                 return
 
-            now = time.time()
             self.last_write_error = message or "DB6 write failed"
             if now - self._last_write_error_ts >= 2.0:
                 self._last_write_error_ts = now
@@ -179,6 +198,12 @@ class Db6RecognitionSender(threading.Thread):
     def write_byte(self, packet: bytes) -> None:
         self.write_bytes(packet)
 
+    def write_bytes(self, packet: bytes) -> None:
+        if packet is None:
+            return
+        with self._write_lock:
+            self._pending_packet = bytes(packet)
+
 
 class Db6RecognitionDebug:
     def __init__(self) -> None:
@@ -186,8 +211,13 @@ class Db6RecognitionDebug:
         self.last_bytes: bytes = b""
         self.last_write_ok_ts: float | None = None
         self.last_write_error: str = ""
+        self._last_write_ts = 0.0
 
     def write_bytes(self, packet: bytes) -> None:  # pragma: no cover - 仿真
+        now = time.time()
+        if hasattr(self, "_last_write_ts") and (now - self._last_write_ts) < 0.3:
+            return
+        self._last_write_ts = now
         self.last_bytes = bytes(packet)
         self.last_write_ok_ts = time.time()
         self.last_write_error = ""

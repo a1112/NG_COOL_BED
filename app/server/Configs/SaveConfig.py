@@ -15,7 +15,7 @@ class SaveConfig(ConfigBase):
         self.camera_save_config = self.config["camera"]
         self.camera_saved = self.camera_save_config["enable"]
         self.camera_save_folder = CAMERA_SAVE_FOLDER / Path(self.camera_save_config["folder"])
-        self.first_save_enabled = not getattr(CONFIG, "IS_LOC", False)
+        self.first_save_enabled = not getattr(CONFIG, "IS_LOC", True)
         self.first_save_map_folder = FIRST_SAVE_FOLDER / "mapping"
         if self.first_save_enabled:
             self.first_save_map_folder.mkdir(parents=True, exist_ok=True)
