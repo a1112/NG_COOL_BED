@@ -102,9 +102,10 @@ if socket.gethostname() in ["DESKTOP-3VCH6DO", "MS-LGKRSZGOVODD", "DESKTOP-94ADH
 print(fr" DEBUG_MODEL ： {DEBUG_MODEL}")
 SHOW_OPENCV = False
 SHOW_STEEL_PREDICT = False
+MAIN_LOOP_INTERVAL_S = 0.3
 camera_fps_show = False
 
-USE_CAPTURE_PROCESS = True
+USE_CAPTURE_PROCESS = False
 USE_WORKER_PROCESS = False
 
 CapTureBaseClass = Process if USE_CAPTURE_PROCESS else Thread

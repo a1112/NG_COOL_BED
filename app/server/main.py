@@ -11,6 +11,7 @@ import threading
 import traceback
 import logging
 import time
+import CONFIG
 from multiprocessing import freeze_support
 # Reduce noisy FFmpeg swscaler warnings from OpenCV decode pipeline.
 os.environ.setdefault("OPENCV_FFMPEG_LOGLEVEL", "24")
@@ -74,6 +75,7 @@ def setup_fatal_handlers(logger):
 
 
 def _run_capture_loop(camera_manage_config, cool_bed_thread_worker_map, business_main):
+    loop_interval = float(getattr(CONFIG, "MAIN_LOOP_INTERVAL_S", 0.0))
     while True:
         steel_infos = {}
         for key, config in camera_manage_config.group_dict.items():
@@ -93,20 +95,27 @@ def _run_capture_loop(camera_manage_config, cool_bed_thread_worker_map, business
                     raise TimeoutError(f"{key} steel_info missing")
             steel_infos[key] = steel_info
         business_main.update(steel_infos)
+        if loop_interval > 0:
+            time.sleep(loop_interval)
 
 
 def _run_http_loop(camera_manage_config, capture_clients, business_main):
+    loop_interval = float(getattr(CONFIG, "MAIN_LOOP_INTERVAL_S", 0.0))
+    loop_logger = logging.getLogger("root")
     while True:
         steel_infos = {}
+        missing_any = False
         for key, config in camera_manage_config.group_dict.items():
             client = capture_clients.get(key)
             if client is None:
-                business_main.mark_fault(f"{key} capture client missing", send_fault_signal=True)
-                raise TimeoutError(f"{key} capture client missing")
+                loop_logger.warning("%s capture client missing", key)
+                missing_any = True
+                break
             steel_info = client.get_steel_info(config)
             if steel_info is None:
-                business_main.mark_fault(f"{key} steel_info timeout", send_fault_signal=True)
-                raise TimeoutError(f"{key} steel_info timeout")
+                loop_logger.warning("%s steel_info timeout", key)
+                missing_any = True
+                break
             if isinstance(steel_info, dict):
                 missing = False
                 for group_config in config.groups:
@@ -114,10 +123,17 @@ def _run_http_loop(camera_manage_config, capture_clients, business_main):
                         missing = True
                         break
                 if missing:
-                    business_main.mark_fault(f"{key} steel_info missing", send_fault_signal=True)
-                    raise TimeoutError(f"{key} steel_info missing")
+                    loop_logger.warning("%s steel_info missing", key)
+                    missing_any = True
+                    break
             steel_infos[key] = steel_info
+        if missing_any:
+            if loop_interval > 0:
+                time.sleep(loop_interval)
+            continue
         business_main.update(steel_infos)
+        if loop_interval > 0:
+            time.sleep(loop_interval)
 
 
 def main(enable_capture: bool):

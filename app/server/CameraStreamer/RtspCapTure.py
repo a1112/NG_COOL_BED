@@ -1,7 +1,8 @@
 from tqdm import tqdm
 import time
 # from queue import Queue
-from threading import Lock
+from threading import Lock as ThreadLock
+from multiprocessing import Lock as MpLock
 import queue
 
 from Base import RollingQueue
@@ -11,7 +12,14 @@ from Configs.GlobalConfig import GlobalConfig
 from Loger import logger
 from .ImageBuffer import ImageBuffer
 from .CameraSdk import DebugCameraSdk, OpenCvCameraSdk, AvCameraSdk, HkCameraSdk
-from CONFIG import DEBUG_MODEL, CapTureBaseClass, CAP_MODEL, CapModelEnum, CapTureQueueClass
+from CONFIG import (
+    DEBUG_MODEL,
+    CapTureBaseClass,
+    CAP_MODEL,
+    CapModelEnum,
+    CapTureQueueClass,
+    USE_CAPTURE_PROCESS,
+)
 from Save.ImageSave import CameraImageSave
 
 
@@ -32,7 +40,7 @@ class RtspCapTure(CapTureBaseClass): # Process, Thread
         self.camera_buffer = RollingQueue(maxsize=1, queue_cls=CapTureQueueClass)
 
         self.camera_image_save = None
-        self._latest_lock = Lock()
+        self._latest_lock = MpLock() if USE_CAPTURE_PROCESS else ThreadLock()
         self._latest_frame = None
         self._latest_frame_ts = 0.0
         self._reconnect_backoff_s = 1.0
