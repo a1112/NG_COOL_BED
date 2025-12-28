@@ -21,7 +21,6 @@ from alg.YoloModel import SteelDetModel, SteelPredict
 from Result.DetResult import DetResult
 from tool import show_cv2
 from collections import OrderedDict
-from ProjectManagement.PriorityManager import priority_registry
 
 class CoolBedThreadWorker(Thread):
     """
@@ -43,7 +42,6 @@ class CoolBedThreadWorker(Thread):
         self._latest_image_cache_id = {}
 
         self.join_image_dict = {}  # 全部的 返回參數
-        self.priority_controller = priority_registry.create_controller(key, self.config.groups)
         self.group_results = {group.group_key: None for group in self.config.groups}
 
         if  self.run_worker:
@@ -155,38 +153,56 @@ class CoolBedThreadWorker(Thread):
             try:
                 cap_index += 1
                 start_time = time.time()
-                plan_groups = self.priority_controller.next_iteration_groups()
+                plan_groups = [
+                    group.group_key
+                    for group in self.config.groups
+                    if not getattr(group, "shield", False)
+                ]
                 if not plan_groups:
-                    if all(getattr(group_config, "shield", False) for group_config in self.config.groups):
-                        steel_info_dict = {group.group_key: None for group in self.config.groups}
-                        self.steel_data_queue.put(steel_info_dict)
-                        time.sleep(0.02)
-                    else:
-                        time.sleep(0.01)
+                    steel_info_dict = {group.group_key: None for group in self.config.groups}
+                    self.steel_data_queue.put(steel_info_dict)
+                    time.sleep(0.02)
                     continue
-                need_cameras = set()
-                for group_key in plan_groups:
-                    group_config = self.config.groups_dict.get(group_key)
-                    if group_config:
-                        need_cameras.update(group_config.camera_list)
-                if not need_cameras:
-                    time.sleep(0.002)
-                    continue
-                cap_dict = {key: self.camera_map[key].get_cap() for key in need_cameras if key in self.camera_map}
                 try:
+                    missing_data = False
+                    batch_items = []
+                    batch_images = []
+                    fetch_start = time.time()
                     for group_key in plan_groups:
                         group_config = self.config.groups_dict.get(group_key)
                         if group_config is None:
                             continue
-                        calibrate = group_config.calibrate_image(cap_dict)
+                        calibrate, _ = self._build_latest_calibrate(group_key)
+                        if calibrate is None:
+                            self.group_results[group_key] = None
+                            missing_data = True
+                            continue
+                        batch_items.append((group_key, group_config, calibrate))
+                        batch_images.append(calibrate.image)
+                    fetch_time = time.time() - fetch_start
+
+                    infer_time = 0.0
+                    batch_boxes = []
+                    if batch_images:
+                        infer_start = time.time()
+                        batch_boxes = predictor.det_model.get_steel_rect_batch(batch_images)
+                        infer_time = time.time() - infer_start
+
+                    for idx, (group_key, group_config, calibrate) in enumerate(batch_items):
                         self._up_join_image_(group_config.group_key, calibrate)
                         if self.save_thread:
                             self.save_thread.save_buffer(group_config.group_key, calibrate)
-                        steel_info = predictor.predict(calibrate, group_config)
+                        model_data = batch_boxes[idx] if idx < len(batch_boxes) else []
+                        steel_info = predictor.predict_from_boxes(calibrate, group_config, model_data)
                         self.group_results[group_key] = steel_info
-                        priority_registry.record_detection(self.key, group_key, steel_info)
+
+                    logger.info(
+                        "batch_groups=%s fetch_s=%.3f infer_s=%.3f",
+                        len(batch_images),
+                        fetch_time,
+                        infer_time,
+                    )
                     steel_info_dict = {}
-                    missing_data = False
                     for group_config in self.config.groups:
                         result = self.group_results.get(group_config.group_key)
                         if result is None and not getattr(group_config, "shield", False):
@@ -204,11 +220,9 @@ class CoolBedThreadWorker(Thread):
                         else:
                             logger.warning(f"单帧处理时间 {use_time}")
                         time.sleep(0.2)
-                    logger.warning(f"单帧处理时间 {use_time}")
+                    logger.info("全链路耗时=%.3fs batch_groups=%s", use_time, len(batch_images))
                 except BaseException as e:
                     logger.error(e)
-                    for group_key in plan_groups:
-                        priority_registry.record_detection(self.key, group_key, None)
             except Exception as exc:
                 logger.exception("CoolBedThreadWorker loop error: %s", exc)
                 time.sleep(0.5)

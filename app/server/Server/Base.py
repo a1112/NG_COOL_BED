@@ -22,7 +22,6 @@ from Configs.CameraListConfig import camera_list_config
 from ProjectManagement.Main import CoolBedThreadWorker
 from Result.DataItem import DataItem
 from ProjectManagement.Business import Business
-from ProjectManagement.PriorityManager import priority_registry
 from Globals import business_main, cool_bed_thread_worker_map, global_config
 from CONFIG import (
     debug_control,
@@ -696,7 +695,7 @@ def current_info():
 
 @app.get("/priority/status")
 def get_priority_status():
-    return priority_registry.dump()
+    return {"enabled": False}
 
 
 @app.post("/priority/shield")
@@ -718,7 +717,6 @@ def set_priority_shield(payload: Optional[dict] = None):
         camera_manage_config.set_group_shield(cool_bed, group_key, shield)
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
-    priority_registry.update_shield(cool_bed, group_key, shield)
     return {
         "ok": True,
         "cool_bed": cool_bed,
@@ -1334,16 +1332,6 @@ def _get_data_payload(cool_bed: str) -> dict:
     cool_bed_data = {key: item.get_info() for key, item in data_dict[cool_bed].items()}
     if hasattr(business_main, "get_current_data"):
         cool_bed_data["current"] = business_main.get_current_data(cool_bed)
-    controller = priority_registry.get_controller(cool_bed)
-    for key, info in cool_bed_data.items():
-        if key == "current" or not isinstance(info, dict):
-            continue
-        state = controller.state_for(key) if controller else None
-        if not state:
-            continue
-        info["priority_level"] = state.level
-        info["priority_reason"] = state.reason
-        info["shielded"] = state.shielded
     auto_snapshot = {}
     try:
         auto_snapshot = db5_reader.snapshot() if db5_reader else {}

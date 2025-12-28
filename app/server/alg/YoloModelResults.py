@@ -2,7 +2,6 @@ from pathlib import Path
 
 import cv2
 import numpy as np
-from ultralytics.engine.results import Results
 from PIL import Image
 
 import tool
@@ -11,7 +10,7 @@ from Configs.ClassConfig import name_to_color
 
 class YoloModelResultsBase:
     def __init__(self, image, result):
-        self.result:Results = result
+        self.result = result
         if isinstance(image, str):
             self.image = cv2.imread(image)
         if isinstance(image, Image.Image):

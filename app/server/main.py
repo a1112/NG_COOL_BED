@@ -11,11 +11,11 @@ import threading
 import traceback
 import logging
 from multiprocessing import freeze_support
-
 # Reduce noisy FFmpeg swscaler warnings from OpenCV decode pipeline.
 os.environ.setdefault("OPENCV_FFMPEG_LOGLEVEL", "24")
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+print(fr"PROJECT_ROOT {PROJECT_ROOT}")
 sys.path.append(str(PROJECT_ROOT))
 
 

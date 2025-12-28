@@ -9,7 +9,6 @@ from CONFIG import CAMERA_SAVE_FOLDER, ONE_CAP_FOLDER
 from Result.DataItem import DataItem
 from Result.DataMap import DataMap
 from Result.DetResult import DetResult
-from ProjectManagement.PriorityManager import priority_registry
 
 
 class Business:
@@ -134,8 +133,6 @@ class Business:
         self.up_count()
         self.current_datas = {"L1": self.data_item_l1, "L2": self.data_item_l2}
         self.data_map = DataMap(self.count,self.current_datas)
-        self._update_priority_states()
-
         self.send_data_dict = self.data_map.get_data_map()
         # print(fr"send_data_dict {self.send_data_dict}")
         self.send_data_byte = self.data_map.data_to_byte(self.send_data_dict)
@@ -213,14 +210,3 @@ class Business:
     def current_info(self):
         return {}
 
-    def _update_priority_states(self):
-        if not self.current_datas:
-            return
-        for cool_bed_key, data_item in self.current_datas.items():
-            group_key = ""
-            if data_item is not None:
-                group_key = (getattr(data_item, "group_key", "") or "")
-            if group_key:
-                priority_registry.mark_sending(cool_bed_key, group_key)
-            else:
-                priority_registry.mark_sending(cool_bed_key, None)

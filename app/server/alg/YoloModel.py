@@ -21,21 +21,31 @@ class SteelDetModel:
         self.model = YOLO(str(CONFIG.MODEL_FOLDER / "steelDet.pt"))   # load a custom model
 
     def predict(self, image):
-        results = self.model(image, device=CONFIG.YOLO_DEVICE)
+        results = self.model(image, device=CONFIG.YOLO_DEVICE, verbose=False)
         if results[0].xyxy:
             return results[0].xyxy
         return None
 
     def get_steel_rect(self, image):
-        results = self.model(image, device=CONFIG.YOLO_DEVICE)
-        bounding_boxes = []
+        results = self.model(image, device=CONFIG.YOLO_DEVICE, verbose=False)
+        return self._boxes_from_results(results)[0]
+
+    def get_steel_rect_batch(self, image_list):
+        results = self.model(image_list, device=CONFIG.YOLO_DEVICE, verbose=False)
+        return self._boxes_from_results(results)
+
+    @staticmethod
+    def _boxes_from_results(results):
+        all_boxes = []
         for result in results:
+            bounding_boxes = []
             for box in result.boxes:
                 xyxy = box.xyxy[0].cpu().numpy()
                 label = int(box.cls[0].cpu().numpy())  # 假设类标签是整数
                 xmin, ymin, xmax, ymax = xyxy
-                bounding_boxes.append([int(xmin), int(ymin), int(xmax-xmin), int(ymax-ymin),label])
-        return bounding_boxes
+                bounding_boxes.append([int(xmin), int(ymin), int(xmax - xmin), int(ymax - ymin), label])
+            all_boxes.append(bounding_boxes)
+        return all_boxes
 
 
 class SteelAreaSegModel:
@@ -56,13 +66,20 @@ class SteelPredict:
 
     def predict(self,calibrate:CalibrateConfig, group_config:GroupConfig):
         model_data = self.det_model.get_steel_rect(calibrate.image)
+        steel_info = self._build_result(calibrate, group_config, model_data)
+        return steel_info
+
+    def predict_from_boxes(self, calibrate: CalibrateConfig, group_config: GroupConfig, model_data):
+        return self._build_result(calibrate, group_config, model_data)
+
+    def _build_result(self, calibrate: CalibrateConfig, group_config: GroupConfig, model_data):
         steel_info = DetResult(calibrate, model_data, group_config.map_config)
 
         if CONFIG.SHOW_STEEL_PREDICT:
             show_cv2(steel_info.show_image, title=fr"j_{group_config.key}_" + group_config.msg)
 
         if steel_info.can_get_data and CONFIG.useSegModel:
-            steel_info = SegResult(steel_info, self.seg_model.predict(calibrate.sub_images) )
+            steel_info = SegResult(steel_info, self.seg_model.predict([calibrate.image]))
             if CONFIG.SHOW_STEEL_PREDICT:
                 show_cv2(steel_info.draw_image, title=fr"j_seg_{group_config.key}_" + group_config.msg)
             calibrate.mask_image = steel_info.mask
