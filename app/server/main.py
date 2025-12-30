@@ -26,6 +26,8 @@ def setup_fatal_handlers(logger):
     log_dir.mkdir(parents=True, exist_ok=True)
     fatal_log = log_dir / "fatal.log"
     try:
+        if not getattr(CONFIG, "ENABLE_DUMPS", False):
+            raise RuntimeError("dump logging disabled by config")
         fh = open(fatal_log, "a", encoding="utf-8")
 
         class _TimestampWriter:
@@ -103,37 +105,40 @@ def _run_http_loop(camera_manage_config, capture_clients, business_main):
     loop_interval = float(getattr(CONFIG, "MAIN_LOOP_INTERVAL_S", 0.0))
     loop_logger = logging.getLogger("root")
     while True:
-        steel_infos = {}
-        missing_any = False
-        for key, config in camera_manage_config.group_dict.items():
-            client = capture_clients.get(key)
-            if client is None:
-                loop_logger.warning("%s capture client missing", key)
-                missing_any = True
-                break
-            steel_info = client.get_steel_info(config)
-            if steel_info is None:
-                loop_logger.warning("%s steel_info timeout", key)
-                missing_any = True
-                break
-            if isinstance(steel_info, dict):
-                missing = False
-                for group_config in config.groups:
-                    if steel_info.get(group_config.group_key) is None and not getattr(group_config, "shield", False):
-                        missing = True
-                        break
-                if missing:
-                    loop_logger.warning("%s steel_info missing", key)
+        try:
+            steel_infos = {}
+            missing_any = False
+            for key, config in camera_manage_config.group_dict.items():
+                client = capture_clients.get(key)
+                if client is None:
+                    loop_logger.warning("%s capture client missing", key)
                     missing_any = True
                     break
-            steel_infos[key] = steel_info
-        if missing_any:
+                steel_info = client.get_steel_info(config)
+                if steel_info is None:
+                    loop_logger.warning("%s steel_info timeout", key)
+                    missing_any = True
+                    break
+                if isinstance(steel_info, dict):
+                    missing = False
+                    for group_config in config.groups:
+                        if steel_info.get(group_config.group_key) is None and not getattr(group_config, "shield", False):
+                            missing = True
+                            break
+                    if missing:
+                        loop_logger.warning("%s steel_info missing", key)
+                        missing_any = True
+                        break
+                steel_infos[key] = steel_info
+            if missing_any:
+                if loop_interval > 0:
+                    time.sleep(loop_interval)
+                continue
+            business_main.update(steel_infos)
             if loop_interval > 0:
                 time.sleep(loop_interval)
-            continue
-        business_main.update(steel_infos)
-        if loop_interval > 0:
-            time.sleep(loop_interval)
+        except BaseException:
+            loop_logger.exception("http loop error")
 
 
 def main(enable_capture: bool):

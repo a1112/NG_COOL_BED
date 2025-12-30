@@ -1,4 +1,5 @@
-﻿from typing import Dict, Optional
+import logging
+from typing import Dict, Optional
 
 import numpy as np
 import requests
@@ -16,6 +17,7 @@ class CaptureHttpClient:
         self.session = requests.Session()
         self._last_payload = None
         self._dummy_image_cache = {}
+        self._logger = logging.getLogger("root")
 
     def _build_dummy_image(self, width: int, height: int):
         key = (int(width), int(height))
@@ -42,6 +44,11 @@ class CaptureHttpClient:
             self._last_payload = payload
             return payload
         except Exception:
+            self._logger.exception(
+                "capture fetch failed url=%s timeout=%s",
+                f"{self.base_url}/boxes",
+                self.timeout,
+            )
             return self._last_payload
 
     def get_steel_info(self, config: CoolBedGroupConfig) -> Optional[Dict[str, DetResult]]:

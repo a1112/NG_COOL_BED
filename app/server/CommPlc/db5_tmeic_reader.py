@@ -59,10 +59,12 @@ class Db5TmeicReader(threading.Thread):
         self._db_address = db_address or PLC_config.TMEIC_DB5_ADDRESS
         self._db_length = db_length or PLC_config.TMEIC_DB5_LENGTH
         self._latest: Dict[str, Any] = {}
+        self._plc_ip = PLC_config.IP_L1
+        self._rack = PLC_config.ROCK
+        self._slot = PLC_config.SLOT
 
-
-        self._client = SiemensS7Net(SiemensPLCS.S400, PLC_config.IP_L1)
-        self._client.SetSlotAndRack(PLC_config.ROCK, PLC_config.SLOT)
+        self._client = SiemensS7Net(SiemensPLCS.S400, self._plc_ip)
+        self._client.SetSlotAndRack(self._rack, self._slot)
         self.start()
 
     def close(self) -> None:
@@ -80,7 +82,15 @@ class Db5TmeicReader(threading.Thread):
                 raw = response.Content
                 timestamp = datetime.datetime.now()
             except Exception as exc:  # pragma: no cover - hardware dependent
-                logger.error("DB5 read error: %s", exc)
+                logger.error(
+                    "DB5 read error ip=%s rack=%s slot=%s db=%s len=%s err=%s",
+                    self._plc_ip,
+                    self._rack,
+                    self._slot,
+                    self._db_address,
+                    self._db_length,
+                    exc,
+                )
                 continue
             try:
                 decoded = self._decode(raw)
@@ -88,7 +98,15 @@ class Db5TmeicReader(threading.Thread):
                 decoded["getTimeLen"] = time.time() - start
                 self._latest = decoded
             except Exception as exc:  # pragma: no cover - decoding guard
-                logger.error("DB5 decode error: %s", exc)
+                logger.error(
+                    "DB5 decode error ip=%s rack=%s slot=%s db=%s len=%s err=%s",
+                    self._plc_ip,
+                    self._rack,
+                    self._slot,
+                    self._db_address,
+                    self._db_length,
+                    exc,
+                )
 
     @staticmethod
     def _decode(payload: bytes) -> Dict[str, Any]:

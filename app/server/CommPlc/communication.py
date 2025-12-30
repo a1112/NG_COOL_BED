@@ -93,8 +93,11 @@ class Db6RecognitionSender(threading.Thread):
         self._running = True
         self._db_address = "DB6.0"
         self._db_length = 64
-        self._client = SiemensS7Net(SiemensPLCS.S400, PLC_config.IP_L1)
-        self._client.SetSlotAndRack(PLC_config.ROCK, PLC_config.SLOT)
+        self._plc_ip = PLC_config.IP_L1
+        self._rack = PLC_config.ROCK
+        self._slot = PLC_config.SLOT
+        self._client = SiemensS7Net(SiemensPLCS.S400, self._plc_ip)
+        self._client.SetSlotAndRack(self._rack, self._slot)
         self.last_data_dict = {}
         self.last_bytes: bytes = b""
         self.last_write_ok_ts: float | None = None
@@ -106,6 +109,8 @@ class Db6RecognitionSender(threading.Thread):
         self._last_read_error_ts = 0.0
         self._write_lock = threading.Lock()
         self._pending_packet: bytes | None = None
+        self._write_fail_count = 0
+        self._last_reconnect_ts = 0.0
         self.start()
 
     def close(self) -> None:
@@ -143,7 +148,15 @@ class Db6RecognitionSender(threading.Thread):
                     now = time.time()
                     if now - self._last_read_error_ts >= 2.0:
                         self._last_read_error_ts = now
-                        logger.error("DB6 read error: %s", exc)
+                        logger.error(
+                            "DB6 read error ip=%s rack=%s slot=%s db=%s len=%s err=%s",
+                            self._plc_ip,
+                            self._rack,
+                            self._slot,
+                            self._db_address,
+                            self._db_length,
+                            exc,
+                        )
 
             if (now - self._last_write_ts) >= self._min_write_interval_s:
                 packet = None
@@ -182,18 +195,60 @@ class Db6RecognitionSender(threading.Thread):
             if ok:
                 self.last_write_ok_ts = time.time()
                 self.last_write_error = ""
+                self._write_fail_count = 0
                 return
 
-            self.last_write_error = message or "DB6 write failed"
+            self._write_fail_count += 1
+            self.last_write_error = (
+                f"DB6 write failed ip={self._plc_ip} rack={self._rack} slot={self._slot} "
+                f"db={self._db_address} len={self._db_length} msg={message or ''}"
+            ).strip()
             if now - self._last_write_error_ts >= 2.0:
                 self._last_write_error_ts = now
                 logger.error("%s", self.last_write_error)
+            if self._write_fail_count >= 5:
+                self._reconnect_if_needed(now, reason="write failed")
         except Exception as exc:  # pragma: no cover - runtime only
             now = time.time()
-            self.last_write_error = f"DB6 write error: {exc}"
+            self._write_fail_count += 1
+            self.last_write_error = (
+                f"DB6 write error ip={self._plc_ip} rack={self._rack} slot={self._slot} "
+                f"db={self._db_address} len={self._db_length} err={exc}"
+            )
             if now - self._last_write_error_ts >= 2.0:
                 self._last_write_error_ts = now
                 logger.error("%s", self.last_write_error)
+            if self._write_fail_count >= 5:
+                self._reconnect_if_needed(now, reason="write exception")
+
+    def _reconnect_if_needed(self, now: float, reason: str) -> None:
+        if now - self._last_reconnect_ts < 5.0:
+            return
+        self._last_reconnect_ts = now
+        self._write_fail_count = 0
+        try:
+            logger.warning(
+                "DB6 reconnecting ip=%s rack=%s slot=%s reason=%s",
+                self._plc_ip,
+                self._rack,
+                self._slot,
+                reason,
+            )
+            if hasattr(self._client, "ConnectClose"):
+                try:
+                    self._client.ConnectClose()
+                except Exception:
+                    pass
+            if hasattr(self._client, "ConnectServer"):
+                self._client.ConnectServer()
+        except Exception as exc:
+            logger.error(
+                "DB6 reconnect failed ip=%s rack=%s slot=%s err=%s",
+                self._plc_ip,
+                self._rack,
+                self._slot,
+                exc,
+            )
 
     def write_byte(self, packet: bytes) -> None:
         self.write_bytes(packet)

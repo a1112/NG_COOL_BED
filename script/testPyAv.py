@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 from PIL import Image
 from tqdm import tqdm
-import av
 
 def cap():
     container = av.open('rtsp://admin:ng123456@192.168.1.101/stream',options={
